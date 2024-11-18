@@ -13,7 +13,6 @@ enum GameState{
     GameOver
 }
 
-const MOVESPEED :f32 = 200.0;
 
 #[macroquad::main("Throwback Kingdom")]
 async fn main() {
@@ -42,6 +41,10 @@ async fn main() {
                 let mvspeed = accel + f32::powf(accel,3.0 );
                 clear_background(SKYBLUE);
 
+
+                let kunci = get_keys_down();
+                println!("{:?}",kunci);
+                
                 // input Movement
                 if is_key_down(KeyCode::D) {
                     player.x += mvspeed * delta_time * player.speed;

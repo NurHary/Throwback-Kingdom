@@ -13,11 +13,10 @@ impl CharacterEntity{
         Self { name: nama, speed: kecepatan, x: x_pos , y: y_pos, tipe_character: tipe }
     }
 }
-
 pub enum CharacterType{
     PLAYER,
     NPC,
-    ALLY,
-    ENEMY,
+    ALLY(i32),
+    ENEMY(i32),
     
 }
