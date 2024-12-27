@@ -1,5 +1,6 @@
 use std::str::MatchIndices;
 
+use camera::mouse;
 use macroquad::prelude::*;
 
 mod character_entity;
@@ -10,13 +11,11 @@ mod tk_system;
 use crate::tk_system::*;
 
 
-const PAN_SPEED:f32 = 2.0;
+const PAN_SPEED:f32 = 10.0;
 
 enum GameState{
     Play,
-    Pause,
     Menu,
-    Setting,
     GameOver
 }
 
@@ -31,9 +30,9 @@ async fn main() {
     let game_start_status = GameState::Play;
 
     let mut character_list : Vec<CharacterEntity> = Vec::new();
-    character_list.push(CharacterEntity::new("King Anton".to_string(), 100, 300.0, screen_width()/2.0, screen_height()/2.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
-    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 400.0, screen_width()/4.0, screen_height()/2.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
-    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 800.0, screen_width()/-4.0, screen_height()/-2.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("King Anton".to_string(), 100, 300.0, screen_width()/2.0, screen_height()/2.0, 15.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 400.0, screen_width()/4.0, screen_height()/2.0, 5.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 800.0, screen_width()/-4.0, screen_height()/-2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
     // character_list.remove(2);
     
 
@@ -43,8 +42,10 @@ async fn main() {
     let mut ls_pos_cam:[f32;2] = [0.0,0.0]; // inisialisasi Posisi Camera Berdasarkan Player
     let mut final_rpg_position: [f32;2] = [0.0, 0.0];
     let mut current_mouse_position: (f32, f32) = (0.0, 0.0); // Mouse Position For Difference
+    let mut mous_mov_pos :(f32, f32) = (1.0, 1.0); // ini untuk melakukan pengecekan apakah posisi mouse saat ini sudah sama atau tidak
 
     let mut game_mode: bool = true; // true = RPG, false = RTS
+    
 
     loop {
         match game_start_status{
@@ -67,7 +68,6 @@ async fn main() {
                     game_mode = !game_mode; // Mengganti Mode dari RPG ke RTS atau sebaliknya
                     final_rpg_position = [character_list[character_main_id].x, character_list[character_main_id].y]; // untuk posisi camera terakhir dari player ketika transisi
                     if game_mode == false {camera_zoom_mode = 1.0};
-                    character_list.remove(character_main_id);
                 }
 
                 match game_mode{
@@ -84,7 +84,7 @@ async fn main() {
                             character_main_id = character_main_id % character_list.len();
 
                         if is_key_pressed(KeyCode::P) {character_list = test_delete(character_list)}
-                        
+
 
                         if movement_pressed > 0 {
                             accel += 1.5 * (delta_time*2.0);
@@ -99,6 +99,11 @@ async fn main() {
                         character_list[character_main_id].y += vector_pressed[1] * (mvspeed * delta_time * character_list[character_main_id].speed);
 
                         ls_pos_cam = [character_list[character_main_id].x, character_list[character_main_id].y]; // ini untuk mendapatkan nilai ketika plyaer bergerak pada RPG mode
+
+                        //if character_list.iter().any(|character_list| player.collide_with(character_list)){
+                          //  println!("coollide!!")} // ini untuk collision dalam vector
+
+                          // if character_list[0].colided_with(&character_list[1]){println!("Collideddd")} // Collider Single
                         
                     },
                     false => { // RTS MODE //
@@ -108,8 +113,13 @@ async fn main() {
                             current_mouse_position = mouse_position();
                         }
 
-                        if is_mouse_button_down(MouseButton::Middle){
-                            final_rpg_position = [final_rpg_position[0] - (mospos.0 - current_mouse_position.0) * delta_time * PAN_SPEED, final_rpg_position[1] - (mospos.1 - current_mouse_position.1) * delta_time * PAN_SPEED]
+                        // Camera Panning System
+                        if is_mouse_button_down(MouseButton::Middle){ // masalahnya adalah ini diupdate setiap framenya sehingga terjadi signifikasi / perubahan
+                            println!("{:?} {:?}", mospos, current_mouse_position);
+                           (final_rpg_position, mous_mov_pos) = mouse_pan(final_rpg_position, current_mouse_position, mospos, delta_time, PAN_SPEED, mous_mov_pos);
+                           if mous_mov_pos == (0.0, 0.0){
+                               current_mouse_position = mouse_position();
+                           }
                         }
         
 
@@ -135,7 +145,7 @@ async fn main() {
                 for i in 0..character_list.len(){
                     match character_list[i].sprite{
                         SpriteTypes::Placeholder => {
-                            draw_circle(character_list[i].x, character_list[i].y, 15.0, YELLOW)
+                            draw_circle(character_list[i].x, character_list[i].y, character_list[i].size, YELLOW)
                     },
                         _ => {}
                     }
@@ -148,14 +158,6 @@ async fn main() {
                 next_frame().await
             },
 
-            GameState::Pause => {},
-
-            GameState::Setting => {},
-
-            GameState::GameOver=> {},
-            GameState::Pause => {},
-
-            GameState::Setting => {},
 
             GameState::GameOver=> {},
             
