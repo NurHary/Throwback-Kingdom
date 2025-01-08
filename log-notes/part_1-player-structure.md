@@ -13,7 +13,7 @@ pada state ini entity itu berupa suatu struct (oop) yang memiliki field:
 
   1. set camera mengikuti character utama terpilih dengan smoothing ### selesai
   2. zoom in zoom out untuk pov rts ### selesai
-  3. menggerakkan kamera rts dengan mouse (control bind dan pergerakan mouse)
+  3. menggerakkan kamera rts dengan mouse (control bind dan pergerakan mouse) // Selesai
 
     hal yang harus diperhatikan: 
     1. system zoom in zoom out (nilai zoom in zoom out dan control mousenya scroll),
@@ -29,6 +29,8 @@ pada state ini entity itu berupa suatu struct (oop) yang memiliki field:
   2. area collision
   3. signal
 
+    // untuk colision sudah bekerja, yang kurang adalah disaat karakter bersentuhan maka karakter
+      itu akan langsung ter assign
 
   // UI
 

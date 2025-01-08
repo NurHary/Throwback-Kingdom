@@ -1,6 +1,3 @@
-use std::str::MatchIndices;
-
-use camera::mouse;
 use macroquad::prelude::*;
 
 mod character_entity;
@@ -23,6 +20,7 @@ enum GameState{
 #[macroquad::main("Throwback Kingdom")]
 async fn main() {
 
+
     let mut accel = 0.0;
     let delta_time = get_frame_time();
     let fps = get_fps();
@@ -30,9 +28,9 @@ async fn main() {
     let game_start_status = GameState::Play;
 
     let mut character_list : Vec<CharacterEntity> = Vec::new();
-    character_list.push(CharacterEntity::new("King Anton".to_string(), 100, 300.0, screen_width()/2.0, screen_height()/2.0, 15.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
-    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 400.0, screen_width()/4.0, screen_height()/2.0, 5.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
-    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 800.0, screen_width()/-4.0, screen_height()/-2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("King Anton".to_string(), 100, 300.0, screen_width()/2.0, screen_height()/2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 400.0, screen_width()/4.0, screen_height()/2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 300.0, screen_width()/-4.0, screen_height()/-2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
     // character_list.remove(2);
     
 
@@ -54,7 +52,7 @@ async fn main() {
             GameState::Play => {
 
                 // test mouse
-                let mut mospos = mouse_position();
+                let mospos = mouse_position();
 
 
                 
@@ -83,7 +81,7 @@ async fn main() {
                         }
                             character_main_id = character_main_id % character_list.len();
 
-                        if is_key_pressed(KeyCode::P) {character_list = test_delete(character_list)}
+                        if is_key_pressed(KeyCode::P) {println!("{:?}", test_id(&character_list[character_main_id]))}
 
 
                         if movement_pressed > 0 {
@@ -100,10 +98,30 @@ async fn main() {
 
                         ls_pos_cam = [character_list[character_main_id].x, character_list[character_main_id].y]; // ini untuk mendapatkan nilai ketika plyaer bergerak pada RPG mode
 
-                        //if character_list.iter().any(|character_list| player.collide_with(character_list)){
-                          //  println!("coollide!!")} // ini untuk collision dalam vector
+                        // if character_list.iter().any(|character_list| player.collide_with(character_list)){
+                           // println!("coollide!!")} // ini untuk collision dalam vector
 
-                          // if character_list[0].colided_with(&character_list[1]){println!("Collideddd")} // Collider Single
+                        for i in 0..character_list.len(){
+                            if i == character_main_id{continue;}
+                            if character_list[character_main_id].colided_with(&character_list[i]){ // collision
+                                println!("collision bitch");
+                                if character_list[character_main_id].x > character_list[i].x{
+                                    character_list[character_main_id].x = clamp(character_list[character_main_id].x, character_list[i].x + character_list[i].size, character_list[character_main_id].x);
+                                }
+                                else {
+                                    character_list[character_main_id].x = clamp(character_list[character_main_id].x, character_list[character_main_id].x, character_list[i].x - character_list[i].size);
+                                };
+                                if character_list[character_main_id].y > character_list[i].y{
+                                    character_list[character_main_id].y = clamp(character_list[character_main_id].y, character_list[i].y + character_list[i].size, character_list[character_main_id].y);
+                                }
+                                else {
+                                    character_list[character_main_id].y = clamp(character_list[character_main_id].y, character_list[character_main_id].y, character_list[i].y - character_list[i].size);
+                                };
+                            }
+                        }
+
+                        
+                        if character_list[0].colided_with(&character_list[1]){println!("Collideddd")} // Collider Single
                         
                     },
                     false => { // RTS MODE //
@@ -115,7 +133,6 @@ async fn main() {
 
                         // Camera Panning System
                         if is_mouse_button_down(MouseButton::Middle){ // masalahnya adalah ini diupdate setiap framenya sehingga terjadi signifikasi / perubahan
-                            println!("{:?} {:?}", mospos, current_mouse_position);
                            (final_rpg_position, mous_mov_pos) = mouse_pan(final_rpg_position, current_mouse_position, mospos, delta_time, PAN_SPEED, mous_mov_pos);
                            if mous_mov_pos == (0.0, 0.0){
                                current_mouse_position = mouse_position();
@@ -145,7 +162,7 @@ async fn main() {
                 for i in 0..character_list.len(){
                     match character_list[i].sprite{
                         SpriteTypes::Placeholder => {
-                            draw_circle(character_list[i].x, character_list[i].y, character_list[i].size, YELLOW)
+                            draw_rectangle(character_list[i].x, character_list[i].y, character_list[i].size, character_list[i].size, YELLOW)
                     },
                         _ => {}
                     }
@@ -170,4 +187,8 @@ fn test_delete (mut data: Vec<CharacterEntity>) -> Vec<CharacterEntity> {
     println!("ok");
     data.remove(data.len() - 1);
     data
+}
+
+fn test_id(char: &CharacterEntity) -> usize{
+     char.id
 }

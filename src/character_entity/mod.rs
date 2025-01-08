@@ -31,8 +31,8 @@ impl CharacterEntity{
 
     pub fn rect(&self) -> Rect{ // ini untuk collision secara traditionalnya
         macroquad::math::Rect{
-            x: self.x - self.size / 2.0,
-            y: self.y - self.size / 2.0,
+            x: self.x - self.size -2.0,
+            y: self.y - self.size -2.0,
             w: self.size,
             h:self.size
         }
