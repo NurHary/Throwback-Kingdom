@@ -1,3 +1,5 @@
+use std::{collections::btree_set::Intersection, ffi::IntoStringError};
+
 use macroquad::prelude::*;
 
 pub struct CharacterEntity{
@@ -24,8 +26,16 @@ impl CharacterEntity{
     pub fn take_damage(mut self){
         
     }
+    
 
-    pub fn colided_with(&self, other: &Self) -> bool{
+    pub fn colided_with(&self, other: &Self) -> (bool, Rect){
+        if let Some(intersect) = self.rect().intersect(other.rect()){
+            return (true, intersect)
+        }
+        (false, other.rect())
+    }
+
+    pub fn area_colided_with(&self, other: &Self) -> bool{
         self.rect().overlaps(&other.rect())
     }
 
