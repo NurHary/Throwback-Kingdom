@@ -28,9 +28,9 @@ async fn main() {
     let game_start_status = GameState::Play;
 
     let mut character_list : Vec<CharacterEntity> = Vec::new();
-    character_list.push(CharacterEntity::new("King Anton".to_string(), 100, 300.0, screen_width()/2.0, screen_height()/2.0, 150.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
-    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 300.0, screen_width()/4.0, screen_height()/2.0, 150.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
-    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 300.0, screen_width()/-2.0, screen_height()/2.0, 150.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("King Anton".to_string(), 100, 300.0, screen_width()/2.0, screen_height()/2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 300.0, screen_width()/4.0, screen_height()/2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
+    character_list.push(CharacterEntity::new("Waiter Alfred".to_string(), 100, 300.0, screen_width()/-2.0, screen_height()/2.0, 30.0, CharacterType::PLAYER, SpriteTypes::Placeholder, character_list.len()));
     // character_list.remove(2);
     
 
@@ -101,35 +101,28 @@ async fn main() {
                         // if character_list.iter().any(|character_list| player.collide_with(character_list)){
                            // println!("coollide!!")} // ini untuk collision dalam vector
 
-                        for i in 0..character_list.len(){ // to fix
+                        for i in 0..character_list.len(){ //  Collision
                             if i == character_main_id{continue;}
                             let coll = character_list[character_main_id].colided_with(&character_list[i]);
                             if coll.0{
-
                                 match coll.1.w > coll.1.h{
                                     true => {
-                                        println!("W > H");
                                         match character_list[character_main_id].y > character_list[i].y{
                                             true => {character_list[character_main_id].y += coll.1.h},
                                             false => {character_list[character_main_id].y -= coll.1.h}
                                         }
                                     },
                                     false => {
-                                        println!("W < H");
                                         match character_list[character_main_id].x > character_list[i].x{
                                             true => {character_list[character_main_id].x += coll.1.w},
                                             false => {character_list[character_main_id].x -= coll.1.w}
                                         }
                                     }
-                            }// collision
-                                //AABB Collision
+                                };
+                            };
+                        }; // close For Loop
 
-
-                                                                
-                            }
-                        }
-
-                    },
+                    }, // Close RPG Mode
                     false => { // RTS MODE //
 
                         

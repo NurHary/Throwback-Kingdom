@@ -6,7 +6,7 @@ pada state ini entity itu berupa suatu struct (oop) yang memiliki field:
 
 
 
-// Camera
+// Camera ## Separuh selesai
 
   sekarang kita akan memasuki sesi pembuatan kamera, dimana saya ingin kamera dapat berganti menjadi 2 pov
   pov karakter utama dan pov RTS. tentu saya harus melakukan hal ini sebelumnya
@@ -20,7 +20,8 @@ pada state ini entity itu berupa suatu struct (oop) yang memiliki field:
       kita butuh clamp nilai
     2. System Panning ## bagian panning selesai, sekarang bagian menghentikannya saja
       !!kita harus membuat itu terasa seperti alat vektor
-// Collision
+      
+// Collision #selesai
 
   sekarang kita akan memasuki sesi collision
   beberapa hal yang perlu di tulis adalah:
