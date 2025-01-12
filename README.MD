@@ -13,20 +13,20 @@ Throwback Kingdom Combine RPG and RTS into one game
 ## Roadmap
 Phase One: Game Concept
 - [x] Game modes first concept
-- [] Collision System
+- [ ] Collision System
 	- [x] Collision Detection
 	- [x] Collision Resolution
-- [] Camera System
+- [ ] Camera System
 	- [x] (RPG) Camera Follow Character choosen
 	- [x] (RTS) Camera Panning
-	- [] (RTS) Camera Zooming
-- [] RPG Mode
+	- [ ] (RTS) Camera Zooming
+- [ ] RPG Mode
 	- [x] Movement
-	- [] 
-	- [] Weapon 
-- [] RTS
-	- [] 
+	- [ ] 
+	- [ ] Weapon 
+- [ ] RTS
+	- [ ] 
 
 Phase Two:  Game Asset
-- [] King Asset
-- [] Hero Asset
+- [ ] King Asset
+- [ ] Hero Asset
