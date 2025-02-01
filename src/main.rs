@@ -7,6 +7,7 @@ use crate::character_entity::*;
 mod tk_system;
 use crate::tk_system::*;
 
+mod tilemaps;
 
 const PAN_SPEED:f32 = 10.0;
 
@@ -23,7 +24,6 @@ async fn main() {
 
     let mut accel = 0.0;
     let delta_time = get_frame_time();
-    let fps = get_fps();
     
     let game_start_status = GameState::Play;
 
@@ -46,6 +46,9 @@ async fn main() {
     
 
     loop {
+
+        
+        let fps = get_fps();
         match game_start_status{
             GameState::Menu => {},
 
