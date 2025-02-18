@@ -23,7 +23,6 @@ async fn main() {
 
 
     let mut accel = 0.0;
-    let delta_time = get_frame_time();
     
     let game_start_status = GameState::Play;
 
@@ -46,6 +45,7 @@ async fn main() {
     
 
     loop {
+        let delta_time = get_frame_time();
 
         
         let fps = get_fps();
@@ -104,6 +104,7 @@ async fn main() {
                         // if character_list.iter().any(|character_list| player.collide_with(character_list)){
                            // println!("coollide!!")} // ini untuk collision dalam vector
 
+                        // <-#c must find a better way to implement colision
                         for i in 0..character_list.len(){ //  Collision
                             if i == character_main_id{continue;}
                             let coll = character_list[character_main_id].colided_with(&character_list[i]);

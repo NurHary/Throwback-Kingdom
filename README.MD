@@ -21,8 +21,9 @@ Phase One: Game Concept
 	- [x] (RTS) Camera Panning
 	- [ ] (RTS) Camera Zooming
 - [ ] Tilemap System
-	- [x] WFC
-	- [ ] Chunking
+	- [ ] WFC
+	- [x] Chunking
+	- [ ] Mapping
 - [ ] RPG Mode
 	- [x] Movement
 	- [ ] 
@@ -36,5 +37,7 @@ Phase One: Game Concept
 	- [ ] Movement
 
 Phase Two:  Game Asset
-- [ ] King Asset
-- [ ] Hero Asset
+- [ ] Heroes Asset
+	- [ ] King Asset
+	- [ ] The Butler
+- [ ] Unit Asset
