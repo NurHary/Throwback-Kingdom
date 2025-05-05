@@ -1,7 +1,5 @@
-mod grid;
-use grid::*;
+struct TilesData {}
 
-pub struct TileMap{
- pub grid: Gridmap,
-    
+pub struct TileMap {
+    tiles_data: TilesData,
 }

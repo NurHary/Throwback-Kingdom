@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 
 mod character_entity;
 mod tools;
+mod world_gen;
 use crate::character_entity::*;
 
 mod tk_system;
