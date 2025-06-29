@@ -15,6 +15,10 @@ so thus heres the list of features
 - Gear up your Kingdoms
 - war againts the main kingdom
 
+
+<br/>
+<br/>
+
 heres the more in depth of the features
 
 ## Table of features
