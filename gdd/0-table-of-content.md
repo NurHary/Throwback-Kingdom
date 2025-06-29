@@ -25,5 +25,5 @@
 <br/>
 <br/>
 
-<link href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md" align="right">next</link>
+<a align="right" href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md">next</a>
 
