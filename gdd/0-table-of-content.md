@@ -22,7 +22,7 @@
 
 [5. Consideration](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/5-consideration.md)
 
-< br / >
+<br/>
 
 <a href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md" align="right">next</a>
 
