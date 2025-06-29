@@ -1,3 +1,4 @@
+# Game Design Document
 ## Table Of Content
 [1. About Throwback Kingdom](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md)
 
@@ -21,4 +22,7 @@
 
 [5. Consideration](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/5-consideration.md)
 
-[next](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md)
+< br / >
+
+<a href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md" align="right">next</a>
+
