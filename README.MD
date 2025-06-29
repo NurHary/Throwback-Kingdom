@@ -1,10 +1,14 @@
 # Throwback Kingdom
 
+<div align="center">
+  <a href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-table-of-content.md">GDD</a>
+  <a href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-table-of-content.md">DOC</a>
+</div>
 
 ## About
-
 Throwback Kingdom is a game written in Rust Programming languange with Macroquad.
 Throwback Kingdom Combine RPG and RTS into one game
+
 
 
 ## Vision
