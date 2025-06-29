@@ -25,5 +25,4 @@
 <br/>
 <br/>
 
-<a href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md" style="float: right;">next</a>
-
+[next](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/1-about.md)
