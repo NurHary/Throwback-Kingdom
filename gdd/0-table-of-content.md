@@ -13,7 +13,7 @@
 
 [2.5. Recruit and Liberation](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/2.5-rnl.md)
 
-[2.6. Progress and Dificulties](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/2.6-prog-dif.md)
+[2.6. Progress and Difficulties](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/2.6-prog-diff.md)
 
 [3. Game Systems](https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/3-game-sys.md)
 
