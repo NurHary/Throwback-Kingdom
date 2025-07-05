@@ -2,9 +2,9 @@
 
 <div align="center">
   |
-  <a href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/0-table-of-content.md">GDD</a>
+  <a href="https://github.com/NurHary/Throwback-Kingdom/tree/master/gdd/0-table-of-content.md">GDD</a>
   |
-  <a href="https://github.com/NurHary/Throwback-Kingdom/tree/main/gdd/0-table-of-content.md">DOC</a>
+  <a href="https://github.com/NurHary/Throwback-Kingdom/tree/master/gdd/0-table-of-content.md">DOC</a>
   |
 </div>
 
