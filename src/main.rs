@@ -1,7 +1,10 @@
+mod gamestate;
 mod tk_entities;
 mod tool;
 
-use std::usize;
+use gamestate::*;
+use tk_entities::*;
+use tool::*;
 
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::sprite::{Wireframe2dConfig, Wireframe2dPlugin};
@@ -11,9 +14,6 @@ use bevy::{
     prelude::*,
     window::PrimaryWindow,
 };
-
-use tk_entities::*;
-use tool::*;
 
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
@@ -34,14 +34,21 @@ fn main() {
             Wireframe2dPlugin::default(),
         ))
         .insert_resource(CurrentId::new(0))
-        .add_systems(Startup, babi)
-        .add_systems(Update, (cursor_pos, rpg_move))
+        .insert_resource(CameraPosition { pos: Vec3::ZERO })
+        .insert_resource(GStatus::default())
+        .add_systems(Startup, (spawn_character, camera_startup).chain())
+        .add_systems(
+            Update,
+            (
+                cursor_pos,
+                (rpg_function, rpg_camera_move).chain().run_if(rc_gamemode),
+            ),
+        )
         .run();
 }
 
-fn babi(
+fn spawn_character(
     mut command: Commands,
-    key: Res<ButtonInput<MouseButton>>,
     mut mesh: ResMut<Assets<Mesh>>,
     mut material: ResMut<Assets<ColorMaterial>>,
 ) {
@@ -66,8 +73,24 @@ fn babi(
         Unit,
         Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
         MeshMaterial2d(material.add(colour)),
-        Transform::from_xyz(20.0, 50.0, 0.0),
+        Transform::from_xyz(1000.0, 50.0, 0.0),
     ));
+}
+
+fn camera_startup(
+    mut camera: Single<&mut Transform, (With<MainCamera>, Without<Unit>)>,
+    king_alfred: Query<(&Transform, &HeroesId), With<Unit>>,
+    mut campos: ResMut<CameraPosition>,
+) {
+    for (tr, id) in king_alfred {
+        if id.id == 0 {
+            let Vec3 { x, y, .. } = tr.translation;
+            let mc_position = Vec3::new(x, y, camera.translation.z);
+
+            camera.translation = mc_position;
+            campos.pos = camera.translation;
+        }
+    }
 }
 
 fn cursor_pos(
@@ -93,11 +116,20 @@ fn cursor_pos(
             ));
         }
     }
+    if key.just_pressed(MouseButton::Left) {
+        if let Some(position) = window.cursor_position() {
+            println!("mouse: {:?}", position)
+        }
+    }
 }
 
-fn rpg_move(
+// Migh Be used
+//fn mainloop() {}
+
+// To Handle Movement in Rpg Mode and to change character and other utility on Rpg Mode
+fn rpg_function(
     key: Res<ButtonInput<KeyCode>>,
-    mut command: Commands,
+    windows: Query<&Window>,
     mut heroes: Query<(&mut Transform, &HeroesId), With<Heroes>>,
     time: Res<Time>,
     mut current_id: ResMut<CurrentId>,
@@ -126,6 +158,57 @@ fn rpg_move(
             her.translation += move_del.extend(0.);
         }
     }
+    if key.just_pressed(KeyCode::KeyP) {
+        println!(
+            "h: {:?}, w: {:?}",
+            windows.single().unwrap().resolution.height(),
+            windows.single().unwrap().resolution.width()
+        )
+    }
 }
 
-fn rpg_camera_move() {}
+// To Handle RPG camera Movement
+fn rpg_camera_move(
+    selected_player: Query<(&Transform, &HeroesId), With<Heroes>>,
+    mut camera: Single<&mut Transform, (With<MainCamera>, Without<Heroes>)>,
+    current_id: Res<CurrentId>,
+    mut campos: ResMut<CameraPosition>,
+    time: Res<Time>,
+) {
+    for (tr, id) in selected_player {
+        if id.id == current_id.id {
+            let Vec3 { x, y, .. } = tr.translation;
+            let direction = Vec3::new(x, y, camera.translation.z);
+            camera
+                .translation
+                .smooth_nudge(&direction, 5.0, time.delta_secs());
+            campos.pos = camera.translation;
+        }
+    }
+}
+
+// To Handle Movement in RTS Mode and to change character and other utility on RTS Mode
+fn rts_move(
+    time: Res<Time>,
+    key: Res<ButtonInput<KeyCode>>,
+    mouse: Res<ButtonInput<MouseButton>>,
+    mut campos: ResMut<CameraPosition>,
+    windows: Query<&Window>,
+) {
+    // Pan
+    let mut cur_mos: Vec3 = Vec3::ZERO;
+    if mouse.just_pressed(MouseButton::Middle) {}
+
+    if mouse.pressed(MouseButton::Middle) {
+        println!("{:?}", windows.single().unwrap().resolution.height())
+    }
+
+    // Dota Move
+    if mouse.just_pressed(MouseButton::Right) {}
+
+    // Select / Draw Select
+    if mouse.pressed(MouseButton::Left) {}
+}
+
+// To Handle RTS camera Movement
+//fn rts_camera_move() {}

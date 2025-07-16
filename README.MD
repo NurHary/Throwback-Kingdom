@@ -18,14 +18,16 @@ Throwback Kingdom Combine RPG and RTS into one game
 
 
 ## Day Run:
-- [ ] Moving with RPG Mode
-- [ ] Switch Character
-- [ ] Switch Mode
+- [ ] RTS Camera Movement
+- [ ] Implement RPG camera movement
+- [ ] Select Component
 
 ## Target One Month
 - [ ] Select sys
-- [ ] Rts Move
-- [ ] 
+- [ ] Rts Move (A* Algorithm - Movement)
+- [ ] Inventory, Item
 
 ## Roadmap
 
+## Notes
+windows cursor position = + 0.5 * resoulution
