@@ -2,10 +2,7 @@ use crate::global_var::*;
 use bevy::prelude::*;
 
 pub fn rc_gamemode(mode: Res<GStatus>) -> bool {
-    match mode.mode {
-        GameMode::RTS => false,
-        GameMode::RPG => true,
-    }
+    mode.mode
 }
 
 pub fn rc_gamestate(mode: Res<GStatus>) -> usize {

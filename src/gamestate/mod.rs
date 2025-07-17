@@ -1,5 +1,7 @@
 pub mod main_menu;
-pub mod main_play;
+pub mod play;
+pub mod startup;
 
-use main_menu::*;
-use main_play::*;
+pub mod play_rpg;
+pub mod play_rts;
+pub use main_menu::*;

@@ -17,11 +17,15 @@ Throwback Kingdom Combine RPG and RTS into one game
 ## Vision
 
 
-## Day Run:
-- [ ] RTS Camera Movement
-- [ ] Implement RPG camera movement
+## Day Run (7/17):
+- [x] Implement RPG camera movement
+- [x] RTS Camera Movement
 - [ ] Select Component
 
+## To Revise
+- [ ] Scale ketika melakukan
+
+(7/2025)
 ## Target One Month
 - [ ] Select sys
 - [ ] Rts Move (A* Algorithm - Movement)
@@ -30,4 +34,5 @@ Throwback Kingdom Combine RPG and RTS into one game
 ## Roadmap
 
 ## Notes
-windows cursor position = + 0.5 * resoulution
+- windows cursor position = - 0.5 * resoulution
+- bingung antara current selected character ditaruh di Res atau Local (sepertinya res saja karena bisa diakses global)

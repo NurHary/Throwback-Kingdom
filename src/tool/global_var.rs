@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+// Variabel Global
 // Untuk pemilihan Karakter
 #[derive(Resource)]
 pub struct CurrentId {
@@ -10,17 +11,6 @@ impl CurrentId {
     pub fn new(id: usize) -> Self {
         Self { id }
     }
-}
-
-#[derive(Resource)]
-struct CurrentCursorPos {
-    pos: Vec3,
-}
-
-// Enum GameMode
-pub enum GameMode {
-    RTS,
-    RPG,
 }
 
 // Enum GameState
@@ -34,17 +24,24 @@ pub enum GameState {
 #[derive(Resource)]
 pub struct GStatus {
     pub state: GameState,
-    pub mode: GameMode,
+    pub mode: bool,
 }
 
 impl GStatus {
-    pub fn new(mode: GameMode, state: GameState) -> Self {
+    pub fn new(mode: bool, state: GameState) -> Self {
         Self { mode, state }
     }
     pub fn default() -> Self {
         Self {
-            mode: GameMode::RPG,
+            mode: true,
             state: GameState::Play,
         }
     }
+}
+
+// Variabel Local
+// ini untuk menyimpan nilai sementara dari klik mouse terakhir
+#[derive(Default)]
+pub struct CurrentCursorPos {
+    pub pos: Vec3,
 }
