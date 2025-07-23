@@ -15,8 +15,3 @@ pub fn mouse_pan(fin_pos: Vec3, cur_mpos: Vec3, last_mpos: Vec3, mov_pos: Vec3) 
         (fin_pos + (last_mpos - cur_mpos), cur_mpos)
     }
 }
-
-#[derive(Resource)]
-pub struct CameraPosition {
-    pub pos: Vec3,
-}

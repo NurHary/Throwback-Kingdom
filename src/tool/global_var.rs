@@ -14,8 +14,10 @@ impl CurrentId {
 }
 
 // Enum GameState
+#[derive(States, Debug, PartialEq, Eq, Hash, Default, Clone)]
 pub enum GameState {
     Menu,
+    #[default]
     Play,
     Pause,
 }
@@ -23,19 +25,15 @@ pub enum GameState {
 // Untuk Mode
 #[derive(Resource)]
 pub struct GStatus {
-    pub state: GameState,
     pub mode: bool,
 }
 
 impl GStatus {
-    pub fn new(mode: bool, state: GameState) -> Self {
-        Self { mode, state }
+    pub fn new(mode: bool) -> Self {
+        Self { mode }
     }
     pub fn default() -> Self {
-        Self {
-            mode: true,
-            state: GameState::Play,
-        }
+        Self { mode: true }
     }
 }
 

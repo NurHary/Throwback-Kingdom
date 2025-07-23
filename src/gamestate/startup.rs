@@ -1,11 +1,39 @@
 use crate::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, render::texture};
 
 pub fn spawn_character(
     mut command: Commands,
     mut mesh: ResMut<Assets<Mesh>>,
     mut material: ResMut<Assets<ColorMaterial>>,
+    mut her_id: ResMut<DynamicHeroList>,
+    asset_server: Res<AssetServer>,
+    mut texture_atlas_layout: ResMut<Assets<TextureAtlasLayout>>,
+    time: Res<Time>,
 ) {
+    // Test
+    // // //
+    let testure: Handle<Image> = asset_server.load("atlas_test.png");
+
+    let layout: TextureAtlasLayout =
+        TextureAtlasLayout::from_grid(UVec2::splat(16), 2, 2, None, None);
+    let texture_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout);
+
+    command.spawn((
+        Sprite {
+            image: testure,
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas,
+                index: 2,
+            }),
+            custom_size: Some(Vec2::splat(100.)),
+            ..Default::default()
+        },
+        Transform::from_xyz(-25.0, -100.0, 0.0),
+    ));
+
+    // Test
+    // // //
+
     command.spawn((
         Camera2d,
         MainCamera,
@@ -20,42 +48,101 @@ pub fn spawn_character(
             ..Default::default()
         },
     ));
+
     let meshu = [
         mesh.add(Rectangle::new(52., 52.)),
         mesh.add(Rectangle::new(32., 32.)),
     ];
     let colour = Color::linear_rgb(1.0, 0.0, 1.0);
 
+    let player_texture: Handle<Image> = asset_server.load("test_chara.png");
+    let player_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(
+        TextureAtlasLayout::from_grid(UVec2::splat(32), 4, 2, None, None),
+    );
+
     command.spawn((
-        Heroes::new("Edward"),
-        HeroesId::new(0),
-        Unit,
-        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
-        MeshMaterial2d(material.add(colour)),
+        HeroesBundles::new(
+            Heroes::new("King Edward"),
+            HeroesId::new(her_id.add_id()),
+            TkUnitState::Idle,
+        ),
+        Sprite {
+            image: player_texture,
+            texture_atlas: Some(TextureAtlas {
+                layout: player_atlas,
+                index: 0,
+            }),
+            image_mode: SpriteImageMode::Auto,
+            custom_size: Some(Vec2::splat(100.)),
+            ..Default::default()
+        },
+        TkAnimation {
+            idle: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.4, TimerMode::Repeating),
+                0,
+                3,
+            )),
+            walk: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.2, TimerMode::Repeating),
+                4,
+                7,
+            )),
+        },
+        Selectable(true),
         Transform::from_xyz(0.0, 0.0, 0.0),
     ));
     command.spawn((
-        Heroes::new("Alfred"),
-        HeroesId::new(1),
-        Unit,
+        HeroesBundles::new(
+            Heroes::new("Alfred"),
+            HeroesId::new(her_id.add_id()),
+            TkUnitState::Idle,
+        ),
         Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
         MeshMaterial2d(material.add(colour)),
-        Transform::from_xyz(1000.0, 50.0, 0.0),
+        Transform::from_xyz(0.0, -50.0, 0.0),
+    ));
+    command.spawn((
+        HeroesBundles::new(
+            Heroes::new("Fulan"),
+            HeroesId::new(her_id.add_id()),
+            TkUnitState::Idle,
+        ),
+        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
+        MeshMaterial2d(material.add(colour)),
+        Transform::from_xyz(-1000.0, 50.0, 0.0),
+    ));
+    command.spawn((
+        HeroesBundles::new(
+            Heroes::new("Fulan"),
+            HeroesId::new(her_id.add_id()),
+            TkUnitState::Idle,
+        ),
+        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
+        MeshMaterial2d(material.add(colour)),
+        Transform::from_xyz(0.0, 100.0, 0.0),
+    ));
+    command.spawn((
+        HeroesBundles::new(
+            Heroes::new("Fulan"),
+            HeroesId::new(her_id.add_id()),
+            TkUnitState::Idle,
+        ),
+        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
+        MeshMaterial2d(material.add(colour)),
+        Transform::from_xyz(-1000.0, -50.0, 0.0),
     ));
 }
 
 pub fn camera_startup(
-    mut camera: Single<&mut Transform, (With<MainCamera>, Without<Unit>)>,
-    king_alfred: Query<(&Transform, &HeroesId), With<Unit>>,
-    mut campos: ResMut<CameraPosition>,
+    mut camera: Single<&mut Transform, (With<MainCamera>, Without<TkUnit>)>,
+    king_edward: Query<(&Transform, &HeroesId), With<TkUnit>>,
 ) {
-    for (tr, id) in king_alfred {
-        if id.id == 0 {
+    for (tr, id) in king_edward {
+        if id.id.lock().unwrap().value == 0 {
             let Vec3 { x, y, .. } = tr.translation;
             let mc_position = Vec3::new(x, y, camera.translation.z);
 
             camera.translation = mc_position;
-            campos.pos = camera.translation;
         }
     }
 }

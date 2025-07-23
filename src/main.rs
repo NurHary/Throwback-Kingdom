@@ -17,22 +17,24 @@ fn main() {
 
     App::new()
         .add_plugins((
-            DefaultPlugins.set(WindowPlugin {
-                primary_window: Some(Window {
-                    position: WindowPosition::Automatic,
-                    resolution: Vec2::new(600., 600.).into(),
-                    mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
+            DefaultPlugins
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        position: WindowPosition::Automatic,
+                        resolution: Vec2::new(600., 600.).into(),
+                        mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
+                        ..Default::default()
+                    }),
                     ..Default::default()
-                }),
-                ..Default::default()
-            }),
+                })
+                .set(ImagePlugin::default_nearest()),
             #[cfg(not(target_arch = "wasm32"))]
             Wireframe2dPlugin::default(),
             PanCamPlugin::default(),
         ))
         .insert_resource(CurrentId::new(0))
-        .insert_resource(CameraPosition { pos: Vec3::ZERO })
         .insert_resource(GStatus::default())
+        .insert_resource(DynamicHeroList::new())
         .add_systems(
             Startup,
             (
@@ -46,6 +48,7 @@ fn main() {
             (
                 gamestate::play::cursor_pos,
                 gamestate::play::maingameloop,
+                gamestate::play::handle_animation,
                 (
                     gamestate::play_rpg::rpg_function,
                     gamestate::play_rpg::rpg_camera_move,
