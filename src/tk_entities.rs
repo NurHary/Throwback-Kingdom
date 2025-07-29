@@ -38,7 +38,15 @@ pub enum TkUnitState {
 }
 
 #[derive(Component)]
-pub struct Selectable(pub bool);
+pub struct Selectable {
+    pub selected: bool,
+}
+
+impl Selectable {
+    pub fn new() -> Self {
+        Self { selected: false }
+    }
+}
 
 #[derive(Component)]
 pub struct HeroesId {

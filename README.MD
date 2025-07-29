@@ -17,11 +17,9 @@ Throwback Kingdom Combine RPG and RTS into one game
 ## Vision
 
 
-## Day Run (7/23):
-- [ ] batch rendering
-- [ ] Quadtree Get
-- [ ] Select Component
-
+## Day Run (7/29):
+- [ ] Membuat Plugin Movement Rpg dan Rts
+- [ ] Membuat Plugin Quadtree
 
 ## To Revise
 - [ ] Scale ketika melakukan
@@ -31,8 +29,8 @@ Throwback Kingdom Combine RPG and RTS into one game
 (7/2025)
 ## Target One Month
 - [x] quadtree for object in map
-- [ ] Select sys
-- [ ] Rts Move (A* Algorithm - Movement)
+- Implementasi Quadtree
+- Memperbaiki fungsi Move dan select
 
 ## Roadmap
 

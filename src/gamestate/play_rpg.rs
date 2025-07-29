@@ -36,27 +36,32 @@ pub fn rpg_function(
         }
 
         // check if move
-        if direction != Vec2::ZERO {
-            unit.state = TkUnitState::Walk
-        } else {
-            unit.state = TkUnitState::Idle
-        }
 
         // check direction untuk sementara
-        if direction.x < 0.0 {
-            unit.flip = true
-        } else if direction.x > 0.0 {
-            unit.flip = false
-        }
 
         let move_del = direction.normalize_or_zero() * UNIT_SPEED * time.delta_secs();
 
         if id.id.lock().unwrap().value == current_id.id {
+            // Handle Animation
+            if direction != Vec2::ZERO {
+                unit.state = TkUnitState::Walk
+            } else {
+                unit.state = TkUnitState::Idle
+            }
+
+            // Handle Flip
+            if direction.x < 0.0 {
+                unit.flip = true
+            } else if direction.x > 0.0 {
+                unit.flip = false
+            }
             //    if key.just_pressed(KeyCode::KeyB) { // Test deletion
             //command.entity(entity).despawn();
             //dynid.delete_index(id.id.clone());
             //    break;
             //}
+
+            // Handle Movement
             her.translation += move_del.extend(0.);
         }
     }

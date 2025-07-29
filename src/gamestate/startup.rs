@@ -88,7 +88,7 @@ pub fn spawn_character(
                 7,
             )),
         },
-        Selectable(true),
+        Selectable::new(),
         Transform::from_xyz(0.0, 0.0, 0.0),
     ));
     command.spawn((
@@ -97,8 +97,36 @@ pub fn spawn_character(
             HeroesId::new(her_id.add_id()),
             TkUnitState::Idle,
         ),
-        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
-        MeshMaterial2d(material.add(colour)),
+        Sprite {
+            image: asset_server.load("test_chara.png"),
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    4,
+                    2,
+                    None,
+                    None,
+                )),
+                index: 0,
+            }),
+            image_mode: SpriteImageMode::Auto,
+            custom_size: Some(Vec2::splat(100.)),
+            color: Color::Hsla(Hsla::new(141.0, 0.86, 0.77, 1.0)),
+            ..Default::default()
+        },
+        TkAnimation {
+            idle: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.4, TimerMode::Repeating),
+                0,
+                3,
+            )),
+            walk: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.2, TimerMode::Repeating),
+                4,
+                7,
+            )),
+        },
+        Selectable::new(),
         Transform::from_xyz(0.0, -50.0, 0.0),
     ));
     command.spawn((
@@ -107,8 +135,36 @@ pub fn spawn_character(
             HeroesId::new(her_id.add_id()),
             TkUnitState::Idle,
         ),
-        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
-        MeshMaterial2d(material.add(colour)),
+        Sprite {
+            image: asset_server.load("test_chara.png"),
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    4,
+                    2,
+                    None,
+                    None,
+                )),
+                index: 0,
+            }),
+            image_mode: SpriteImageMode::Auto,
+            custom_size: Some(Vec2::splat(100.)),
+            color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
+            ..Default::default()
+        },
+        TkAnimation {
+            idle: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.4, TimerMode::Repeating),
+                0,
+                3,
+            )),
+            walk: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.2, TimerMode::Repeating),
+                4,
+                7,
+            )),
+        },
+        Selectable::new(),
         Transform::from_xyz(-1000.0, 50.0, 0.0),
     ));
     command.spawn((
@@ -117,8 +173,36 @@ pub fn spawn_character(
             HeroesId::new(her_id.add_id()),
             TkUnitState::Idle,
         ),
-        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
-        MeshMaterial2d(material.add(colour)),
+        Sprite {
+            image: asset_server.load("test_chara.png"),
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    4,
+                    2,
+                    None,
+                    None,
+                )),
+                index: 0,
+            }),
+            image_mode: SpriteImageMode::Auto,
+            custom_size: Some(Vec2::splat(100.)),
+            color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
+            ..Default::default()
+        },
+        TkAnimation {
+            idle: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.4, TimerMode::Repeating),
+                0,
+                3,
+            )),
+            walk: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.2, TimerMode::Repeating),
+                4,
+                7,
+            )),
+        },
+        Selectable::new(),
         Transform::from_xyz(0.0, 100.0, 0.0),
     ));
     command.spawn((
@@ -127,8 +211,36 @@ pub fn spawn_character(
             HeroesId::new(her_id.add_id()),
             TkUnitState::Idle,
         ),
-        Mesh2d(mesh.add(Rectangle::new(52.0, 52.0))),
-        MeshMaterial2d(material.add(colour)),
+        Sprite {
+            image: asset_server.load("test_chara.png"),
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    4,
+                    2,
+                    None,
+                    None,
+                )),
+                index: 0,
+            }),
+            image_mode: SpriteImageMode::Auto,
+            custom_size: Some(Vec2::splat(100.)),
+            color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
+            ..Default::default()
+        },
+        TkAnimation {
+            idle: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.4, TimerMode::Repeating),
+                0,
+                3,
+            )),
+            walk: Some(TkAnimationStorage::new(
+                Timer::from_seconds(0.2, TimerMode::Repeating),
+                4,
+                7,
+            )),
+        },
+        Selectable::new(),
         Transform::from_xyz(-1000.0, -50.0, 0.0),
     ));
 }

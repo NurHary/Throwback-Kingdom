@@ -40,6 +40,7 @@ impl GStatus {
 // Variabel Local
 // ini untuk menyimpan nilai sementara dari klik mouse terakhir
 #[derive(Default)]
-pub struct CurrentCursorPos {
-    pub pos: Vec3,
+pub struct MarqueeCursorPosition {
+    pub pos_start: Option<Vec2>,
+    pub pos_end: Option<Vec2>,
 }

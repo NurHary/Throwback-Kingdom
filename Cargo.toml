@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = "0.16.1"
-bevy_pancam = "0.18.0"
+bevy = "0.16.1" # Bevy
+bevy_egui = "0.35.1" # ini untuk inspector doang
+bevy_pancam = "0.18.0" # ini untuk pergerakan Camera dalam mode rts
+avian2d = "0.3.1" # ini untuk fisik dalam game
 
 [workspace]
 resolver = "2" # Important! wgpu/Bevy needs this!
