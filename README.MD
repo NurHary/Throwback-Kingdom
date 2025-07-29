@@ -18,7 +18,7 @@ Throwback Kingdom Combine RPG and RTS into one game
 
 
 ## Day Run (7/29):
-- [ ] Membuat Plugin Movement Rpg dan Rts
+- [x] Membuat Plugin Movement Rpg dan Rts
 - [ ] Membuat Plugin Quadtree
 
 ## To Revise
