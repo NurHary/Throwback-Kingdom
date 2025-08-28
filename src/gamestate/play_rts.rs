@@ -86,15 +86,8 @@ pub fn rts_handle_movement(
             .and_then(|cur| Some(camera.viewport_to_world(camera_transform, cur)))
             .map(|ray| ray.unwrap().origin.truncate())
         {
-            println!("posisi bos");
             for (id, mut tr, slc, mut unit) in &mut unit_query {
                 let mut direction = Vec2::ZERO;
-                println!("posisi bos 2");
-                println!(
-                    "id: {:?} selected:{}",
-                    id.id.lock().unwrap().value,
-                    slc.selected
-                );
                 if slc.selected {
                     direction.x = (position.x > tr.translation.x) as i32 as f32
                         - (position.x < tr.translation.x) as i32 as f32;

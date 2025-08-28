@@ -9,6 +9,7 @@ pub fn rpg_function(
     time: Res<Time>,
     mut current_id: ResMut<CurrentId>,
     mut enable_camera_motion: Single<&mut PanCam, With<MainCamera>>,
+    mut debug_pos: ResMut<DebugCurrentPosition>,
     //mut command: Commands,
     //mut dynid: ResMut<DynamicHeroList>,
 ) {
@@ -63,6 +64,7 @@ pub fn rpg_function(
 
             // Handle Movement
             her.translation += move_del.extend(0.);
+            debug_pos.pos = her.translation;
         }
     }
     if key.just_pressed(KeyCode::KeyP) {
@@ -84,10 +86,12 @@ pub fn rpg_camera_move(
 ) {
     match *proj.into_inner() {
         Projection::Orthographic(ref mut orthographic) => {
-            orthographic.scale.smooth_nudge(&1., 5.0, time.delta_secs())
+            orthographic
+                .scale
+                .smooth_nudge(&0.1, 5.0, time.delta_secs())
         }
         Projection::Perspective(ref mut perspective) => {
-            perspective.fov.smooth_nudge(&1., 5.0, time.delta_secs())
+            perspective.fov.smooth_nudge(&0.1, 5.0, time.delta_secs())
         }
         _ => {}
     };

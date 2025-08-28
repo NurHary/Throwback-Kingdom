@@ -19,9 +19,7 @@ untuk data ini itu sendiri kita akan mengguanakan data struktur quadtree
 apakah kita menyimpan suatu data di quadtree dalam model rect atau cukup vec2 saja?
 
 model 1 Tilemap:
-- for i in tilemap: spawn sprite, pos_index, tile_index
-- operasi yang dilakukan pada dunia akan membuat tilemap bertindak dimana itu akan mengubah index pada tilemap
-// sepertinya ini tidak efisien
+jadi plugin akan melakukan fn test query apakah akan ada yang intersect atau tidak. nah kita dapat menggunakan
+itu untuk melakukan pengecekan via quadtree juga <TkRectangleCollider, Transform, QuadtreeUnit>
 
 Tilemap skip dulu, kita fokus pada bagian quadtree terlebih dahulu
-alasan: Rendering dengan model batch rendering

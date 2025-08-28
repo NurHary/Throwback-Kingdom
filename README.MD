@@ -17,9 +17,9 @@ Throwback Kingdom Combine RPG and RTS into one game
 ## Vision
 
 
-## Day Run (7/29):
-- [x] Membuat Plugin Movement Rpg dan Rts
-- [ ] Membuat Plugin Quadtree
+## Day Run (8/24):
+- [ ] Implementasi Quadtree
+- [ ] Membaca / melakukan collision check berdasarkan quadtree tersebut
 
 ## To Revise
 - [ ] Scale ketika melakukan
@@ -36,5 +36,5 @@ Throwback Kingdom Combine RPG and RTS into one game
 
 ## Notes
 - windows cursor position = - 0.5 * resoulution
-- bingung antara current selected character ditaruh di Res atau Local (sepertinya res saja karena bisa diakses global)
-- Quadtree digunakan untuk biome-level, object-level, 
+- masalah scale dan banyak lainnya
+- Quadtree digunakan untuk biome-level, object-level

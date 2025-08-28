@@ -44,3 +44,14 @@ pub struct MarqueeCursorPosition {
     pub pos_start: Option<Vec2>,
     pub pos_end: Option<Vec2>,
 }
+
+#[derive(Resource)]
+struct WorldSize {
+    value: f32,
+}
+
+impl WorldSize {
+    pub const SMALL: f32 = 1000000.0;
+    pub const MEDIUM: f32 = 100000000.0;
+    pub const LARGE: f32 = 100000000000.0;
+}

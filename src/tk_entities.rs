@@ -48,6 +48,9 @@ impl Selectable {
     }
 }
 
+// Sistem Id
+// //
+// //
 #[derive(Component)]
 pub struct HeroesId {
     pub id: Arc<Mutex<DynamicHeroId>>,

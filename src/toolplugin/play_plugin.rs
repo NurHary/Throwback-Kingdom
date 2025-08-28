@@ -1,5 +1,6 @@
 use crate::*;
 use bevy::prelude::*;
+use bevy_egui::EguiPrimaryContextPass;
 
 pub struct GameplayPlugin;
 impl Plugin for GameplayPlugin {
@@ -32,5 +33,6 @@ impl Plugin for GameplayPlugin {
             )
                 .run_if(in_state(GameState::Play)),
         );
+        app.add_systems(EguiPrimaryContextPass, show_current_position);
     }
 }

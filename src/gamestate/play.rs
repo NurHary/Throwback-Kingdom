@@ -1,7 +1,7 @@
 use crate::*;
-use bevy::prelude::*;
+use bevy::{ecs::entity::Entities, prelude::*};
 
-pub const UNIT_SPEED: f32 = 500.;
+pub const UNIT_SPEED: f32 = 50.;
 
 pub fn maingameloop(key: Res<ButtonInput<KeyCode>>, mut gstate: ResMut<GStatus>) {
     if key.just_pressed(KeyCode::Tab) {

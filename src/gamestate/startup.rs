@@ -18,6 +18,7 @@ pub fn spawn_character(
         TextureAtlasLayout::from_grid(UVec2::splat(16), 2, 2, None, None);
     let texture_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout);
 
+    // Test Texture Atlas untuk tilemap
     command.spawn((
         Sprite {
             image: testure,
@@ -25,7 +26,7 @@ pub fn spawn_character(
                 layout: texture_atlas,
                 index: 2,
             }),
-            custom_size: Some(Vec2::splat(100.)),
+            custom_size: Some(Vec2::splat(15.)),
             ..Default::default()
         },
         Transform::from_xyz(-25.0, -100.0, 0.0),
@@ -43,23 +44,18 @@ pub fn spawn_character(
             speed: 500.,
             enabled: true,
             zoom_to_cursor: true,
-            min_scale: 1.,
+            min_scale: 0.1,
             max_scale: 30.,
             ..Default::default()
         },
     ));
-
-    let meshu = [
-        mesh.add(Rectangle::new(52., 52.)),
-        mesh.add(Rectangle::new(32., 32.)),
-    ];
-    let colour = Color::linear_rgb(1.0, 0.0, 1.0);
 
     let player_texture: Handle<Image> = asset_server.load("test_chara.png");
     let player_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(
         TextureAtlasLayout::from_grid(UVec2::splat(32), 4, 2, None, None),
     );
 
+    // Test spawn Character
     command.spawn((
         HeroesBundles::new(
             Heroes::new("King Edward"),
@@ -73,7 +69,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(100.)),
+            custom_size: Some(Vec2::splat(15.)),
             ..Default::default()
         },
         TkAnimation {
@@ -89,6 +85,7 @@ pub fn spawn_character(
             )),
         },
         Selectable::new(),
+        ColliderBundles::new(100.0, 100.0),
         Transform::from_xyz(0.0, 0.0, 0.0),
     ));
     command.spawn((
@@ -110,7 +107,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(100.)),
+            custom_size: Some(Vec2::splat(15.)),
             color: Color::Hsla(Hsla::new(141.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -127,6 +124,7 @@ pub fn spawn_character(
             )),
         },
         Selectable::new(),
+        ColliderBundles::new(100.0, 100.0),
         Transform::from_xyz(0.0, -50.0, 0.0),
     ));
     command.spawn((
@@ -148,7 +146,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(100.)),
+            custom_size: Some(Vec2::splat(15.)),
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -165,6 +163,7 @@ pub fn spawn_character(
             )),
         },
         Selectable::new(),
+        ColliderBundles::new(100.0, 100.0),
         Transform::from_xyz(-1000.0, 50.0, 0.0),
     ));
     command.spawn((
@@ -186,7 +185,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(100.)),
+            custom_size: Some(Vec2::splat(15.)),
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -203,6 +202,7 @@ pub fn spawn_character(
             )),
         },
         Selectable::new(),
+        ColliderBundles::new(100.0, 100.0),
         Transform::from_xyz(0.0, 100.0, 0.0),
     ));
     command.spawn((
@@ -224,7 +224,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(100.)),
+            custom_size: Some(Vec2::splat(15.)),
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -241,6 +241,7 @@ pub fn spawn_character(
             )),
         },
         Selectable::new(),
+        ColliderBundles::new(100.0, 100.0),
         Transform::from_xyz(-1000.0, -50.0, 0.0),
     ));
 }
