@@ -49,6 +49,7 @@ impl TkQuadTree {
 
     // # Fungsi untuk membangun anakan berdasarkan ukuran diri sendiri
     fn subdivide(&mut self) {
+        // tambahkan fungsi yang dapat mentrigger distribute sekali lagi
         self.divided = true;
         let center = self.boundaries.center();
         let (centerx, centery) = (center.x, center.y);
