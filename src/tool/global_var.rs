@@ -55,3 +55,27 @@ impl WorldSize {
     pub const MEDIUM: f32 = 100000000.0;
     pub const LARGE: f32 = 100000000000.0;
 }
+
+#[derive(Resource)]
+pub struct QTDistributeChild {
+    pub pos: Option<Vec3>,
+    pub condition: bool,
+}
+impl Default for QTDistributeChild {
+    fn default() -> Self {
+        Self {
+            pos: None,
+            condition: false,
+        }
+    }
+}
+//impl QuadtreeDistributeChild {
+//    pub fn need_to_distribute(&mut self, tr: Vec3) {
+//        self.pos = Some(tr);
+//        self.condition = true
+//    }
+//    pub fn clear(&mut self) {
+//        self.pos = None;
+//        self.condition = false;
+//    }
+//}

@@ -23,15 +23,16 @@ impl Plugin for GameplayPlugin {
                     gamestate::play_rpg::rpg_camera_move,
                 )
                     .chain()
-                    .run_if(rc_gamemode),
+                    .run_if(rc_gamemode), // run hanya apabila gamemode = rpg
                 ((
                     gamestate::play_rts::rts_play,
                     gamestate::play_rts::rts_handle_movement,
                 )
                     .chain())
-                .run_if(not(rc_gamemode)),
+                .run_if(not(rc_gamemode)), // run hanya apabila game mode = rts
             )
-                .run_if(in_state(GameState::Play)),
+                .run_if(in_state(GameState::Play)), // ini hanya akan berjalan ketika game state
+                                                    // adalah play
         );
         app.add_systems(EguiPrimaryContextPass, show_current_position);
     }

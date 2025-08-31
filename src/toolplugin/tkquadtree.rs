@@ -1,7 +1,10 @@
 use bevy::prelude::*;
 use bevy_egui::EguiPrimaryContextPass;
 
-use crate::toolplugin::TkRectangle;
+use crate::{
+    tool::{qt_distribute, QTDistributeChild},
+    toolplugin::TkRectangle,
+};
 
 // Quadtree itu sendiri
 // pertanyaannya adalah bagaimana cara mengimplementasikannya
@@ -24,7 +27,7 @@ impl TkQuadTree {
         }
     }
     //
-    pub fn insert(&mut self, rhs: Entity, tr: Vec3) {
+    pub fn insert(&mut self, rhs: Entity, tr: Vec3) -> Option<Vec3> {
         if self.contains3(tr) {
             if let Some(mut tiles) = self.tiles.take() {
                 if tiles.len() >= 4 {
@@ -37,14 +40,16 @@ impl TkQuadTree {
                     }
                     // setelah setidaknya sudah ada anakan, maka kita kemudian melakukan distribute
                     self.distribute(rhs, tr);
+                    return Some(tr);
                     // kemudian kita akan langsung memindahkan setiap nilai dalam tile ke dalam child
                     // node nya secara langsung dan langsung memisahkan
                 } else {
                     tiles.push(rhs);
+                    return None;
                 }
             }
-        } else { // else tidak akan melakukan apa - apa jika objek tidak dalam posisi itu
-        }
+        } // else tidak akan melakukan apa - apa jika objek tidak dalam posisi itu
+        None
     }
 
     // # Fungsi untuk membangun anakan berdasarkan ukuran diri sendiri
@@ -92,7 +97,7 @@ impl TkQuadTree {
         // iya, boundaries itu sendiri bevy::Rect
         self.boundaries.contains(posi)
     }
-    pub fn distribute(&mut self, en: Entity, tr: Vec3) {
+    pub fn distribute(&mut self, en: Entity, tr: Vec3) -> Option<Vec3> {
         // mengecek terlebih dahulu apakah nilai tr ada di kotak ini atau tidak
         if self.contains3(tr) {
             // mengecek apakah anakan / diri sendiri telah terbelah atau belum
@@ -101,14 +106,15 @@ impl TkQuadTree {
 
                 // disini kita menggunakan
                 for i in child_node {
-                    i.distribute(en, tr)
+                    i.distribute(en, tr);
+                    return Some(tr);
                 }
             } else {
                 self.insert(en, tr);
+                return None;
             }
-        } else {
-            return;
         }
+        None
     }
     // Fungsi yang digunakan untuk mendapatkan suatu partisi berdasarkan posisi yang kau berika
     // pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
@@ -197,7 +203,20 @@ impl Plugin for TkQuadTreePlugin {
             10000000.0,
             10000000.0,
         )); // Init the quadtree
-        app.add_systems(Update, (unit_to_quadtree, update_quadtree_unit));
+        app.insert_resource(QTDistributeChild::default());
+        app.add_systems(
+            Update,
+            (
+                unit_to_quadtree,
+                (
+                    update_quadtree_unit,
+                    distribute_qt_child.run_if(qt_distribute), // hanya dijalankan ketika anakan
+                                                               // lebih dari 4 dan terjadi
+                                                               // subdivide
+                )
+                    .chain(),
+            ),
+        );
     }
 }
 
@@ -248,3 +267,31 @@ fn update_quadtree_unit(
 
 // fungsi yang dibuat untuk mengecek anakan dari quadtree tersebut dengan menggunakan egui
 //fn debug_quadtree() {}
+//
+
+fn distribute_qt_child(
+    mut qt: ResMut<TkQuadTree>,
+    mut qdc: ResMut<QTDistributeChild>,
+    qr: Query<(Entity, &Transform), With<QuadtreeUnit>>,
+) {
+    // jajal
+    if let Some(inner) = qdc.pos {}
+}
+
+fn search_qt_to_distribute(mut qt: &mut TkQuadTree, tr: Vec3) -> Option<&mut TkQuadTree> {
+    // fungsi untuk mendapatkan quadtree yang dicari, Diluar Plugin
+
+    // jadi pertama kita akan ngecek apakah qt itu saat ini divided dan memiliki anakan di dalamnya
+    // atau tidak
+
+    if qt.contains3(tr) {
+        // Ketika ini divided tapi masih memiliki nilai
+        if qt.divided && qt.tiles != None {
+            return Some(qt.get_partition_mut(tr).unwrap());
+        }
+        // Ketika ini divided tapi tidak ada nilai didalamnya
+        else if qt.divided && qt.tiles == None {
+        }
+    }
+    None
+}
