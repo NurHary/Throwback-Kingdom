@@ -275,23 +275,28 @@ fn distribute_qt_child(
     qr: Query<(Entity, &Transform), With<QuadtreeUnit>>,
 ) {
     // jajal
-    if let Some(inner) = qdc.pos {}
+    if let Some(inner) = qdc.pos {
+        let sqt = search_qt_to_distribute(&mut qt, qdc.pos.unwrap()); // searched quadtree
+    } else {
+    }
 }
 
 fn search_qt_to_distribute(mut qt: &mut TkQuadTree, tr: Vec3) -> Option<&mut TkQuadTree> {
     // fungsi untuk mendapatkan quadtree yang dicari, Diluar Plugin
 
-    // jadi pertama kita akan ngecek apakah qt itu saat ini divided dan memiliki anakan di dalamnya
-    // atau tidak
-
-    if qt.contains3(tr) {
-        // Ketika ini divided tapi masih memiliki nilai
-        if qt.divided && qt.tiles != None {
-            return Some(qt.get_partition_mut(tr).unwrap());
-        }
-        // Ketika ini divided tapi tidak ada nilai didalamnya
-        else if qt.divided && qt.tiles == None {
+    // Ketika ini divided tapi masih memiliki nilai
+    if qt.divided && qt.tiles != None {
+        return Some(qt);
+    }
+    // Ketika ini divided tapi tidak ada nilai didalamnya
+    else if qt.divided && qt.tiles == None {
+        // kita akan mengecek setiap anakannya apakah setiap kotak anakannya dapat menampung tr
+        for i in qt.childnode.as_mut().unwrap() {
+            if i.contains3(tr) {
+                return search_qt_to_distribute(i, tr);
+            }
         }
     }
+
     None
 }
