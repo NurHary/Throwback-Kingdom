@@ -1,6 +1,13 @@
-# Distribute Qt Child
-- jadi pertama saya akan mengambil nilai vec3 dari qdc itu sendiri
-- kemudian saya melakukan recursive untuk mendapatkan anakan dalam suatu
+yippie, sekarang:
+# Clear Quadtree if no childnode
+ada dua: 
+1. fungsi dari bevy yang melakukan pengecekan sama seperti distribute itu
+    - jajal
+2. fungsi pada quadtree tersebut untuk check dan clear apabila anakan kosong
+    - for i in childnode
+    - if i.divided: recursive
+    - 
+
 
 
 untuk bagian raycast saya memiliki ide sebagai berikut:

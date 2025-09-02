@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 use bevy_egui::EguiPrimaryContextPass;
+use crate::run_condition::*;
 
 use crate::{
     tool::{qt_distribute, QTDistributeChild},
     toolplugin::TkRectangle,
 };
+
 
 // Quadtree itu sendiri
 // pertanyaannya adalah bagaimana cara mengimplementasikannya
@@ -27,26 +29,26 @@ impl TkQuadTree {
         }
     }
     //
-    pub fn insert(&mut self, rhs: Entity, tr: Vec3) -> Option<Vec3> {
+    pub fn insert(&mut self, en: Entity, tr: Vec3) -> Option<Vec3> {
         if self.contains3(tr) {
-            if let Some(mut tiles) = self.tiles.take() {
-                if tiles.len() >= 4 {
-                    // jika > maka itu akan dihitung ketika kita sudah
-                    // menambahkan yang ke empat
+            let tailu = self.tiles.as_mut().unwrap();
+            if tailu.len() >= 4 {
+                // jika > maka itu akan dihitung ketika kita sudah
+                // menambahkan yang ke empat
 
-                    // apabila tiles lebih dari 4 dan belum terpisah, maka kita akan langsung memisah quadtree menjadi 4
-                    if !self.divided {
-                        self.subdivide();
-                    }
-                    // setelah setidaknya sudah ada anakan, maka kita kemudian melakukan distribute
-                    self.distribute(rhs, tr);
-                    return Some(tr);
-                    // kemudian kita akan langsung memindahkan setiap nilai dalam tile ke dalam child
-                    // node nya secara langsung dan langsung memisahkan
-                } else {
-                    tiles.push(rhs);
-                    return None;
+                // apabila tiles lebih dari 4 dan belum terpisah, maka kita akan langsung memisah quadtree menjadi 4
+                if !self.divided {
+                    self.subdivide();
                 }
+                // setelah setidaknya sudah ada anakan, maka kita kemudian melakukan distribute
+                self.distribute(en, tr);
+                return Some(tr);
+                // kemudian kita akan langsung memindahkan setiap nilai dalam tile ke dalam child
+                // node nya secara langsung dan langsung memisahkan
+            } else {
+                tailu.push(en);
+                println!("Berhasil Memasukkan Entity ke quadtree dengan sebagai berikut= en: {}, tr: {:?}", en, tr);
+                return None;
             }
         } // else tidak akan melakukan apa - apa jika objek tidak dalam posisi itu
         None
@@ -107,6 +109,7 @@ impl TkQuadTree {
                 // disini kita menggunakan
                 for i in child_node {
                     i.distribute(en, tr);
+                    println!("Berhasil Distribute Entity ke quadtree dengan sebagai berikut= en: {}, tr: {:?}", en, tr);
                     return Some(tr);
                 }
             } else {
@@ -175,14 +178,19 @@ impl TkQuadTree {
 
     //.
     pub fn check_entity(&self, en: Entity) -> bool {
-        if self.tiles.as_ref().unwrap().contains(&en) {
+        if let Some(tile) = &self.tiles{
+            if tile.contains(&en){
             return true;
+            }
         }
         false
     }
     pub fn check_remove(&mut self, en: Entity) {
-        if self.tiles.as_ref().unwrap().contains(&en) {
+        if let Some(tile) = &self.tiles{
+            if tile.contains(&en){
+
             self.tiles.as_mut().unwrap().retain(|value| *value != en);
+            }
         }
     }
 }
@@ -215,6 +223,7 @@ impl Plugin for TkQuadTreePlugin {
                                                                // subdivide
                 )
                     .chain(),
+                print_the_quadtree // ini untuk menunjukkan quadtree tersebut
             ),
         );
     }
@@ -222,15 +231,20 @@ impl Plugin for TkQuadTreePlugin {
 
 fn unit_to_quadtree(
     mut qt: ResMut<TkQuadTree>,
+    mut qtdc: ResMut<QTDistributeChild>,
     unit_entity: Query<(Entity, &Transform), (With<QuadtreeUnit>, Added<QuadtreeUnit>)>,
 ) {
     // ~ To Fix: Kita Harus menambahakan cara supaya ini tidak terus - terusan menambahkan anakan ~
     // itu sudah di atasi dengan menggunakan Added<>
-    for (entiti, tr) in &unit_entity {
+    for (en, tr) in &unit_entity {
         if qt.divided {
-            qt.distribute(entiti, tr.translation);
+            if let Some(distribusi) = qt.distribute(en, tr.translation) {
+                qtdc.activate(distribusi);
+            }
         } else {
-            qt.insert(entiti, tr.translation);
+            if let Some(distribusi) = qt.insert(en, tr.translation){
+                qtdc.activate(distribusi);
+            }
         }
     }
 }
@@ -242,6 +256,7 @@ fn update_quadtree_unit(
     qr: Query<(Entity, &Transform, &TkRectangle), (With<QuadtreeUnit>, Changed<Transform>)>,
     //lqr: Query<(Entity, &Transform), With<QuadtreeUnit>>, // aku lupa ini untuk apa
     mut qt: ResMut<TkQuadTree>,
+    mut qtdc: ResMut<QTDistributeChild>
 ) {
     //for (en, tr) in &lqr {}
 
@@ -258,7 +273,9 @@ fn update_quadtree_unit(
                     }
                 }
 
-                qt.insert(en, tr.translation);
+                if let Some(distribusi) = qt.insert(en, tr.translation){
+                    qtdc.activate(distribusi);
+                }
             }
         } else { // apabila gagal / objek tersebut telah keluar dari quadtree
         }
@@ -271,12 +288,20 @@ fn update_quadtree_unit(
 
 fn distribute_qt_child(
     mut qt: ResMut<TkQuadTree>,
-    mut qdc: ResMut<QTDistributeChild>,
+    mut qtdc: ResMut<QTDistributeChild>,
     qr: Query<(Entity, &Transform), With<QuadtreeUnit>>,
 ) {
-    // jajal
-    if let Some(inner) = qdc.pos {
-        let sqt = search_qt_to_distribute(&mut qt, qdc.pos.unwrap()); // searched quadtree
+    // ini untuk mendapatkan nilai dari quadtree yang meminta untuk dilakukan distribute
+    if let Some(inner) = qtdc.pos {
+        // ini untuk mendapatkan quadtree yang di cari untuk di distribute
+        if let Some(sqt) = search_qt_to_distribute(&mut qt, qtdc.pos.unwrap()) {
+            // kemudian kita mengiterasikan setiap anakannya lalu kita menghapus tiles itu sendiri
+            for (en, tr) in &qr {
+                if sqt.check_entity(en){sqt.distribute(en, tr.translation);}
+                sqt.tiles = None;
+                qtdc.clear();
+            }
+        }
     } else {
     }
 }
@@ -300,3 +325,8 @@ fn search_qt_to_distribute(mut qt: &mut TkQuadTree, tr: Vec3) -> Option<&mut TkQ
 
     None
 }
+
+fn search_qt_to_delete(qt: ResMut<TkQuadTree>){}
+
+fn print_the_quadtree(qt: Res<TkQuadTree>){}
+
