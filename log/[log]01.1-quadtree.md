@@ -9,13 +9,21 @@
 3.4. cek perubahan pada posisi dari setiap anakan
 4. kita dapat menggunakan quadtree tersebut kini terutama dalam pengecekan collision
 
+## Komponen Fungsi
+### unit to quadtree
+ini adalah komponenen fungsi yang digunakan untuk memasukkan setiap entity dengan component quadtree untuk masuk ke dalam quadtreenya itu sendiri
 
-## Masalah Yang Masih Saya Temukan
-oke beberapa masalah yang masih ada dan tengah saya cari cara untuk menghadapinya adalah 
-perpindahan dari satu grid ke grid lainnya
+dimana cara kerja dari Komponen Fungsi ini adalah sebagai berikut:
+- Bevy melakukan run system dengan schedule update dimana parameternya adalah objek dengan Added<QuadtreeUnit>
+- dengan Added<QuadtreeUnit> maka setiap entity yang memiliki component itu hanya akan di panggil sekali yang kemudian
+- kita dapat memanfaatkan itu untuk memasukkan setiap unit ke dalam quadtree tersebut
 
-jadi saya memiliki beberapa solusi yang dapat kita gunakan:
-1. daripada kita pusing bagaimana cara menaruh data di dalam quadtree itu langsung. kita akan menggunakan
-pendekatan ecs itu sendiri dimana daripada kita benar - benar menaruh posisi itu ke dalam Res quadtree.
-kita akan memasukkan entitynya saja daripada posisinya. dengan kata lain kita akan merefaktor quadtree 
-itu secara sepenuhnya
+### update to quadtree
+ini adalah komponen fungsi yang digunakan untuk memindahkan suatu entity dalam suatu partition quadtree ke pertition lainnya
+
+dimana cara kerja dari komponen fungsi ini adalah sebagai berikut:
+- fungsi dengan parameter Changed<Transform> dengan begitu kita dapat melakukan pengecekan apakah entity yang memiliki transform mengalami perpindahan
+- 
+
+### delete partition
+### distribute partition

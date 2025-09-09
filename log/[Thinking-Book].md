@@ -9,6 +9,11 @@ ada dua:
     - 
 
 
+// jadi ada dua kemungkinan juga untuk terjadi penghapusan partition: ketika entity itu dihapus dan ketika itu berpindah
+// jadi: 
+// - entity berpindah -> trigger distribute sekalian cek isi partition
+// - entity mati -> trigger penghapusan sekalian cek isi partition
+
 
 untuk bagian raycast saya memiliki ide sebagai berikut:
 1. pastikan tr ada
