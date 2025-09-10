@@ -121,7 +121,42 @@ impl TkQuadTree {
     }
     // Fungsi yang digunakan untuk mendapatkan suatu partisi berdasarkan posisi yang kau berika
     // pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
-    pub fn get_partition(&self, tr: Vec3) -> Option<&TkQuadTree> {
+    pub fn get_parent(&self, tr: Vec3) -> Option<&TkQuadTree> {
+        if self.contains3(tr) {
+            if self.divided {
+                let child_node = self.childnode.as_ref().unwrap();
+                for i in child_node {
+                    if let Some(part) = i.get_parent(tr) {
+                        return Some(part);
+                    }
+                }
+                None
+            } else {
+                return Some(self);
+            }
+        } else {
+            return None;
+        }
+    }
+
+    // Fungsi yang digunakan untuk mendapatkan suatu partisi mutable berdasarkan posisi yang kau berikan
+    // pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
+    pub fn get_parent_mut(&mut self, tr: Vec3) -> Option<&mut TkQuadTree> {
+        if self.contains3(tr){
+            let childnode = self.childnode.as_mut().unwrap();
+            for i in childnode{
+                if i.divided{
+                    return i.get_parent_mut(tr);
+                }
+                else{
+                    return Some(i);
+                }
+            }
+        }
+        None
+    }
+
+    pub fn get_partition(&self, tr: Vec3) -> Option<&TkQuadTree>{
         if self.contains3(tr) {
             if self.divided {
                 let child_node = self.childnode.as_ref().unwrap();
@@ -138,10 +173,7 @@ impl TkQuadTree {
             return None;
         }
     }
-
-    // Fungsi yang digunakan untuk mendapatkan suatu partisi mutable berdasarkan posisi yang kau berika
-    // pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
-    pub fn get_partition_mut(&mut self, tr: Vec3) -> Option<&mut TkQuadTree> {
+    pub fn get_partition_mut(&mut self, tr: Vec3) -> Option<&mut TkQuadTree>{
         if self.contains3(tr) {
             if self.divided {
                 let child_node = self.childnode.as_mut().unwrap();
@@ -159,7 +191,7 @@ impl TkQuadTree {
         }
     }
 
-    pub fn delete_child_partition(&mut self, tr: Vec3){
+    pub fn delete_partition(&mut self, tr: Vec3){
 
     }
 
@@ -259,7 +291,7 @@ fn update_quadtree_unit(
     // iterasikan query
     for (en, tr, trec) in &qr {
         // mendapatkan posisi patisi dimana entity saat ini berada
-        if let Some(part) = qt.get_partition_mut(tr.translation) {
+        if let Some(part) = qt.get_parent_mut(tr.translation) {
             // apabila posisi dari patisi saat ini tidak memiliki enntity itu, maka kemungkinan
             // partisi ini adaalh partisi yang baru saja dimasuki oleh entity itu sendiri
             if !part.check_entity(en) {
@@ -274,7 +306,7 @@ fn update_quadtree_unit(
                     // NOTE: Sepertinya ini kurang efisien
                     // melakukan pengulangan dan check remove setiap entity dari ke empat partisi
                     // yang ada di posisi itu
-                    if let Some(inner) = qt.get_partition_mut(i) {
+                    if let Some(inner) = qt.get_parent_mut(i) {
                         if inner.check_remove(en){
                             // NOTE: Disini kita akan melakukan pengecekan terhadap partisi itu
                             

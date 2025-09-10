@@ -4,6 +4,7 @@ saat ini saya sedang menggarap bagian quadtree dimana saya masih harus melakukan
 - [x] fungsi untuk mendapatkan partisi terdekat
 - [x] implementasikan quadtree pada game tersebut
     - [x] memastikan unit dapat berpindah dari suatu partition ke partition lainnya (mungkin)
+        }
     - [ ] fungsi untuk menghapus quadtree ketika childnodenya pada kosong
 - [ ] implementasi pengecekan collision berdasarkan quadtree tersebut / posisinya
 - [ ] (Opsional) membuat egui windows untuk melihat anakan dari quadtree itu
