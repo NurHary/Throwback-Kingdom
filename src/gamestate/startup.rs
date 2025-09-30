@@ -26,7 +26,7 @@ pub fn spawn_character(
                 layout: texture_atlas,
                 index: 2,
             }),
-            custom_size: Some(Vec2::splat(15.)),
+            custom_size: Some(Vec2::splat(7.)),
             ..Default::default()
         },
         Transform::from_xyz(-25.0, -100.0, 0.0),
@@ -69,7 +69,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(15.)),
+            custom_size: Some(Vec2::splat(7.)),
             ..Default::default()
         },
         TkAnimation {
@@ -107,7 +107,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(15.)),
+            custom_size: Some(Vec2::splat(7.)),
             color: Color::Hsla(Hsla::new(141.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -146,7 +146,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(15.)),
+            custom_size: Some(Vec2::splat(7.)),
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -164,7 +164,7 @@ pub fn spawn_character(
         },
         Selectable::new(),
         ColliderBundles::new(100.0, 100.0),
-        Transform::from_xyz(-1000.0, 50.0, 0.0),
+        Transform::from_xyz(-100.0, 50.0, 0.0),
     ));
     command.spawn((
         HeroesBundles::new(
@@ -185,7 +185,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(15.)),
+            custom_size: Some(Vec2::splat(7.)),
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -224,7 +224,7 @@ pub fn spawn_character(
                 index: 0,
             }),
             image_mode: SpriteImageMode::Auto,
-            custom_size: Some(Vec2::splat(15.)),
+            custom_size: Some(Vec2::splat(7.)),
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
@@ -242,7 +242,7 @@ pub fn spawn_character(
         },
         Selectable::new(),
         ColliderBundles::new(100.0, 100.0),
-        Transform::from_xyz(-1000.0, -50.0, 0.0),
+        Transform::from_xyz(-100.0, -50.0, 0.0),
     ));
 }
 

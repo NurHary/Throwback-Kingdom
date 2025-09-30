@@ -15,8 +15,9 @@ saat ini saya sedang menggarap bagian quadtree dimana saya masih harus melakukan
 
 To Fix
 - [ ] pengiriman anakan dari suatu quadtree ketika sudah penuh
+- [ ] Perpindahan anakan hanya terjadi sekali
 
 
 What To Do Tomorrow
-- [ ] mengimplementasikan fungsi remove quadtree if kosong
+- [x] mengimplementasikan fungsi remove quadtree if kosong
 - [ ] mengimplementasikan penggambaran gizmo untuk melihat quadtree itu sendiri

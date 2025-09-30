@@ -1,6 +1,7 @@
 //! Ini adalah Plugin yang digunakan untuk algoritma spatial partitioning yang digunakan untuk
 
 use crate::global_var::*;
+use bevy::color::palettes::css::WHITE;
 use bevy::prelude::*;
 use bevy_egui::EguiPrimaryContextPass;
 
@@ -333,12 +334,7 @@ pub struct TkQuadTreePlugin;
 impl Plugin for TkQuadTreePlugin {
     fn build(&self, app: &mut App) {
         // TO FIX: PEMILIHAN WORLD SIZENYA NANTI SAJA
-        app.insert_resource(TkQuadTree::new(
-            -10000000.0,
-            -10000000.0,
-            10000000.0,
-            10000000.0,
-        )); // Init the quadtree
+        app.insert_resource(TkQuadTree::new(-200.0, -200.0, 200.0, 200.0)); // Init the quadtree
         app.insert_resource(QTDistributeConditions::default());
         app.insert_resource(QTDeleteConditions::default());
         app.add_systems(
@@ -356,7 +352,7 @@ impl Plugin for TkQuadTreePlugin {
                                                            // beserta ketika terjadi kematian
                 )
                     .chain(),
-                print_the_quadtree, // ini untuk menunjukkan quadtree tersebut
+                draw_quadtree, // ini untuk menunjukkan quadtree tersebut
             ),
         );
     }
@@ -411,6 +407,7 @@ fn update_quadtree_unit(
                     // yang ada di posisi itu
                     if let Some(inner) = qt.get_partition_mut(i) {
                         if inner.check_remove(en) {
+                            println!("Selamat, ada yang berpindah");
                             // NOTE: Disini kita akan melakukan pengecekan terhadap partisi itu
                             qtdec.activate(i);
                         }
@@ -456,19 +453,6 @@ fn distribute_qt_child(
     } else {
     }
 }
-/// Ini adalah fungsi untuk menghapus partisi pada suatu partisi di quadtree
-fn delete_qt_partition(mut qt: ResMut<TkQuadTree>, mut qtdec: ResMut<QTDeleteConditions>) {
-    // memeriksa apakah qtdc benar - benar memiliki nilai
-    if let Some(inner) = qtdec.pos {
-        // mendapatkan parent dari partisi yang ingin dilakukan pengencekan
-        if let Some(parent) = qt.get_parent_mut(inner) {
-            if parent.check_child_branch() {
-                parent.delete_parent_partitioning();
-            }
-            qtdec.clear();
-        }
-    }
-}
 
 /// fungsi yang berjalan secara recursive untuk mencari anakan sesuai dengan Transform
 fn search_qt_to_distribute(mut qt: &mut TkQuadTree, tr: Vec3) -> Option<&mut TkQuadTree> {
@@ -489,6 +473,43 @@ fn search_qt_to_distribute(mut qt: &mut TkQuadTree, tr: Vec3) -> Option<&mut TkQ
     None
 }
 
-fn search_qt_to_delete(qt: ResMut<TkQuadTree>) {}
+/// Ini adalah fungsi untuk menghapus partisi pada suatu partisi di quadtree
+fn delete_qt_partition(mut qt: ResMut<TkQuadTree>, mut qtdec: ResMut<QTDeleteConditions>) {
+    // memeriksa apakah qtdc benar - benar memiliki nilai
+    if let Some(inner) = qtdec.pos {
+        // mendapatkan parent dari partisi yang ingin dilakukan pengencekan
+        if let Some(parent) = qt.get_parent_mut(inner) {
+            if parent.check_child_branch() {
+                parent.delete_parent_partitioning();
+            }
+            qtdec.clear();
+        }
+    }
+}
 
-fn print_the_quadtree(qt: Res<TkQuadTree>) {}
+/// Fungsi untuk menggambar border dari quadtree dengan menggunakan gizmo
+fn draw_quadtree(qt: Res<TkQuadTree>, mut gizmos: Gizmos) {
+    gizmos.rect_2d(
+        qt.boundaries.center(),
+        qt.boundaries.size(),
+        Color::linear_rgb(0.0, 0.0, 1.0),
+    );
+    if qt.divided {
+        for i in qt.childnode.as_ref().unwrap() {
+            draw_quadtree_gizmos(&i, &mut gizmos);
+        }
+    }
+}
+
+fn draw_quadtree_gizmos(qt: &TkQuadTree, gizmos: &mut Gizmos) {
+    gizmos.rect_2d(
+        qt.boundaries.center(),
+        qt.boundaries.size(),
+        Color::linear_rgb(0.0, 0.0, 1.0),
+    );
+    if qt.divided {
+        for i in qt.childnode.as_ref().unwrap() {
+            draw_quadtree_gizmos(&i, gizmos);
+        }
+    }
+}
