@@ -129,8 +129,8 @@ impl TkQuadTree {
         }
         None
     }
-    // Fungsi yang digunakan untuk mendapatkan suatu partisi berdasarkan posisi yang diberikan
-    // pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
+    /// Fungsi yang digunakan untuk mendapatkan suatu partisi berdasarkan posisi yang diberikan
+    /// pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
     pub fn get_parent(&self, tr: Vec3) -> Option<&TkQuadTree> {
         // cek apakah partisi ini memiliki tr, apabila tidak return none
         if self.contains3(tr) {
@@ -232,7 +232,12 @@ impl TkQuadTree {
         }
     }
 
-    pub fn delete_partition(&mut self, tr: Vec3) {}
+    /// Fungsi untuk menghapus suatu partisi dan mengubahnya kembali menjadi partisi biasa
+    pub fn delete_parent_partitioning(&mut self) {
+        self.divided = false;
+        self.childnode = None;
+        self.tiles = Some(Vec::new())
+    }
 
     // On Proccess
     // Fungsi yang akan mengembalikan n partisi berdasarkan posisi titik a dan titik b serta ray
@@ -242,6 +247,7 @@ impl TkQuadTree {
     // fungsi ini ada untuk digunakan pada path finding seperti A* Algorithm
     //pub fn ray_partition(&self, tr: Vec3, rhs: Vec3) {}
 
+    /// Fungsi untuk mengecek apakah entity ada di dalam partisi ini
     pub fn check_entity(&self, en: Entity) -> bool {
         if let Some(tile) = &self.tiles {
             if tile.contains(&en) {
@@ -250,6 +256,9 @@ impl TkQuadTree {
         }
         false
     }
+
+    /// Fungsi untuk mengecek keberadaan suatu titik di partisi ini, dan jika ada maka kita akan
+    /// menghapus nilai itu di vec
     pub fn check_remove(&mut self, en: Entity) -> bool {
         if let Some(tile) = &self.tiles {
             if tile.contains(&en) {
@@ -264,13 +273,11 @@ impl TkQuadTree {
     pub fn check_tiles(&self) -> bool {
         // apabila tiles tidak kosong maka mengembalikan nilai true
         if self.tiles != None {
-            return true;
+            return false;
         }
         // apabila kosong (None), maka kita akan return false
-        false
+        true
     }
-
-    pub fn check_child_tiles(&self) {}
 
     /// ini untuk pengecekan pada suatu quadtree apakah Quadree tersebut memiliki anakan yang
     /// bercabang atau tidak.
@@ -294,16 +301,25 @@ impl TkQuadTree {
     }
     /// Fungsi yang akan melakukan pengecekan pada ke emoat anakan dimana ini akan mereturn true
     /// apabila tidak ada yang terdivide dan akan mengembalikan false apabila ada satu yang
-    /// terdivide
-    pub fn check_all_child_not_divided(&mut self) -> bool {
-        if let Some(childnode) = self.childnode.as_ref() {
-            for i in childnode {
-                if i.divided == true {
-                    return false;
+    /// memiliki nilai di tilesnya
+    pub fn check_child_branch(&self) -> bool {
+        let mut return_value = true;
+        for i in self.childnode.as_ref().unwrap() {
+            if i.divided {
+                // apabila anakan terdivide, maka kita akan cek satu persatu
+                return_value = i.check_child_branch();
+                if return_value == false {
+                    return return_value;
                 }
+            } else {
+                return_value = i.check_tiles();
+                if return_value == false {
+                    return return_value;
+                }
+                // apabila anakan tidak terdivide
             }
         }
-        true
+        return_value
     }
 }
 
@@ -442,8 +458,13 @@ fn distribute_qt_child(
 }
 /// Ini adalah fungsi untuk menghapus partisi pada suatu partisi di quadtree
 fn delete_qt_partition(mut qt: ResMut<TkQuadTree>, mut qtdec: ResMut<QTDeleteConditions>) {
+    // memeriksa apakah qtdc benar - benar memiliki nilai
     if let Some(inner) = qtdec.pos {
+        // mendapatkan parent dari partisi yang ingin dilakukan pengencekan
         if let Some(parent) = qt.get_parent_mut(inner) {
+            if parent.check_child_branch() {
+                parent.delete_parent_partitioning();
+            }
             qtdec.clear();
         }
     }
