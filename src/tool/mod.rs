@@ -1,3 +1,7 @@
+//! Tool adalah module sekumpulan alat yang dapat digunakan dalam pembuatan Throwback Kingdom itu
+//! sendiri
+
+
 pub mod bundles;
 pub mod camera;
 pub mod global_var;

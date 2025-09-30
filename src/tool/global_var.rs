@@ -74,11 +74,11 @@ pub trait QTRC {
 }
 
 #[derive(Resource)]
-pub struct QTDistributeChild {
+pub struct QTDistributeConditions {
     pub pos: Option<Vec3>,
     pub condition: bool,
 }
-impl Default for QTDistributeChild {
+impl Default for QTDistributeConditions {
     fn default() -> Self {
         Self {
             pos: None,
@@ -86,36 +86,35 @@ impl Default for QTDistributeChild {
         }
     }
 }
-impl QTRC for QTDistributeChild{
+impl QTRC for QTDistributeConditions{
     fn clear(&mut self){
         self.pos = None;
-        self.condition = false
+        self.condition = false;
     }
     fn activate(&mut self, tr: Vec3){
         self.pos = Some(tr);
         self.condition = true
     }
 }
-
 #[derive(Resource)]
-pub struct QTDeleteChild{
+pub struct QTDeleteConditions {
     pub pos: Option<Vec3>,
-    pub condition: bool
-
+    pub condition: bool,
 }
-
-impl Default for QTDeleteChild{
+impl Default for  QTDeleteConditions {
     fn default() -> Self {
-        Self{pos: None, condition: false}
+        Self {
+            pos: None,
+            condition: false,
+        }
     }
 }
-
-impl QTRC for QTDeleteChild{
+impl QTRC for QTDeleteConditions {
     fn clear(&mut self){
         self.pos = None;
-        self.condition = false
+        self.condition = false;
     }
-    fn activate(&mut self, tr: Vec3){
+    fn activate(&mut self, tr: Vec3) {
         self.pos = Some(tr);
         self.condition = true
     }

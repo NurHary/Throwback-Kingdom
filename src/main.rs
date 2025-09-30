@@ -11,6 +11,7 @@ use toolplugin::*;
 
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::sprite::Wireframe2dPlugin;
+use bevy::window::WindowMode;
 use bevy::{prelude::*, window::PrimaryWindow};
 
 use bevy_egui::{egui, EguiPlugin};
@@ -19,8 +20,6 @@ use bevy_pancam::*;
 
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
-    use bevy::window::WindowMode;
-
     App::new()
         .add_plugins((
             DefaultPlugins

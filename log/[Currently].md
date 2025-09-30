@@ -6,6 +6,7 @@ saat ini saya sedang menggarap bagian quadtree dimana saya masih harus melakukan
     - [x] memastikan unit dapat berpindah dari suatu partition ke partition lainnya (mungkin)
         }
     - [ ] fungsi untuk menghapus quadtree ketika childnodenya pada kosong
+        - [ ] fungsi untuk mendapatkan parent
 - [ ] implementasi pengecekan collision berdasarkan quadtree tersebut / posisinya
 - [ ] (Opsional) membuat egui windows untuk melihat anakan dari quadtree itu
 - [ ] (Opsional) membuat kotakan dari Gizmo untuk melihat kotakan dari Quadtree itu
