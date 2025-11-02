@@ -6,9 +6,9 @@
 ## Ready
 
 ## Process
-- Gizmo Quadtree
 
 ## Review
+- Gizmo Quadtree
 - Kinerja Quadtree
 
 ## Finished

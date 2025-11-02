@@ -16,10 +16,10 @@ Throwback Kingdom Combine RPG and RTS into one game
 
 ## Vision
 
-
-## Day Run (9/08):
-- [ ] Implementasi Quadtree
-- [ ] Membaca / melakukan collision check berdasarkan quadtree tersebut
+## Week Run
+- [x] Implementasi Quadtree
+- [ ] Refactoring Quadtree
+- [ ] Test Quadtree
 
 ## To Revise
 - [ ] Scale ketika melakukan

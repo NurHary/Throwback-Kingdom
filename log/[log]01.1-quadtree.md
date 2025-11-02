@@ -23,7 +23,7 @@ ini adalah komponen fungsi yang digunakan untuk memindahkan suatu entity dalam s
 
 dimana cara kerja dari komponen fungsi ini adalah sebagai berikut:
 - fungsi dengan parameter Changed<Transform> dengan begitu kita dapat melakukan pengecekan apakah entity yang memiliki transform mengalami perpindahan
-- 
+-
 
 ### delete partition
 ### distribute partition
