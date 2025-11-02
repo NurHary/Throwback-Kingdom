@@ -43,9 +43,11 @@ pub fn rpg_function(
         let move_del = direction.normalize_or_zero() * UNIT_SPEED * time.delta_secs();
 
         if id.id.lock().unwrap().value == current_id.id {
-            // Handle Animation
+            // Handle Animation & Movement
             if direction != Vec2::ZERO {
-                unit.state = TkUnitState::Walk
+                unit.state = TkUnitState::Walk;
+                her.translation += move_del.extend(0.);
+                debug_pos.pos = her.translation;
             } else {
                 unit.state = TkUnitState::Idle
             }
@@ -63,8 +65,6 @@ pub fn rpg_function(
             //}
 
             // Handle Movement
-            her.translation += move_del.extend(0.);
-            debug_pos.pos = her.translation;
         }
     }
     if key.just_pressed(KeyCode::KeyP) {

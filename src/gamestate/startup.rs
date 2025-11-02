@@ -86,7 +86,7 @@ pub fn spawn_character(
         },
         Selectable::new(),
         ColliderBundles::new(100.0, 100.0),
-        Transform::from_xyz(0.0, 0.0, 0.0),
+        Transform::from_xyz(25.0, 25.0, 0.0),
     ));
     command.spawn((
         HeroesBundles::new(
@@ -125,7 +125,7 @@ pub fn spawn_character(
         },
         Selectable::new(),
         ColliderBundles::new(100.0, 100.0),
-        Transform::from_xyz(0.0, -50.0, 0.0),
+        Transform::from_xyz(30.0, -20.0, 0.0),
     ));
     command.spawn((
         HeroesBundles::new(
@@ -164,8 +164,9 @@ pub fn spawn_character(
         },
         Selectable::new(),
         ColliderBundles::new(100.0, 100.0),
-        Transform::from_xyz(-100.0, 50.0, 0.0),
+        Transform::from_xyz(-90.0, 25.0, 0.0),
     ));
+    // NOTE Nonaktifkan Sementara
     command.spawn((
         HeroesBundles::new(
             Heroes::new("Fulan"),
@@ -203,7 +204,7 @@ pub fn spawn_character(
         },
         Selectable::new(),
         ColliderBundles::new(100.0, 100.0),
-        Transform::from_xyz(0.0, 100.0, 0.0),
+        Transform::from_xyz(220.0, 0.0, 0.0),
     ));
     command.spawn((
         HeroesBundles::new(

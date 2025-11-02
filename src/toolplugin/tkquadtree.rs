@@ -15,16 +15,29 @@ use crate::{
 // pertanyaannya adalah bagaimana cara mengimplementasikannya
 #[derive(Resource, Debug, Clone, PartialEq)]
 pub struct TkQuadTree {
+    // ini untuk Debug lebih mudah
+    pub name: String,
+    pub id: usize,
+    // ini fungsi utama
     boundaries: Rect,
     tiles: Option<Vec<Entity>>,
     divided: bool,
-    childnode: Option<[Box<TkQuadTree>; 4]>, // UL, LL, UR, lR
+    childnode: Option<[Box<TkQuadTree>; 4]>,
 }
 
 impl TkQuadTree {
     /// Fungsi untuk menginisalisasi Quadtree
-    pub fn new(border_x0: f32, border_y0: f32, border_x1: f32, border_y1: f32) -> Self {
+    pub fn new(
+        name: String,
+        id: usize,
+        border_x0: f32,
+        border_y0: f32,
+        border_x1: f32,
+        border_y1: f32,
+    ) -> Self {
         Self {
+            name,
+            id,
             boundaries: Rect::new(border_x0, border_y0, border_x1, border_y1),
             tiles: Some(Vec::new()),
             divided: false,
@@ -49,8 +62,11 @@ impl TkQuadTree {
             // menambahkan yang ke empat
             if let Some(tiles) = self.tiles.as_mut() {
                 tiles.push(en);
-                // println!("Berhasil Memasukkan Entity ke quadtree dengan sebagai berikut= en: {}, tr: {:?}", en, tr);
-                if tiles.len() >= 4 {
+                println!(
+                    "Berhasil Memasukkan Entity ke quadtree dengan sebagai berikut= en: {}, tr: {:?}, ke {}",
+                    en, tr, self.name
+                );
+                if tiles.len() > 4 {
                     self.subdivide();
                     return Some(tr);
                 }
@@ -62,12 +78,15 @@ impl TkQuadTree {
     /// # Fungsi untuk membangun tempat anakan dan mendeklarasikan diri bahwa diri telah terbagi
     pub fn subdivide(&mut self) {
         // tambahkan fungsi yang dapat mentrigger distribute sekali lagi
+        println!("Dividing Partition");
         self.divided = true;
         let center = self.boundaries.center();
         let (centerx, centery) = (center.x, center.y);
         let quadra: [Box<TkQuadTree>; 4] = [
             // Top Left
             Box::new(TkQuadTree::new(
+                format!("Top Left {}", self.id + 1),
+                self.id + 1,
                 self.boundaries.min.x,
                 centery,
                 centerx,
@@ -75,6 +94,8 @@ impl TkQuadTree {
             )),
             // Bottomleft
             Box::new(TkQuadTree::new(
+                format!("Bottom Left {}", self.id + 1),
+                self.id + 1,
                 self.boundaries.min.x,
                 self.boundaries.min.y,
                 centerx,
@@ -82,6 +103,8 @@ impl TkQuadTree {
             )),
             // TopRight
             Box::new(TkQuadTree::new(
+                format!("Top Right {}", self.id + 1),
+                self.id + 1,
                 centerx,
                 centery,
                 self.boundaries.max.x,
@@ -89,6 +112,8 @@ impl TkQuadTree {
             )),
             // Bottomright
             Box::new(TkQuadTree::new(
+                format!("Bottom Right {}", self.id + 1),
+                self.id + 1,
                 centerx,
                 self.boundaries.min.y,
                 self.boundaries.max.x,
@@ -109,14 +134,14 @@ impl TkQuadTree {
                 // disini kita menggunakan
                 for i in child_node {
                     i.distribute(en, tr);
-                    println!(
-                        "Berhasil Distribute Entity ke quadtree dengan sebagai berikut= en: {}, tr: {:?}",
-                        en, tr
-                    );
-                    return Some(tr);
                 }
+                return Some(tr);
             } else {
                 self.insert(en, tr);
+                println!(
+                    "Berhasil Distribute Entity ke quadtree dengan sebagai berikut= en: {}, tr: {:?}, ke {} /n",
+                    en, tr, self.name
+                );
                 return None;
             }
         }
@@ -162,6 +187,7 @@ impl TkQuadTree {
                         // maka kita akan melakukan fungsi get_parent_mut pada anakan tersebut
                         for i in inner {
                             if let Some(hasil_return) = i.get_parent_mut(tr) {
+                                println!("Getting parent mutable");
                                 return Some(hasil_return);
                             }
                         }
@@ -202,7 +228,7 @@ impl TkQuadTree {
     //    }
     //}
 
-    /// Fungi untuk mendapatkan partisi yang mmutable
+    /// Fungi untuk mendapatkan partisi yang utable
     pub fn get_partition_mut(&mut self, tr: Vec3) -> Option<&mut TkQuadTree> {
         // cek apakah partisi ini mengandung tr, apabila tidak return none
         if self.contains3(tr) {
@@ -249,6 +275,7 @@ impl TkQuadTree {
     pub fn check_entity(&self, en: Entity) -> bool {
         if let Some(tile) = &self.tiles {
             if tile.contains(&en) {
+                //println!("Check Entity keluar sebagai: ada {en}\n");
                 return true;
             }
         }
@@ -332,14 +359,21 @@ pub struct TkQuadTreePlugin;
 impl Plugin for TkQuadTreePlugin {
     fn build(&self, app: &mut App) {
         // TO FIX: PEMILIHAN WORLD SIZENYA NANTI SAJA
-        app.insert_resource(TkQuadTree::new(-200.0, -200.0, 200.0, 200.0)); // Init the quadtree
+        app.insert_resource(TkQuadTree::new(
+            "Root".into(),
+            0,
+            -200.0,
+            -200.0,
+            200.0,
+            200.0,
+        )); // Init the quadtree
         app.insert_resource(QTDistributeConditions::default());
         app.insert_resource(QTDeleteConditions::default());
         app.add_systems(
             Update,
             (
-                unit_to_quadtree,
                 (
+                    unit_to_quadtree,
                     update_quadtree_unit,
                     distribute_qt_child.run_if(qt_distribute), // hanya dijalankan ketika anakan
                     // lebih dari 4 dan terjadi
@@ -363,6 +397,7 @@ fn unit_to_quadtree(
 ) {
     for (en, tr) in &unit_entity {
         // apabila Quadtree telah terpartisi, maka kita akan melakukan distribute saja
+        println!("Memasukkan {en}");
         if qt.divided {
             //
             if let Some(distribusi) = qt.distribute(en, tr.translation) {
@@ -387,23 +422,31 @@ fn update_quadtree_unit(
 ) {
     // iterasikan query
     for (en, tr, trec) in &qr {
-        // mendapatkan posisi patisi dimana entity saat ini berada
+        // mendapatkan posisi partisi dimana entity saat ini berada
         if let Some(part) = qt.get_partition_mut(tr.translation) {
             // # -> Ini adalah tempat dimana hal akan di run terus menerus, kita tidak mau ini <- #
 
-            // apabila posisi dari patisi saat ini tidak memiliki enntity itu, maka kemungkinan
-            // partisi ini adaalh partisi yang baru saja dimasuki oleh entity itu sendiri
-            if !part.check_entity(en) {
-                println!("Update Quadtree 2 \n");
+            // apabila posisi dari patisi saat ini tidak memiliki entity itu, maka kemungkinan
+            // partisi ini adalah partisi yang baru saja dimasuki oleh entity itu sendiri
 
+            // NOTE: Kenapa ini membaca ketika entity itu ada dalam suatu partisi itu
+            if !part.check_entity(en) {
+                //println!("Membaca jika tidak ada");
                 // NOTE:
-                // Aku menhapus bagian Menghapusnya disini
+                // Aku menghapus bagian Menghapusnya disini
 
                 // setelah dihapus dari antara ke empat posisi sebelumnnya, maka kita akan
                 // menginsert entity itu pada posisi saat ini
-                if let Some(distribusi) = qt.insert(en, tr.translation) {
-                    println!("Update Quadtree 3 \n");
-                    qtdc.activate(distribusi);
+                if qt.divided {
+                    if let Some(distribusi) = qt.distribute(en, tr.translation) {
+                        println!("Update Quadtree distribute \n");
+                        qtdc.activate(distribusi);
+                    }
+                } else {
+                    if let Some(distribusi) = qt.insert(en, tr.translation) {
+                        println!("Update Quadtree insert \n");
+                        qtdc.activate(distribusi);
+                    }
                 }
             }
         } else { // apabila gagal / objek tersebut telah keluar dari quadtree
@@ -433,10 +476,10 @@ fn distribute_qt_child(
                 }
                 // menghapus tile untuk menunjukkan jika partition yang sudah terdivide tidak boleh punya tiles
                 // lagi selain anakan
-                sqt.tiles = None;
-                qtdc.clear();
             }
+            sqt.tiles = None;
         }
+        qtdc.clear();
     } else {
     }
 }
@@ -445,6 +488,7 @@ fn distribute_qt_child(
 fn search_qt_to_distribute(qt: &mut TkQuadTree, tr: Vec3) -> Option<&mut TkQuadTree> {
     // Ketika ini divided tapi masih memiliki nilai
     if qt.divided && qt.tiles != None {
+        println!("Search Qt to Distribute: Menemukan partisi untuk di distribute");
         return Some(qt);
     }
     // Ketika ini divided tapi tidak ada nilai didalamnya
