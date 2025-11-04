@@ -30,6 +30,7 @@ pub struct ColliderBundles {
     is_colliding: EntityColliding,
 
     quadtree: QuadtreeUnit,
+    quadtree_position: QuadtreeUnitPosition,
 }
 
 impl ColliderBundles {
@@ -38,6 +39,7 @@ impl ColliderBundles {
             collision_area: TkRectangle::new(width, height),
             is_colliding: EntityColliding::new(),
             quadtree: QuadtreeUnit,
+            quadtree_position: QuadtreeUnitPosition::new(),
         }
     }
 }
