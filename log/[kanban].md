@@ -8,7 +8,8 @@
 ## Process
 
 ## Review
-- Gizmo Quadtree
 - Kinerja Quadtree
 
 ## Finished
+- Gizmo Quadtree
+- Quadtree Structure
