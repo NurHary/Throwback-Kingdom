@@ -2,6 +2,7 @@
 
 use crate::global_var::*;
 use bevy::prelude::*;
+use bevy_egui::egui::epaint::EllipseShape;
 use bevy_egui::egui::Ui;
 
 use crate::tool::qt_delete;
@@ -113,6 +114,8 @@ impl TkQuadTree {
 
     pub fn remerge(&mut self) {
         let all_child = self.take_all_children_unit();
+        println!("\n take all Children {:?}", all_child);
+        self.tiles = Some(Vec::new());
         if let Some(tiles) = &mut self.tiles {
             tiles.extend(all_child.into_iter());
         }
@@ -125,9 +128,16 @@ impl TkQuadTree {
     pub fn take_all_children_unit(&mut self) -> Vec<Entity> {
         // Inisialisasi nilai penampung return keseluruhan
         let mut return_value: Vec<Entity> = Vec::new();
+
+        // apabila parent divided
         if self.divided {
             for i in self.childnode.as_mut().unwrap() {
                 return_value.extend(i.take_all_children_unit().into_iter());
+            }
+        } else {
+            // apabila parent tidak terdivide
+            if let Some(tiles) = &self.tiles {
+                return tiles.to_vec();
             }
         }
         return_value
@@ -728,7 +738,7 @@ fn delete_qt(
                             "Mendapatkan Partisi berupa: {}======================",
                             part.name
                         );
-                        // apabila anakan dari parentnya pada kosong atau dibawah 4
+                        // apabila anakan dari parentnya ada di atas 4
                         if !part.check_child_branch_exceed_four() {
                             println!("{} memiliki jumlah anakan diatas 4", part.name);
                         } else {

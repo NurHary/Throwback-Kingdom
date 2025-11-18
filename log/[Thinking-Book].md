@@ -1,3 +1,10 @@
+## Masalah saat ini:
+update qt juga memiliki fungsi [delete serta remerge] (masih belum diketahui fungsi apa)
+
+
+
+
+
 
 
 untuk bagian raycast saya memiliki ide sebagai berikut:
