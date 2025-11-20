@@ -25,5 +25,12 @@ dimana cara kerja dari komponen fungsi ini adalah sebagai berikut:
 - fungsi dengan parameter Changed<Transform> dengan begitu kita dapat melakukan pengecekan apakah entity yang memiliki transform mengalami perpindahan
 -
 
-### delete partition
+### delete unit and remerge
+ketika suatu unit keluar dari satu partisi, maka partisi yang lama akan langsung menghapus keberadaan dari unit itu
+di anakan itu, dan yang menarik adalah apabila jumlah unit di suatu parent lebih kecil daripada 4, maka partisi itu akan
+langsung dihapus dan digabungkan kembali dengan parentnya itu sendiri
+
+bagaimana cara itu bekerja adalah dengan cara menyimpan posisi lama secara kecil, yang mana ketika terjadi update
+ada kemeungkinan fungsi penghapusan akan dipanggil dan membuat sistem penghapusan terjadi, menambahkan nilai baru,
+menghapus unit di partisi dengan nilai lama, dan cek apakah remerge atau tidak
 ### distribute partition

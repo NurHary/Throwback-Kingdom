@@ -2,7 +2,6 @@
 
 use crate::global_var::*;
 use bevy::prelude::*;
-use bevy_egui::egui::epaint::EllipseShape;
 use bevy_egui::egui::Ui;
 
 use crate::tool::qt_delete;

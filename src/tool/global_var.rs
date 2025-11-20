@@ -1,4 +1,7 @@
-use crate::run_condition::*;
+use crate::{
+    run_condition::*,
+    toolplugin::{TkItems, ITEMIDS},
+};
 use bevy::{prelude::*, scene::ron::Options};
 
 // Variabel Global
@@ -64,7 +67,6 @@ impl WorldSize {
     pub const LARGE: f32 = 100000000000.0;
 }
 
-// NOTE
 // // // QUADTREE // // //
 
 pub trait QTRC {
@@ -120,5 +122,33 @@ impl QTRC for QTDeleteConditions {
     fn activate(&mut self, tr: Vec3) {
         self.pos.push(tr);
         self.condition = true
+    }
+}
+
+// Inventory //
+
+#[derive(Resource, Clone, Copy)]
+pub struct InventoryDistributeSystems {
+    items: Option<ITEMIDS>,
+    amount: usize,
+    condition: bool,
+}
+
+impl InventoryDistributeSystems {
+    pub fn new() -> Self {
+        Self {
+            items: None,
+            amount: 0,
+            condition: false,
+        }
+    }
+    pub fn activate(&mut self, items: ITEMIDS, amount: usize) {
+        self.items = Some(items);
+        self.amount = amount
+    }
+    pub fn clear(&mut self) {
+        self.items = None;
+        self.amount = 0;
+        self.condition = false
     }
 }

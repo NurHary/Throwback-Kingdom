@@ -6,12 +6,12 @@
 - [x] Mencari cara untuk menghapus nodes sebelumnya
 - [x] Memperbaiki penghapusan yang cacat
 - [x] Memperbaiki Remerging
-- [ ] Mengatasi berbagai masalah yang ada dalam quadtree itu sendiri
+- [ ] Mengatasi berbagai masalah yang ada dalam quadtree itu sendiri (Almost)
 === Quadtree Rest ===
 
 === Sistem Inventory & Building ===
-- [ ] menentukan model inventory yang tepat dan bagaimana cara mengaksesnya
+- [x] menentukan model inventory yang tepat dan bagaimana cara mengaksesnya
     #ide: mungkin disini kita akan menggunakan konsep dari Quadtree dimana kita akan melakukan pengecekan
     pada area / collision / physics itu sendiri
-- [ ] implementasi kasar model simpelnya (yang global shared / local unit)
+- [x] implementasi kasar model simpelnya (yang global shared / local unit)
 - [ ] implementasi prerequisites dan pembangunan serta sistem grid pembangunan
