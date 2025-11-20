@@ -1,5 +1,5 @@
-use bevy::{prelude::*, scene::ron::Options};
 use crate::run_condition::*;
+use bevy::{prelude::*, scene::ron::Options};
 
 // Variabel Global
 // Untuk pemilihan Karakter
@@ -64,58 +64,61 @@ impl WorldSize {
     pub const LARGE: f32 = 100000000000.0;
 }
 
-
 // NOTE
 // // // QUADTREE // // //
 
 pub trait QTRC {
-    fn clear(&mut self);
+    fn clear(&mut self, tr: Vec3);
     fn activate(&mut self, tr: Vec3);
 }
 
 #[derive(Resource)]
 pub struct QTDistributeConditions {
-    pub pos: Option<Vec3>,
+    pub pos: Vec<Vec3>,
     pub condition: bool,
 }
 impl Default for QTDistributeConditions {
     fn default() -> Self {
         Self {
-            pos: None,
+            pos: Vec::new(),
             condition: false,
         }
     }
 }
-impl QTRC for QTDistributeConditions{
-    fn clear(&mut self){
-        self.pos = None;
-        self.condition = false;
+impl QTRC for QTDistributeConditions {
+    fn clear(&mut self, tr: Vec3) {
+        self.pos.retain(|value| *value != tr);
+        if self.pos.len() > 0 {
+            self.condition = false;
+        }
     }
-    fn activate(&mut self, tr: Vec3){
-        self.pos = Some(tr);
+    fn activate(&mut self, tr: Vec3) {
+        self.pos.push(tr);
         self.condition = true
     }
 }
 #[derive(Resource)]
 pub struct QTDeleteConditions {
-    pub pos: Option<Vec3>,
+    pub pos: Vec<Vec3>,
     pub condition: bool,
 }
-impl Default for  QTDeleteConditions {
+impl Default for QTDeleteConditions {
     fn default() -> Self {
         Self {
-            pos: None,
+            pos: Vec::new(),
             condition: false,
         }
     }
 }
 impl QTRC for QTDeleteConditions {
-    fn clear(&mut self){
-        self.pos = None;
-        self.condition = false;
+    fn clear(&mut self, tr: Vec3) {
+        self.pos.retain(|value| *value != tr);
+        if self.pos.len() > 0 {
+            self.condition = false;
+        }
     }
     fn activate(&mut self, tr: Vec3) {
-        self.pos = Some(tr);
+        self.pos.push(tr);
         self.condition = true
     }
 }

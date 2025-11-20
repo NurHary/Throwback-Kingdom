@@ -1,0 +1,7 @@
+- menambahkan fitur rts dan rpg
+- membuat state gameplay
+- mempelajari sistem animasi bevy
+- menambahkan sistem marque select
+- menambahkan sistem physic / collision dasar
+- menambahkan quadtree beserta fitur2 seperti update entity dan lainnya
+- memperbaiki error pada quadtree ketika menambahkan entity dari luar ke dalam suatu titik secara langsung

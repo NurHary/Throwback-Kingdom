@@ -5,8 +5,13 @@
 - [x] Membuat debug windows untuk melihat si quadtree anjing
 - [x] Mencari cara untuk menghapus nodes sebelumnya
 - [x] Memperbaiki penghapusan yang cacat
-- [ ] Memperbaiki Remerging
+- [x] Memperbaiki Remerging
+- [ ] Mengatasi berbagai masalah yang ada dalam quadtree itu sendiri
+=== Quadtree Rest ===
 
-# Current States
-- [ ] Mencari tahu apa yang sebenarnya membuat itu terjadi
-    - [ ] Print Debug di hampir di semua titik
+=== Sistem Inventory & Building ===
+- [ ] menentukan model inventory yang tepat dan bagaimana cara mengaksesnya
+    #ide: mungkin disini kita akan menggunakan konsep dari Quadtree dimana kita akan melakukan pengecekan
+    pada area / collision / physics itu sendiri
+- [ ] implementasi kasar model simpelnya (yang global shared / local unit)
+- [ ] implementasi prerequisites dan pembangunan serta sistem grid pembangunan

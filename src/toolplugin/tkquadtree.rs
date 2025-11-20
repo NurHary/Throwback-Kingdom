@@ -145,50 +145,53 @@ impl TkQuadTree {
 
     /// # Fungsi untuk membangun tempat anakan dan mendeklarasikan diri bahwa diri telah terbagi
     pub fn subdivide(&mut self) {
-        // tambahkan fungsi yang dapat mentrigger distribute sekali lagi
-        //println!("Dividing Partition");
-        self.divided = true;
-        let center = self.boundaries.center();
-        let (centerx, centery) = (center.x, center.y);
-        let quadra: [Box<TkQuadTree>; 4] = [
-            // Top Left
-            Box::new(TkQuadTree::new(
-                format!("Top Left {}", self.id + 1),
-                self.id + 1,
-                self.boundaries.min.x,
-                centery,
-                centerx,
-                self.boundaries.max.y,
-            )),
-            // Bottomleft
-            Box::new(TkQuadTree::new(
-                format!("Bottom Left {}", self.id + 1),
-                self.id + 1,
-                self.boundaries.min.x,
-                self.boundaries.min.y,
-                centerx,
-                centery,
-            )),
-            // TopRight
-            Box::new(TkQuadTree::new(
-                format!("Top Right {}", self.id + 1),
-                self.id + 1,
-                centerx,
-                centery,
-                self.boundaries.max.x,
-                self.boundaries.max.y,
-            )),
-            // Bottomright
-            Box::new(TkQuadTree::new(
-                format!("Bottom Right {}", self.id + 1),
-                self.id + 1,
-                centerx,
-                self.boundaries.min.y,
-                self.boundaries.max.x,
-                centery,
-            )),
-        ];
-        self.childnode = Some(quadra)
+        // Pertahanan untuk mengatasi masalah pada satu titik bersamaan
+        if (self.boundaries.size().cmpgt(Vec2::new(0.5, 0.5))).all() {
+            // tambahkan fungsi yang dapat mentrigger distribute sekali lagi
+            //println!("Dividing Partition");
+            self.divided = true;
+            let center = self.boundaries.center();
+            let (centerx, centery) = (center.x, center.y);
+            let quadra: [Box<TkQuadTree>; 4] = [
+                // Top Left
+                Box::new(TkQuadTree::new(
+                    format!("Top Left {}", self.id + 1),
+                    self.id + 1,
+                    self.boundaries.min.x,
+                    centery,
+                    centerx,
+                    self.boundaries.max.y,
+                )),
+                // Bottomleft
+                Box::new(TkQuadTree::new(
+                    format!("Bottom Left {}", self.id + 1),
+                    self.id + 1,
+                    self.boundaries.min.x,
+                    self.boundaries.min.y,
+                    centerx,
+                    centery,
+                )),
+                // TopRight
+                Box::new(TkQuadTree::new(
+                    format!("Top Right {}", self.id + 1),
+                    self.id + 1,
+                    centerx,
+                    centery,
+                    self.boundaries.max.x,
+                    self.boundaries.max.y,
+                )),
+                // Bottomright
+                Box::new(TkQuadTree::new(
+                    format!("Bottom Right {}", self.id + 1),
+                    self.id + 1,
+                    centerx,
+                    self.boundaries.min.y,
+                    self.boundaries.max.x,
+                    centery,
+                )),
+            ];
+            self.childnode = Some(quadra)
+        }
     }
 
     /// Fungsi untuk melakukan distribusi pada
@@ -211,29 +214,6 @@ impl TkQuadTree {
         }
         None
     }
-
-    ///// Fungsi yang digunakan untuk mendapatkan suatu partisi berdasarkan posisi yang diberikan
-    ///// pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
-    //pub fn get_parent(&self, tr: Vec3) -> Option<&TkQuadTree> {
-    //    // cek apakah partisi ini memiliki tr, apabila tidak return none
-    //    if self.contains3(tr) {
-    //        // cek apakah diri sendiri terbagi
-    //        if self.divided {
-    //            //
-    //            let child_node = self.childnode.as_ref().unwrap();
-    //            for i in child_node {
-    //                if let Some(part) = i.get_parent(tr) {
-    //                    return Some(part);
-    //                }
-    //            }
-    //            None
-    //        } else {
-    //            return Some(self);
-    //        }
-    //    } else {
-    //        return None;
-    //    }
-    //}
 
     /// Fungsi yang digunakan untuk mendapatkan suatu partisi mutable berdasarkan posisi yang kau berikan
     /// pada parameter fungsi tersebut. hanya menerima Vec3 untuk saat ini
@@ -265,35 +245,50 @@ impl TkQuadTree {
         None
     }
 
-    // NOTE: Mungkin kita harus membersihkan ini terlebih dahulu supaya ini bisa dipakai tanpa
-    // perlu melakukan rekursif
+    /// Fungsi untuk membandingkan dua partisi, apabila dua partisi sama maka return True
+    pub fn two_partition_equal(&self, old_tr: Vec3, new_tr: Vec3) -> bool {
+        let mut oldname: String = "Zero".into();
+        let mut newname: String = "Non_Zero".into();
+
+        if let Some(old_part) = &self.get_partition(old_tr) {
+            oldname = old_part.name.clone();
+        }
+        if let Some(new_part) = &self.get_partition(new_tr) {
+            newname = new_part.name.clone();
+        }
+
+        if newname == oldname {
+            return true;
+        }
+        false
+    }
 
     /// Fungsi untuk mendapatkan Partisi
-    //pub fn get_partition(&self, tr: Vec3) -> Option<&TkQuadTree> {
-    //    // cek apakah partisi ini mengandung tr, apabila tidak return none
-    //    if self.contains3(tr) {
-    //        // cek apakah diri sendiri divided, apabila tidak maka return diri sendiri dan
-    //        // menghentikan rekursi
-    //        if self.divided {
-    //            // kita akan iterasikan anakan dari quadtree ini apabila memiliki anakan
-    //            let child_node = self.childnode.as_ref().unwrap();
-    //            for i in child_node {
-    //                // kita akan iterasi tiap anakan, disini kebanyakan akan berhenti ketika
-    //                // pengecekan posisi / contains dari quadtree itu sendiri
-    //                if let Some(part) = i.get_partition(tr) {
-    //                    // tentu apabila ada maka kita akan mengembalikan self
-    //                    return Some(part);
-    //                }
-    //            }
-    //            None
-    //        } else {
-    //            // return diri sendiri ketika tidak memiliki anakan
-    //            return Some(self);
-    //        }
-    //    } else {
-    //        return None;
-    //    }
-    //}
+    pub fn get_partition(&self, tr: Vec3) -> Option<&TkQuadTree> {
+        // cek apakah partisi ini mengandung tr, apabila tidak return none
+        if self.contains3_equal(tr) {
+            // cek apakah diri sendiri divided, apabila tidak maka return diri sendiri dan
+            // menghentikan rekursi
+            if self.divided {
+                // kita akan iterasikan anakan dari quadtree ini apabila memiliki anakan
+                let child_node = self.childnode.as_ref().unwrap();
+                for i in child_node {
+                    // kita akan iterasi tiap anakan, disini kebanyakan akan berhenti ketika
+                    // pengecekan posisi / contains dari quadtree itu sendiri
+                    if let Some(part) = i.get_partition(tr) {
+                        // tentu apabila ada maka kita akan mengembalikan self
+                        return Some(part);
+                    }
+                }
+                None
+            } else {
+                // return diri sendiri ketika tidak memiliki anakan
+                return Some(self);
+            }
+        } else {
+            return None;
+        }
+    }
 
     /// Fungi untuk mendapatkan partisi yang mutable
     pub fn get_partition_mut(&mut self, tr: Vec3) -> Option<&mut TkQuadTree> {
@@ -372,18 +367,6 @@ impl TkQuadTree {
             }
         }
     }
-
-    // /// Fungsi untuk mengecek keberadaan suatu titik di partisi ini, dan jika ada maka kita akan
-    // /// menghapus nilai itu di vec
-    //pub fn check_remove(&mut self, en: Entity) -> bool {
-    //    if let Some(tile) = &self.tiles {
-    //        if tile.contains(&en) {
-    //            self.tiles.as_mut().unwrap().retain(|value| *value != en);
-    //            return true;
-    //        }
-    //    }
-    //    false
-    //}
 
     /// Fungsi untuk melakukan cek apakah quadtree ini memiliki tiles atau tidak
     pub fn check_if_tiles_empty(&self) -> bool {
@@ -547,10 +530,10 @@ impl Plugin for TkQuadTreePlugin {
                     // terjadi perpindahan anakan dari
                     // suatu titik ke titik lainnya
                     // beserta ketika terjadi kematian
-                    delete_qt.run_if(qt_delete), // hanya akan di trigger ketika
                     distribute_qt_child.run_if(qt_distribute), // hanya dijalankan ketika anakan
-                                                 // lebih dari 4 dan terjadi
-                                                 // subdivide
+                    // lebih dari 4 dan terjadi
+                    // subdivide
+                    delete_qt.run_if(qt_delete), // hanya akan di trigger ketika
                 )
                     .chain(),
                 draw_quadtree, // ini untuk menunjukkan quadtree tersebut
@@ -618,7 +601,7 @@ fn update_quadtree_unit(
                 // menginsert entity itu pada posisi saat ini
                 if qt.divided {
                     if let Some(distribusi) = qt.distribute(en, tr.translation) {
-                        //println!("Update Quadtree distribute \n");
+                        println!("Update Quadtree distribute \n");
                         qtdec.activate(distribusi);
                         qtdc.activate(distribusi);
                         qtup.assign_values(distribusi);
@@ -626,7 +609,7 @@ fn update_quadtree_unit(
                 } else {
                     if let Some(distribusi) = qt.insert(en, tr.translation) {
                         //println!("Update Quadtree insert \n");
-                        //println!("Assign This To qtup insert update");
+                        println!("Assign This To qtup insert update");
                         qtdec.activate(distribusi);
                         qtdc.activate(distribusi);
                         //qtup.assign_values(distribusi);
@@ -649,10 +632,9 @@ fn distribute_qt_child(
     mut qr: Query<(Entity, &Transform, &mut QuadtreeUnitPosition), With<QuadtreeUnit>>,
 ) {
     // ini untuk mendapatkan nilai dari quadtree yang meminta untuk dilakukan distribute
-    if let Some(inner) = qtdc.pos {
-        //println!("Mendapatkan Posisi untuk Distribute");
+    for qtdc_pos in qtdc.pos.clone() {
         // ini untuk mendapatkan quadtree yang di cari untuk di distribute
-        if let Some(sqt) = search_qt_to_distribute(&mut qt, inner) {
+        if let Some(sqt) = search_qt_to_distribute(&mut qt, qtdc_pos) {
             // kemudian kita mengiterasikan setiap anakannya lalu kita menghapus tiles itu sendiri
             for (en, tr, mut qtup) in &mut qr {
                 if sqt.check_entity(en) {
@@ -686,8 +668,7 @@ fn distribute_qt_child(
             }
             sqt.tiles = None;
         }
-        qtdc.clear();
-    } else {
+        qtdc.clear(qtdc_pos);
     }
 }
 
@@ -719,40 +700,49 @@ fn delete_qt(
     mut qtdec: ResMut<QTDeleteConditions>,
 ) {
     // apabila qtdec memiliki posisi, maka dilanjutkan
-    if let Some(position) = qtdec.pos {
-        let to_delete = search_unit_to_delete(&mut qt, position);
-        //println!(
-        //    "Mendapatkan unit apa saja yang harus di cek untuk delete, {:?}",
-        //to_delete
-        //);
+    for qtdec_pos in qtdec.pos.clone() {
+        let to_delete = search_unit_to_delete(&mut qt, qtdec_pos);
+        println!(
+            "Mendapatkan unit apa saja yang harus di cek untuk delete, {:?}",
+            to_delete
+        );
         for (en, mut qtup) in &mut qr {
-            // NOTE: Mungkin ini akar alasannya karena si
-            if to_delete.contains(&en) {
-                // pada mereka yang memiliki 2 values posisi
-                if qtup.new_val != None {
-                    // Menghapus unit dari posisi lamanya
-                    qt.remove_unit(en, *qtup.old_val.as_ref().unwrap());
-                    // cari partisi parentnya
-                    if let Some(part) = qt.get_parent_mut(*qtup.old_val.as_ref().unwrap()) {
-                        println!(
-                            "Mendapatkan Partisi berupa: {}======================",
-                            part.name
-                        );
-                        // apabila anakan dari parentnya ada di atas 4
-                        if !part.check_child_branch_exceed_four() {
-                            println!("{} memiliki jumlah anakan diatas 4", part.name);
-                        } else {
-                            println!("{} memiliki jumlah anakan dibawah 4", part.name);
-                            // Maka kita akan meremerge semua anakan di bawahnya untuk masuk
-                            // menjadi ankan dari parent itu sendiri
-                            part.remerge();
+            for check_deleting_nodes in &to_delete {
+                if check_deleting_nodes == &en {
+                    // pada mereka yang memiliki 2 values posisi
+                    if qtup.new_val != None {
+                        // NOTE: Ini sumber masalahnya, kita harus menambahkan fungsi untuk
+                        // mengecek kedua titik partisi apakah sama
+                        // Hapus node
+                        if !qt.two_partition_equal(
+                            *qtup.old_val.as_ref().unwrap(),
+                            *qtup.new_val.as_ref().unwrap(),
+                        ) {
+                            qt.remove_unit(en, *qtup.old_val.as_ref().unwrap());
                         }
+                        // cari partisi parentnya
+                        if let Some(part) = qt.get_parent_mut(*qtup.old_val.as_ref().unwrap()) {
+                            println!(
+                                "Mendapatkan Partisi berupa: {}======================",
+                                part.name
+                            );
+
+                            // apabila anakan dari parentnya ada di atas 4
+                            if !part.check_child_branch_exceed_four() {
+                                println!("{} memiliki jumlah anakan diatas 4", part.name);
+                            } else {
+                                println!("{} memiliki jumlah anakan dibawah 4", part.name);
+                                // Maka kita akan meremerge semua anakan di bawahnya untuk masuk
+                                // menjadi ankan dari parent itu sendiri
+                                part.remerge();
+                            }
+                        }
+                        // update qtup
+                        qtup.update_values();
                     }
-                    // update qtup
-                    qtup.update_values();
                 }
-                qtdec.clear();
             }
+            qtdec.clear(qtdec_pos);
         }
         // mencari posisi dari partisi yang terjadi perpindahan itu sendiri
     }
