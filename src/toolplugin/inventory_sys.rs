@@ -54,6 +54,7 @@ pub struct TkInventoryPlugins;
 impl Plugin for TkInventoryPlugins {
     fn build(&self, app: &mut App) {
         app.insert_resource(tkitems::DemoItemsSelect::new(tkitems::ITEMIDS::Wood, 5));
+        app.insert_resource(InventoryDistributeSystems::new());
         app.add_systems(Update, test_insert_item_to_inventory);
     }
 }
@@ -65,6 +66,7 @@ fn test_insert_item_to_inventory(
     key: Res<ButtonInput<KeyCode>>,
     mut item_select: ResMut<tkitems::DemoItemsSelect>,
     current_id: Res<CurrentId>,
+    mut invdsys: ResMut<InventoryDistributeSystems>,
 ) {
     if key.just_pressed(KeyCode::Digit1) {
         item_select.id = tkitems::ITEMIDS::Wood
@@ -75,13 +77,24 @@ fn test_insert_item_to_inventory(
     if key.just_pressed(KeyCode::Digit3) {
         item_select.id = tkitems::ITEMIDS::Fiber
     }
-    for (en, inv, id) in qr {
+    for (en, mut inv, id) in qr {
         if id.id.lock().unwrap().value == current_id.id {
             if key.just_pressed(KeyCode::KeyP) {
                 // insert item to inventory
-                if inv.check_contains_item(item_select.into_item()) { // NOTE Unfinished
+                if inv.check_contains_item(item_select.into_item()) {
+                    for i in &mut inv.slot {
+                        if i.check_items(&item_select.into_item()) {
+                            let (condition, distr) = i.add_amount(item_select.amount);
+                            if condition {
+                                // NOTE: Unfinished
+                                invdsys.activate(item_select.id, distr);
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+fn distribute_items() {}
