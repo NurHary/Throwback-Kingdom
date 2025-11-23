@@ -1,7 +1,7 @@
-mod inventory_sys;
+pub mod inventory_sys;
 pub mod play_plugin;
 pub mod tkanimations;
-mod tkitems;
+pub mod tkitems;
 pub mod tkphysics;
 pub mod tkquadtree;
 

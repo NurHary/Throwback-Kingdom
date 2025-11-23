@@ -54,8 +54,15 @@ pub struct TkInventoryPlugins;
 impl Plugin for TkInventoryPlugins {
     fn build(&self, app: &mut App) {
         app.insert_resource(tkitems::DemoItemsSelect::new(tkitems::ITEMIDS::Wood, 5));
-        app.insert_resource(InventoryDistributeSystems::new());
-        app.add_systems(Update, test_insert_item_to_inventory);
+        app.insert_resource(InvDSys::new());
+        app.add_systems(
+            Update,
+            (
+                test_insert_item_to_inventory,
+                distribute_items.run_if(inv_distribute),
+            )
+                .chain(),
+        );
     }
 }
 
@@ -66,7 +73,7 @@ fn test_insert_item_to_inventory(
     key: Res<ButtonInput<KeyCode>>,
     mut item_select: ResMut<tkitems::DemoItemsSelect>,
     current_id: Res<CurrentId>,
-    mut invdsys: ResMut<InventoryDistributeSystems>,
+    mut invdsys: ResMut<InvDSys>,
 ) {
     if key.just_pressed(KeyCode::Digit1) {
         item_select.id = tkitems::ITEMIDS::Wood
@@ -79,6 +86,7 @@ fn test_insert_item_to_inventory(
     }
     for (en, mut inv, id) in qr {
         if id.id.lock().unwrap().value == current_id.id {
+            // Apabila P di klik maka aktifkan
             if key.just_pressed(KeyCode::KeyP) {
                 // insert item to inventory
                 if inv.check_contains_item(item_select.into_item()) {
@@ -97,4 +105,4 @@ fn test_insert_item_to_inventory(
     }
 }
 
-fn distribute_items() {}
+fn distribute_items(mut invdsys: ResMut<InvDSys>) {}

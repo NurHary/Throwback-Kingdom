@@ -18,3 +18,7 @@ pub fn qt_distribute(need: Res<QTDistributeConditions>) -> bool {
 pub fn qt_delete(need: Res<QTDeleteConditions>) -> bool {
     need.condition
 }
+
+pub fn inv_distribute(need: Res<InvDSys>) -> bool {
+    need.condition
+}

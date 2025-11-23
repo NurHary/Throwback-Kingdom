@@ -1,5 +1,3 @@
-se std::usize;
-
 use crate::toolplugin::inventory_sys;
 use bevy::prelude::*;
 

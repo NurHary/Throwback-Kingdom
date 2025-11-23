@@ -7,6 +7,8 @@
 - [x] Memperbaiki penghapusan yang cacat
 - [x] Memperbaiki Remerging
 - [ ] Mengatasi berbagai masalah yang ada dalam quadtree itu sendiri (Almost)
+    - [ ] ada masalah ketika memasukkan unit kedalam suatu partisi dengan 4 anakan di dalamnya yang mana
+    ketambahan satu lagi akan membuat partisi itu subdivide
 === Quadtree Rest ===
 
 === Sistem Inventory & Building ===

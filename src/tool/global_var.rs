@@ -1,6 +1,6 @@
 use crate::{
     run_condition::*,
-    toolplugin::{TkItems, ITEMIDS},
+    toolplugin::tkitems::{TkItems, ITEMIDS},
 };
 use bevy::{prelude::*, scene::ron::Options};
 
@@ -128,13 +128,13 @@ impl QTRC for QTDeleteConditions {
 // Inventory //
 
 #[derive(Resource, Clone, Copy)]
-pub struct InventoryDistributeSystems {
-    items: Option<ITEMIDS>,
-    amount: usize,
-    condition: bool,
+pub struct InvDSys {
+    pub items: Option<ITEMIDS>,
+    pub amount: usize,
+    pub condition: bool,
 }
 
-impl InventoryDistributeSystems {
+impl InvDSys {
     pub fn new() -> Self {
         Self {
             items: None,
