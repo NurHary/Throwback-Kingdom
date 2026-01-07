@@ -84,14 +84,7 @@ impl DynamicHeroId {
             self.value -= 1;
         }
         match &self.child {
-            Some(x) => x.clone().lock().unwrap().reduce(),
-            None => {}
-        }
-    }
-    pub fn print_child(&self) {
-        println!("nilai: {:?}", self.value);
-        match &self.child {
-            Some(x) => x.lock().unwrap().print_child(),
+            Some(x) => x.as_ref().lock().unwrap().reduce(),
             None => {}
         }
     }

@@ -4,7 +4,7 @@
 
 [2. Features](https://github.com/NurHary/Throwback-Kingdom/tree/master/gdd/2-features.md)
 
-[3. Game Systems](https://github.com/NurHary/Throwback-Kingdom/tree/master/gdd/3-game-sys.md)
+[3. Game Loops](https://github.com/NurHary/Throwback-Kingdom/tree/master/gdd/3-game-sys.md)
 
 [4. Story Objective](https://github.com/NurHary/Throwback-Kingdom/tree/master/gdd/4-story.md)
 

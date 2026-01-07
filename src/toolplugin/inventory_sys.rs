@@ -51,6 +51,14 @@ impl TkInventory {
     }
 }
 
+/// Komponen yang menyimpan informasi terkait apakah unit dengan inventory ini merupakan unit
+/// shared inventory. komponen ini hanya menerima satu parameter yaitu size dengan input Vec2.
+// NOTE: Ada Kemungkinan saya akan menggantinya dari kotak menjadi bentuk lingkaran dengan
+// memanfaatkan rumus lingkaran. mungkin itu akan jadi lebih gampang karena itu hanya mengecek
+// apakah suatu unit ada **Didalam** lingkaran itu
+#[derive(Copy, Clone, Component, Debug)]
+pub struct TkSharedInventory(Vec2);
+
 /// Fungsi untuk memasukkan suatu item ke dalam inventory karakter
 /// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
 /// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter
