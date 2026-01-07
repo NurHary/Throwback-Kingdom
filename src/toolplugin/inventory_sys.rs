@@ -3,6 +3,7 @@ use bevy::prelude::*;
 
 use crate::*;
 
+/// Struct inventory yang akan dipegang oleh semua unit dengan sistem inventory
 #[derive(Clone, Component)]
 pub struct TkInventory {
     slot_amount: usize,
@@ -25,7 +26,8 @@ impl TkInventory {
         false
     }
 
-    /// Fungsi untuk update jumlah slot maximum
+    /// Fungsi untuk update jumlah slot maximum.
+    /// fungsi ini akan dipanggil ketika update inventory / backpack dilakukan
     pub fn extend_maximum_slot() {}
 
     /// Fungnsi untuk menambahkan
@@ -49,25 +51,15 @@ impl TkInventory {
     }
 }
 
-///// Plugins //////
-pub struct TkInventoryPlugins;
-impl Plugin for TkInventoryPlugins {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(tkitems::DemoItemsSelect::new(tkitems::ITEMIDS::Wood, 5));
-        app.insert_resource(InvDSys::new());
-        app.add_systems(
-            Update,
-            (
-                test_insert_item_to_inventory,
-                distribute_items.run_if(inv_distribute),
-            )
-                .chain(),
-        );
-    }
-}
-
+/// Fungsi untuk memasukkan suatu item ke dalam inventory karakter
+/// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
+/// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter
 pub fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
 
+/// Fungsi untuk (Test) memasukkan suatu item ke dalam inventory karakter
+/// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
+/// /// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter. sehingga untuk fungsi tes
+/// ini kita tidak akan menggunakan collision itu terlebih dahulu
 pub fn test_insert_item_to_inventory(
     qr: Query<(Entity, &mut TkInventory, &HeroesId)>,
     key: Res<ButtonInput<KeyCode>>,

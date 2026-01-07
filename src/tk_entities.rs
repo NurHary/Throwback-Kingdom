@@ -62,6 +62,7 @@ impl HeroesId {
     }
 }
 
+// NOTE: TO FIX HERE
 #[derive(Debug)]
 pub struct DynamicHeroId {
     parent: Option<Weak<Mutex<Self>>>,
