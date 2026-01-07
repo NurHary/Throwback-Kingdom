@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use crate::*;
 
 #[derive(Clone, Component)]
-struct TkInventory {
+pub struct TkInventory {
     slot_amount: usize,
     slot: Vec<tkitems::TkItems>,
 }
@@ -66,9 +66,9 @@ impl Plugin for TkInventoryPlugins {
     }
 }
 
-fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
+pub fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
 
-fn test_insert_item_to_inventory(
+pub fn test_insert_item_to_inventory(
     qr: Query<(Entity, &mut TkInventory, &HeroesId)>,
     key: Res<ButtonInput<KeyCode>>,
     mut item_select: ResMut<tkitems::DemoItemsSelect>,
@@ -105,4 +105,4 @@ fn test_insert_item_to_inventory(
     }
 }
 
-fn distribute_items(mut invdsys: ResMut<InvDSys>) {}
+pub fn distribute_items(mut invdsys: ResMut<InvDSys>) {}

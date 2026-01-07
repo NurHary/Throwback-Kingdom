@@ -72,15 +72,15 @@ impl TkQuadTree {
         }
     }
 
-    pub fn contains3_equal_option(&self, rhs: Option<Vec3>) -> bool {
-        match rhs {
-            Some(t) => {
-                let pos = Vec2::new(t.x, t.y);
-                (pos.cmpge(self.boundaries.min) & pos.cmple(self.boundaries.max)).all()
-            }
-            None => return false,
-        }
-    }
+    //pub fn contains3_equal_option(&self, rhs: Option<Vec3>) -> bool {
+    //    match rhs {
+    //        Some(t) => {
+    //            let pos = Vec2::new(t.x, t.y);
+    //            (pos.cmpge(self.boundaries.min) & pos.cmple(self.boundaries.max)).all()
+    //        }
+    //        None => return false,
+    //    }
+    //}
 
     /// fungsi untuk mengecek apakah suatu vector ada dalam posisi quadtree tersebut
     pub fn contains3_equal(&self, rhs: Vec3) -> bool {

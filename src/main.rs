@@ -41,7 +41,6 @@ fn main() {
             GameplayPlugin,
             TkQuadTreePlugin,
             TkPhysicsPlugin,
-            TkInventoryPlugins,
         ))
         .insert_resource(CurrentId::new(0))
         .insert_resource(GStatus::default()) // ini untuk menentukan rts atau rpg

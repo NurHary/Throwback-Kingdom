@@ -2,6 +2,8 @@ use crate::*;
 use bevy::prelude::*;
 use bevy_egui::EguiPrimaryContextPass;
 
+use toolplugin::inventory_sys;
+
 pub struct GameplayPlugin;
 impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
@@ -17,19 +19,28 @@ impl Plugin for GameplayPlugin {
             Update,
             (
                 //gamestate::play::cursor_pos,
+
+                // // // // Main GameLoop, berjalan tak peduli di mode apapun
                 gamestate::play::maingameloop,
+                (
+                    inventory_sys::test_insert_item_to_inventory,
+                    inventory_sys::distribute_items.run_if(inv_distribute),
+                )
+                    .chain(),
+                // // // // RPG GameLoop, berjalan hanya ketika ada dalam mode rpg
                 (
                     gamestate::play_rpg::rpg_function,
                     gamestate::play_rpg::rpg_camera_move,
                 )
                     .chain()
                     .run_if(rc_gamemode), // run hanya apabila gamemode = rpg
-                ((
+                // // // // RTS GameLoop, berjalan hanya ketika ada dalam mode rts
+                (
                     gamestate::play_rts::rts_play,
                     gamestate::play_rts::rts_handle_movement,
                 )
-                    .chain())
-                .run_if(not(rc_gamemode)), // run hanya apabila game mode = rts
+                    .chain()
+                    .run_if(not(rc_gamemode)),
             )
                 .run_if(in_state(GameState::Play)), // ini hanya akan berjalan ketika game state
                                                     // adalah play
