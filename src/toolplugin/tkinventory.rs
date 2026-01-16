@@ -71,6 +71,8 @@ pub fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
 pub fn test_insert_item_to_inventory(
     qr: Query<(Entity, &mut TkInventory, &HeroesId)>,
     key: Res<ButtonInput<KeyCode>>,
+
+    // Variabel dari item yang akan dimasukkan
     mut item_select: ResMut<tkitems::DemoItemsSelect>,
     current_id: Res<CurrentId>,
     mut invdsys: ResMut<InvDSys>,

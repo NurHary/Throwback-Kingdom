@@ -1,7 +1,7 @@
 //! Run Condition adalah module yang menyimpan struct logic dari Run Condition yang dapat
 //! memungkinkan trigger suatu fungsi ketika kondisi terpenuhi
 
-use crate::global_var::*;
+use crate::tkglobal_var::*;
 use bevy::prelude::*;
 
 /// ini digunakan untuk mentrigger perubahan game mode

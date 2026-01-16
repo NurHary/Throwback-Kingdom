@@ -2,7 +2,7 @@ use crate::*;
 use bevy::prelude::*;
 use bevy_egui::EguiPrimaryContextPass;
 
-use toolplugin::inventory_sys;
+use toolplugin::tkinventory;
 
 pub struct GameplayPlugin;
 impl Plugin for GameplayPlugin {
@@ -23,8 +23,8 @@ impl Plugin for GameplayPlugin {
                 // // // // Main GameLoop, berjalan tak peduli di mode apapun
                 gamestate::play::maingameloop,
                 (
-                    inventory_sys::test_insert_item_to_inventory,
-                    inventory_sys::distribute_items.run_if(inv_distribute),
+                    tkinventory::test_insert_item_to_inventory,
+                    tkinventory::distribute_items.run_if(inv_distribute),
                 )
                     .chain(),
                 // // // // RPG GameLoop, berjalan hanya ketika ada dalam mode rpg

@@ -1,6 +1,6 @@
 use crate::{
-    run_condition::*,
-    toolplugin::tkitems::{TkItems, ITEMIDS},
+    tkrun_condition::*,
+    toolplugin::tkitems::{ITEMIDS, TkItems},
 };
 use bevy::{prelude::*, scene::ron::Options};
 
@@ -74,6 +74,8 @@ pub trait QTRC {
     fn activate(&mut self, tr: Vec3);
 }
 
+/// Resource Switch yang berguna untuk memberitahu jika diperlukan operasi pendistribusian partisi pada
+/// suatu Quadtree
 #[derive(Resource)]
 pub struct QTDistributeConditions {
     pub pos: Vec<Vec3>,
@@ -87,6 +89,7 @@ impl Default for QTDistributeConditions {
         }
     }
 }
+
 impl QTRC for QTDistributeConditions {
     fn clear(&mut self, tr: Vec3) {
         self.pos.retain(|value| *value != tr);
@@ -99,6 +102,9 @@ impl QTRC for QTDistributeConditions {
         self.condition = true
     }
 }
+
+/// Resource Switch yang berguna untuk memberitahu jika diperlukan operasi penghapusan partisi pada
+/// suatu Quadtree
 #[derive(Resource)]
 pub struct QTDeleteConditions {
     pub pos: Vec<Vec3>,
@@ -130,7 +136,7 @@ impl QTRC for QTDeleteConditions {
 #[derive(Resource, Clone, Copy)]
 pub struct InvDSys {
     pub items: Option<ITEMIDS>,
-    pub amount: usize,
+    pub amount: u8,
     pub condition: bool,
 }
 
@@ -142,7 +148,7 @@ impl InvDSys {
             condition: false,
         }
     }
-    pub fn activate(&mut self, items: ITEMIDS, amount: usize) {
+    pub fn activate(&mut self, items: ITEMIDS, amount: u8) {
         self.items = Some(items);
         self.amount = amount
     }

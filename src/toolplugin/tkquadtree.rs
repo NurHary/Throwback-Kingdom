@@ -1,14 +1,14 @@
 //! Ini adalah Plugin yang digunakan untuk algoritma spatial partitioning yang digunakan untuk
 
-use crate::global_var::*;
+use crate::tkglobal_var::*;
 use bevy::prelude::*;
 use bevy_egui::egui::Ui;
 
 use crate::tool::qt_delete;
-use crate::tool::{qt_distribute, QTDeleteConditions};
+use crate::tool::{QTDeleteConditions, qt_distribute};
 
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContexts, EguiPrimaryContextPass};
+use bevy_egui::{EguiContexts, EguiPrimaryContextPass, egui};
 
 //#[derive(Debug, Clone, PartialEq)]
 //struct TkBoundaries {

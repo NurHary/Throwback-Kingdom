@@ -1,26 +1,30 @@
-use crate::*;
-use bevy::{math::VectorSpace, prelude::*, window::CursorGrabMode};
-
-use crate::{gamestate::play::UNIT_SPEED, *};
+use crate::{gamestate::play::UNIT_SPEED, tkcamera, tkentities, tkglobal_var};
+use bevy::{math::VectorSpace, prelude::*, window::CursorGrabMode, window::PrimaryWindow};
+use bevy_pancam;
 
 pub fn rts_play(
     key: Res<ButtonInput<KeyCode>>,
     mouse: Res<ButtonInput<MouseButton>>,
     windows: Query<&Window>,
-    mut enable_camera_motion: Single<&mut PanCam, With<MainCamera>>,
+    mut enable_camera_motion: Single<&mut bevy_pancam::PanCam, With<tkcamera::MainCamera>>,
 ) {
     enable_camera_motion.enabled = true;
 }
 
 pub fn rts_handle_movement(
     mut unit_query: Query<
-        (&HeroesId, &mut Transform, &mut Selectable, &mut TkUnit),
-        With<Selectable>,
+        (
+            &tkentities::HeroesId,
+            &mut Transform,
+            &mut tkentities::UnitSelectable,
+            &mut tkentities::TkUnit,
+        ),
+        With<tkentities::UnitSelectable>,
     >,
     mut window: Single<&mut Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
+    q_camera: Query<(&Camera, &GlobalTransform), With<tkcamera::MainCamera>>,
     mouse: Res<ButtonInput<MouseButton>>,
-    mut ls_cursor_pos: Local<MarqueeCursorPosition>,
+    mut ls_cursor_pos: Local<tkglobal_var::MarqueeCursorPosition>,
     mut gizmo: Gizmos,
     time: Res<Time>,
 ) {
@@ -95,9 +99,9 @@ pub fn rts_handle_movement(
                         - (position.y < tr.translation.y) as i32 as f32;
 
                     if direction != Vec2::ZERO {
-                        unit.state = TkUnitState::Walk
+                        unit.state = tkentities::TkUnitState::Walk
                     } else {
-                        unit.state = TkUnitState::Idle
+                        unit.state = tkentities::TkUnitState::Idle
                     }
 
                     // Handle Flip

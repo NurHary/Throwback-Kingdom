@@ -18,8 +18,8 @@ impl HeroesBundles {
     }
 }
 
-// ini bundle untuk memberikan suatu unit kemampuan untuk collision serta menaruh unit ke dalam
-// quadtree
+/// ini bundle untuk memberikan suatu unit kemampuan untuk collision serta menaruh unit ke dalam
+/// quadtree serta menjadi suatu yang dapat colliding
 #[derive(Bundle)]
 pub struct ColliderBundles {
     // ukuran dari collision tersebut.
@@ -34,10 +34,10 @@ pub struct ColliderBundles {
 }
 
 impl ColliderBundles {
-    pub fn new(width: f32, height: f32) -> Self {
+    pub fn new(coltype: CollisionType, width: f32, height: f32) -> Self {
         Self {
             collision_area: TkRectangle::new(width, height),
-            is_colliding: EntityColliding::new(),
+            is_colliding: EntityColliding::new(coltype),
             quadtree: QuadtreeUnit,
             quadtree_position: QuadtreeUnitPosition::new(),
         }

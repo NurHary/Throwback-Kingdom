@@ -1,4 +1,4 @@
-use crate::toolplugin::inventory_sys;
+use crate::toolplugin::tkinventory;
 use bevy::prelude::*;
 
 const MAXIMUM_ITEM_STACK: u8 = 99;
@@ -13,21 +13,21 @@ pub enum ITEMIDS {
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
 pub struct TkItems {
     id: ITEMIDS,
-    amount: usize,
+    amount: u8,
 }
 impl TkItems {
-    pub fn new(id: ITEMIDS, amount: usize) -> Self {
+    pub fn new(id: ITEMIDS, amount: u8) -> Self {
         Self { id, amount }
     }
-    pub fn add_amount(&mut self, amount: usize) -> (bool, usize) {
-        if (self.amount + amount) <= MAXIMUM_ITEM_STACK as usize {
+    pub fn add_amount(&mut self, amount: u8) -> (bool, u8) {
+        if (self.amount + amount) <= MAXIMUM_ITEM_STACK {
             self.amount += amount;
             // apabila bisa ditambah, maka kita tidak perlu melakukan aksi selanjutnya
             return (false, 0);
         }
         // apabila tidak bisa ditambah, maka kita perlu melakukan aksi selanjutnya
-        self.amount += amount - ((self.amount + amount) - MAXIMUM_ITEM_STACK as usize);
-        (true, (self.amount + amount) - MAXIMUM_ITEM_STACK as usize)
+        self.amount += amount - ((self.amount + amount) - MAXIMUM_ITEM_STACK);
+        (true, (self.amount + amount) - MAXIMUM_ITEM_STACK)
     }
     pub fn check_items(&self, rhs: &Self) -> bool {
         if self.id == rhs.id {
@@ -37,25 +37,14 @@ impl TkItems {
     }
 }
 
-#[derive(Component, Clone, Copy, PartialEq, Eq)]
-pub struct TkItemDrop {
-    pub id: ITEMIDS,
-    pub amount: usize,
-}
-impl TkItemDrop {
-    pub fn new(id: ITEMIDS, amount: usize) -> Self {
-        Self { id, amount }
-    }
-}
-
 #[derive(Resource)]
 pub struct DemoItemsSelect {
     pub id: ITEMIDS,
-    pub amount: usize,
+    pub amount: u8,
 }
 
 impl DemoItemsSelect {
-    pub fn new(id: ITEMIDS, amount: usize) -> Self {
+    pub fn new(id: ITEMIDS, amount: u8) -> Self {
         Self { id, amount }
     }
     pub fn into_item(&self) -> TkItems {

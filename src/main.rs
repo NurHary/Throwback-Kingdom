@@ -1,11 +1,11 @@
 mod debugtool;
 mod gamestate;
-mod tk_entities;
+mod tkentities;
 mod tool;
 mod toolplugin;
 
 use debugtool::*;
-use tk_entities::*;
+use tkentities::*;
 use tool::*;
 use toolplugin::*;
 

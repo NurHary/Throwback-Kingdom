@@ -1,8 +1,15 @@
-use crate::*;
-use bevy::{math::VectorSpace, prelude::*};
+use crate::{gamestate::startup, *};
+use bevy::prelude::*;
 // Plugins//
 //
 //Ini adalah Plugin yang mana Plugin ini akan berjalan ketika
+
+#[derive(Copy, Clone)]
+pub enum CollisionType {
+    UNIT,
+    ITEMS,
+}
+
 pub struct TkPhysicsPlugin;
 
 impl Plugin for TkPhysicsPlugin {
@@ -11,7 +18,10 @@ impl Plugin for TkPhysicsPlugin {
     }
 }
 
-// Kita akan menngubah fungsinya dari Oop ke Ecs
+/// Struct untuk bentuk segi empat
+/// model dari struct ini dalam model ECS sehingga ia hanya menyimpan informasi terkait width dan
+/// height saja. untuk posisinya diambil dari entity yang memegangnya (dimana pasti memiliki
+/// transform)
 #[derive(Component, Clone, Copy)]
 pub struct TkRectangle {
     pub width: f32,
@@ -48,14 +58,35 @@ impl TkRectangle {
     }
 }
 
+/// Struct untuk bentuk Capsules (tidur)
+/// model dari struct ini dalam model ECS sehingga han ya menyimpan radius dari lingkaran tersebut
+/// tanpa menyertakan posisinya. untuk posisinya diambil dari entity yang memegangnya (dimana pasti
+/// memiliki transform)
+#[derive(Component, Clone, Copy)]
+struct TkCapsules {
+    width: f32, // width ada, tapi height = rad
+    rad: f32,
+}
+
+impl TkCapsules {
+    /// fungsi init untuk membuat componen ECS TkCircles
+    pub fn new(width: f32, rad: f32) -> Self {
+        Self { width, rad }
+    }
+}
+
 #[derive(Component)]
 pub struct EntityColliding {
     colliding: bool,
+    col_type: CollisionType,
 }
 
 impl EntityColliding {
-    pub fn new() -> Self {
-        Self { colliding: false }
+    pub fn new(coltype: CollisionType) -> Self {
+        Self {
+            colliding: false,
+            col_type: coltype,
+        }
     }
 }
 
