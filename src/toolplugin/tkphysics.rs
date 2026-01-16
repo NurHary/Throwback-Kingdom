@@ -90,6 +90,17 @@ impl EntityColliding {
     }
 }
 
+/// Fungsi untuk mengakses Quadtree serta melakukan pengecekan collision berdasarkan isi dari
+/// Quadtree tersebut
+pub fn access_quadtree(
+    qr: Query<
+        (&mut EntityColliding, &TkRectangle, &Transform, Entity),
+        With<tkquadtree::QuadtreeUnit>,
+    >,
+    qt: Res<tkquadtree::TkQuadTree>,
+) {
+}
+
 pub fn check_collision(
     mut aabb_query: Query<
         (&mut EntityColliding, &TkRectangle, &Transform, Entity),

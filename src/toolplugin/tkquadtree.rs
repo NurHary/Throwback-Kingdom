@@ -5,10 +5,10 @@ use bevy::prelude::*;
 use bevy_egui::egui::Ui;
 
 use crate::tool::qt_delete;
-use crate::tool::{QTDeleteConditions, qt_distribute};
+use crate::tool::{qt_distribute, QTDeleteConditions};
 
 use bevy::prelude::*;
-use bevy_egui::{EguiContexts, EguiPrimaryContextPass, egui};
+use bevy_egui::{egui, EguiContexts, EguiPrimaryContextPass};
 
 //#[derive(Debug, Clone, PartialEq)]
 //struct TkBoundaries {
