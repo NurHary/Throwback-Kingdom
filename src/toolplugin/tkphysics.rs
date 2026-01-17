@@ -14,7 +14,10 @@ pub struct TkPhysicsPlugin;
 
 impl Plugin for TkPhysicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, check_collision.run_if(in_state(GameState::Play)));
+        app.add_systems(
+            Update,
+            (check_collision, access_quadtree_physics).run_if(in_state(GameState::Play)),
+        );
     }
 }
 
@@ -92,13 +95,14 @@ impl EntityColliding {
 
 /// Fungsi untuk mengakses Quadtree serta melakukan pengecekan collision berdasarkan isi dari
 /// Quadtree tersebut
-pub fn access_quadtree(
+pub fn access_quadtree_physics(
     qr: Query<
         (&mut EntityColliding, &TkRectangle, &Transform, Entity),
         With<tkquadtree::QuadtreeUnit>,
     >,
     qt: Res<tkquadtree::TkQuadTree>,
 ) {
+    println!("List: {:?}", qt.get_all_entity());
 }
 
 pub fn check_collision(
@@ -108,7 +112,7 @@ pub fn check_collision(
     >,
 ) { //
 
-    //for (mut entycoll, rectang, tr, entiti) in &aabb_query {
+    //for (mut entycoll, rectang, tr, entity) in &aabb_query {
     //    let this_min_x = tr.translation.x - rectang.width / 2.0;
     //    let this_max_x = tr.translation.x + rectang.width / 2.0;
     //    let this_min_y = tr.translation.y - rectang.height / 2.0;
@@ -118,7 +122,7 @@ pub fn check_collision(
     //        let other_max_x = other_tr.translation.x + other_rectang.width / 2.0;
     //        let other_min_y = other_tr.translation.y - other_rectang.height / 2.0;
     //        let other_max_y = other_tr.translation.y + other_rectang.height / 2.0;
-    //        if entiti != other_entiti {
+    //        if entity != other_entiti {
     //            if this_min_x <= other_max_x
     //                && this_max_x >= other_min_x
     //                && this_min_y <= other_max_y

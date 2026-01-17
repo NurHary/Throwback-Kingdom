@@ -48,7 +48,7 @@ impl UnitSelectable {
     }
 }
 
-// Sistem Id
+// System Id
 // //
 // //
 #[derive(Component)]
@@ -146,10 +146,10 @@ impl DynamicHeroList {
             self.val_back = prev_val.and_then(|w| w.upgrade());
         }
     }
-    pub fn print_member(&self) {
-        match &self.val_front {
-            Some(x) => x.lock().unwrap().print_child(),
-            None => {}
-        }
-    }
+    //pub fn print_member(&self) {
+    //    match &self.val_front {
+    //        Some(x) => x.lock().unwrap().print_child(),
+    //        None => {}
+    //    }
+    //}
 }

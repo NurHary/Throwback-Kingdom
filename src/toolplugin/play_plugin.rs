@@ -22,11 +22,11 @@ impl Plugin for GameplayPlugin {
 
                 // // // // Main GameLoop, berjalan tak peduli di mode apapun
                 gamestate::play::maingameloop,
-                (
-                    tkinventory::test_insert_item_to_inventory,
-                    tkinventory::distribute_items.run_if(inv_distribute),
-                )
-                    .chain(),
+                //(
+                //tkinventory::test_insert_item_to_inventory,
+                //tkinventory::distribute_items.run_if(inv_distribute),
+                //)
+                //    .chain(),
                 // // // // RPG GameLoop, berjalan hanya ketika ada dalam mode rpg
                 (
                     gamestate::play_rpg::rpg_function,
