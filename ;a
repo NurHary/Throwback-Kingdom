@@ -98,77 +98,41 @@ pub fn get_quadtree_information() {}
 /// Fungsi untuk mengakses Quadtree serta melakukan pengecekan collision berdasarkan isi dari
 /// Quadtree tersebut
 pub fn access_quadtree_physics(
-    mut qr: Query<(&mut EntityColliding, &TkRectangle, &Transform), With<tkquadtree::QuadtreeUnit>>,
+    qr: Query<
+        (&mut EntityColliding, &TkRectangle, &Transform, Entity),
+        With<tkquadtree::QuadtreeUnit>,
+    >,
     qt: Res<tkquadtree::TkQuadTree>,
 ) {
-    //println!("List: {:?}", qt.get_all_entity());
+    println!("List: {:?}", qt.get_all_entity());
     // mendapatkan semua entity dalam quadtree
     if let Some(all_en) = qt.get_all_entity() {
         // iterasikan vector tersebut untuk mengakses vector di dalamnya
         for part_all_en in all_en {
             // apabila len 1, make skip
             if part_all_en.len() == 1 {
-                continue;
+                break;
             }
             // TODO: lakukan fungsi untuk mengecek collision antara 2 unit tersebut
-            // 2D Array Iteration
-            println!("Cek Pada {:?}", part_all_en);
-            for i in part_all_en {
-                if let Ok((mut current_ecol, current_rectang, current_tr)) = qr.get(*i) {
-                    let current_min_pos: Vec2 = Vec2::new(
-                        current_tr.translation.x - current_rectang.width / 2.0,
-                        current_tr.translation.y - current_rectang.height / 2.0,
-                    );
-                    let current_max_pos: Vec2 = Vec2::new(
-                        current_tr.translation.x + current_rectang.width / 2.0,
-                        current_tr.translation.y + current_rectang.height / 2.0,
-                    );
-                    for j in part_all_en {
-                        // if check untuk memastikan entity i bukanlah entity i itu sendiri
-                        if i != j {
-                            // if check untuk memastikan entity i bukanlah entity i itu sendiri
-                            if let Ok((mut next_ecol, next_rectang, next_tr)) = qr.get(*j) {
-                                let next_min_pos: Vec2 = Vec2::new(
-                                    next_tr.translation.x - next_rectang.width / 2.0,
-                                    next_tr.translation.y - next_rectang.height / 2.0,
-                                );
-                                let next_max_pos: Vec2 = Vec2::new(
-                                    next_tr.translation.x + next_rectang.width / 2.0,
-                                    next_tr.translation.y + next_rectang.height / 2.0,
-                                );
-
-                                if current_min_pos.x <= next_max_pos.x
-                                    && current_max_pos.x >= next_min_pos.x
-                                    && current_min_pos.y <= next_max_pos.y
-                                    && current_max_pos.y >= next_min_pos.y
-                                {
-                                    println!(
-                                        "this min {current_min_pos}, this max {current_max_pos} \n next min {next_min_pos}, next max {next_max_pos} \n{i} Ditabrak dengan {j}\nLebih Baik Kau Diam"
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            check_collision(&qr, part_all_en);
         }
     }
 }
 
 pub fn check_collision(
-    mut qr: Query<
+    mut aabb_query: &Query<
         (&mut EntityColliding, &TkRectangle, &Transform, Entity),
         With<tkquadtree::QuadtreeUnit>,
     >,
-) {
-    //
+    qt_data: &Vec<Entity>,
+) { //
 
-    //for (mut entycoll, rectang, tr, entity) in &qr {
+    //for (mut entycoll, rectang, tr, entity) in &aabb_query {
     //    let this_min_x = tr.translation.x - rectang.width / 2.0;
     //    let this_max_x = tr.translation.x + rectang.width / 2.0;
     //    let this_min_y = tr.translation.y - rectang.height / 2.0;
     //    let this_max_y = tr.translation.y + rectang.height / 2.0;
-    //    for (mut other_entycoll, other_rectang, other_tr, other_entiti) in &qr {
+    //    for (mut other_entycoll, other_rectang, other_tr, other_entiti) in &aabb_query {
     //        let other_min_x = other_tr.translation.x - other_rectang.width / 2.0;
     //        let other_max_x = other_tr.translation.x + other_rectang.width / 2.0;
     //        let other_min_y = other_tr.translation.y - other_rectang.height / 2.0;

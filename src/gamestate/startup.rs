@@ -86,7 +86,7 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 100.0, 100.0),
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 15.0, 15.0),
         Transform::from_xyz(25.0, 25.0, 0.0),
     ));
     command.spawn((
@@ -125,7 +125,7 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 100.0, 100.0),
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 15.0, 15.0),
         Transform::from_xyz(30.0, -20.0, 0.0),
     ));
     command.spawn((
@@ -164,7 +164,7 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 100.0, 100.0),
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 15.0, 15.0),
         Transform::from_xyz(-90.0, 25.0, 0.0),
     ));
     // NOTE Nonaktifkan Sementara
@@ -204,7 +204,7 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 100.0, 100.0),
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 15.0, 15.0),
         Transform::from_xyz(220.0, 0.0, 0.0),
     ));
     command.spawn((
@@ -243,7 +243,7 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 100.0, 100.0),
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 15.0, 15.0),
         Transform::from_xyz(-100.0, -50.0, 0.0),
     ));
 }

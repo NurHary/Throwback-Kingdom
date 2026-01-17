@@ -1,6 +1,6 @@
 # Main
 ## Plugin
-main.rs menggunakan Bevy dengan model modular dimana sistem - sistem dari game itu sendiri akan di pisah dengan menggunakan model modular plugin itu sendiri
+main.rs menggunakan Bevy dengan model modular dimana system - system dari game itu sendiri akan di pisah dengan menggunakan model modular plugin itu sendiri
 
 untuk saat ini terdapat beberapa plugin yang telah dibuat itu sendiri yaitu:
 
@@ -14,7 +14,7 @@ GameplayPlugin
 TkQuadTreePlugin
 |   unit_to_quadtree    // Fungsi yang akan menambahkan entity baru dengan componen QuadtreeUnit kedalam TkQuadTree
 |   update_quadtree_unit    // Fungsi yang akan melakukan update pada quadtree ketika ada perpindahan suatu objek dari 1 quadtree ke quadtree lainnya
-|   
+|
 
 target ke depan
 MainMenuPlugin
@@ -27,10 +27,22 @@ TkQuadTree
 |   tile
 |   boundary
 {impl
-|   insert(en, tr)          // Fungsi yang digunakan untuk menaruh sesuatu kedalam Quadtree tersebut fungsi ini membutuhkan entity (en) yang akan dimasukkan dan posisi (tr) untuk menentukan 
-|   subdivide               // Fungsi yang digunakan ketika jumlah anakan dalam suatu quadtree lebih dari empat, fungsi ini akan membuat children quadtree berdasaarkan parameter quadtree itu sendiri dan 
+|   insert(en, tr)          // Fungsi yang digunakan untuk menaruh sesuatu kedalam Quadtree tersebut fungsi ini membutuhkan entity (en)
+                            yang akan dimasukkan dan posisi (tr) untuk menentukan
+|   subdivide               // Fungsi yang digunakan ketika jumlah anakan dalam suatu quadtree lebih dari empat, fungsi ini akan membuat
+                            children quadtree berdasaarkan parameter quadtree itu sendiri dan
 |   distribute
-|   contains
-|   get_partition
-|   check_entity
-|   ray_partition
+|   contains(tr)            // Fungsi untuk mengecek apakah
+|   get_partition(tr)
+|   check_entity(en)
+|   remove_unit()
+|   remerge()
+|   check_if_tiles_empty
+|   check_child_branch
+|   check_child_branch_exceed
+|   check_child_amount
+|
+|   recursive_entity_get
+|   get_all_entity
+|
+|   ray_partition()

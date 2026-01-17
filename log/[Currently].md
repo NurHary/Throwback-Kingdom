@@ -1,18 +1,21 @@
 # Apa yang akan dilakukan
 
 === To Fix ===
+- [ ] Fugsi pengecekan bekerja pada satu saja
 - [ ] masih ingat dengan tipe data doubly linked list yang saya buat, ayo kita ubah dari doubly linked list menjadi linked list biasa
     untuk menyimpan lebih banyak memori
 
 
-=== Sistem Pickup Items ===
-- [ ] membuat kode / implementasi simpel untuk mengakses quadtree serta menggunakannya sebagai sarana utama untuk melakukan pengecekan
+=== System Pickup Items ===
+- [x] membuat kode / implementasi simpel untuk mengakses quadtree serta menggunakannya sebagai sarana utama untuk melakukan pengecekan
     collision pada semua EntityColliding
-- [ ] implementasi simpel untuk EntityColliding
+- [x] system untuk mengecek collision berdasarkan hasil quadtree
+- [ ] update system
+- [] implementasi simpel untuk EntityColliding
 
-=== Sistem Inventory & Building ===
+=== System Inventory & Building ===
 - [ ] membuat indikator untuk mengecek inventory secara sederhana dengan menggunakan bevy native ui
-- [ ] implementasi prerequisites dan pembangunan serta sistem grid pembangunan
+- [ ] implementasi prerequisites dan pembangunan serta system grid pembangunan
 
 === Quadtree ===
 - [ ] Mengatasi berbagai masalah yang ada dalam quadtree itu sendiri (Almost)
