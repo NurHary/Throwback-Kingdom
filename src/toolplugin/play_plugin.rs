@@ -45,6 +45,6 @@ impl Plugin for GameplayPlugin {
                 .run_if(in_state(GameState::Play)), // ini hanya akan berjalan ketika game state
                                                     // adalah play
         );
-        //app.add_systems(EguiPrimaryContextPass, show_current_position);
+        app.add_systems(EguiPrimaryContextPass, show_current_position);
     }
 }

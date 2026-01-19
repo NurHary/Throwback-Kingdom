@@ -12,8 +12,8 @@ pub enum ITEMIDS {
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
 pub struct TkItems {
-    id: ITEMIDS,
-    amount: u8,
+    pub id: ITEMIDS,
+    pub amount: u8,
 }
 impl TkItems {
     pub fn new(id: ITEMIDS, amount: u8) -> Self {
@@ -22,10 +22,10 @@ impl TkItems {
     pub fn add_amount(&mut self, amount: u8) -> (bool, u8) {
         if (self.amount + amount) <= MAXIMUM_ITEM_STACK {
             self.amount += amount;
-            // apabila bisa ditambah, maka kita tidak perlu melakukan aksi selanjutnya
+            // apabila bisa ditambah, make kita tidak perlu melakukan aksi selanjutnya
             return (false, 0);
         }
-        // apabila tidak bisa ditambah, maka kita perlu melakukan aksi selanjutnya
+        // apabila tidak bisa ditambah, make kita perlu melakukan aksi selanjutnya
         self.amount += amount - ((self.amount + amount) - MAXIMUM_ITEM_STACK);
         (true, (self.amount + amount) - MAXIMUM_ITEM_STACK)
     }

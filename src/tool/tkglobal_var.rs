@@ -1,10 +1,10 @@
 use crate::{
     tkrun_condition::*,
-    toolplugin::tkitems::{ITEMIDS, TkItems},
+    toolplugin::tkitems::{TkItems, ITEMIDS},
 };
 use bevy::{prelude::*, scene::ron::Options};
 
-// Variabel Global
+// Variable Global
 // Untuk pemilihan Karakter
 #[derive(Resource)]
 pub struct CurrentId {
@@ -45,7 +45,7 @@ impl GStatus {
     }
 }
 
-// Variabel Local
+// Variable Local
 // ini untuk menyimpan nilai sementara dari klik mouse terakhir
 #[derive(Default)]
 pub struct MarqueeCursorPosition {

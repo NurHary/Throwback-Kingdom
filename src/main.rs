@@ -46,6 +46,7 @@ fn main() {
         .insert_resource(GStatus::default()) // ini untuk menentukan rts atau rpg
         .insert_resource(DynamicHeroList::new()) // ini untuk memberikan id ke setiap heroes
         .insert_resource(DebugCurrentPosition { pos: Vec3::ZERO })
+        .insert_resource(tkglobal_var::InvDSys::new())
         .init_state::<GameState>()
         .run();
 }

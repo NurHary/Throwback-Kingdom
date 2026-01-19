@@ -3,7 +3,7 @@ use bevy::prelude::*;
 
 use crate::*;
 
-/// Struct inventory yang akan dipegang oleh semua unit dengan sistem inventory
+/// Struct inventory yang akan dipegang oleh semua unit dengan system inventory
 #[derive(Clone, Component)]
 pub struct TkInventory {
     slot_amount: usize,
@@ -72,7 +72,7 @@ pub fn test_insert_item_to_inventory(
     qr: Query<(Entity, &mut TkInventory, &HeroesId)>,
     key: Res<ButtonInput<KeyCode>>,
 
-    // Variabel dari item yang akan dimasukkan
+    // Variable dari item yang akan dimasukkan
     mut item_select: ResMut<tkitems::DemoItemsSelect>,
     current_id: Res<CurrentId>,
     mut invdsys: ResMut<InvDSys>,
@@ -88,7 +88,7 @@ pub fn test_insert_item_to_inventory(
     }
     for (en, mut inv, id) in qr {
         if id.id.lock().unwrap().value == current_id.id {
-            // Apabila P di klik maka aktifkan
+            // Apabila P di klik make aktifkan
             if key.just_pressed(KeyCode::KeyP) {
                 // insert item to inventory
                 if inv.check_contains_item(item_select.into_item()) {

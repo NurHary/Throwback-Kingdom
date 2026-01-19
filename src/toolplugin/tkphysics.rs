@@ -1,4 +1,4 @@
-use crate::{gamestate::startup, tkglobal_var, tkquadtree};
+use crate::{gamestate::startup, tkglobal_var, tkitems, tkquadtree};
 use bevy::prelude::*;
 // Plugins//
 //
@@ -7,7 +7,7 @@ use bevy::prelude::*;
 #[derive(Copy, Clone)]
 pub enum CollisionType {
     UNIT,
-    ITEMS,
+    ITEMS(tkitems::TkItems),
 }
 
 pub struct TkPhysicsPlugin;
@@ -118,6 +118,7 @@ impl EntityColliding {
 pub fn access_quadtree_physics(
     mut qr: Query<(&EntityColliding, &TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
     qt: Res<tkquadtree::TkQuadTree>,
+    mut invdsys: ResMut<tkglobal_var::InvDSys>,
 ) {
     //println!("List: {:?}", qt.get_all_entity());
     // mendapatkan semua entity dalam quadtree
@@ -135,7 +136,7 @@ pub fn access_quadtree_physics(
                 if let Ok((current_ecol, current_rectang, current_tr)) = qr.get(*i) {
                     // Pastikan yang saat ini adalah Unit dan bukan items
                     match current_ecol.col_type {
-                        CollisionType::ITEMS => {
+                        CollisionType::ITEMS(_) => {
                             continue;
                         }
                         _ => {}
@@ -174,8 +175,13 @@ pub fn access_quadtree_physics(
                                                 current_tr.translation.x < next_tr.translation.x,
                                                 current_tr.translation.y < next_tr.translation.y,
                                             ))
+                                        } // TODO, antara lakukan system pengambilan item disini
+                                        // atau di tempat lainnya
+                                        // PLACEHOLDER
+                                        CollisionType::ITEMS(collisionitems) => {
+                                            invdsys
+                                                .activate(collisionitems.id, collisionitems.amount);
                                         }
-                                        CollisionType::ITEMS => {}
                                     }
                                 }
                             }
@@ -184,7 +190,7 @@ pub fn access_quadtree_physics(
                 }
             }
 
-            // TODO Perbaiki Collision
+            // Melakukan Operasi Collision
             if let Some(colval) = collision_value {
                 //println!("posisi: {:?}", colval.2);
                 if let Ok((current_ecol, _, mut current_tr)) = qr.get_mut(colval.0) {
