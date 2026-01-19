@@ -16,7 +16,11 @@ impl Plugin for TkPhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (access_quadtree_physics).run_if(in_state(tkglobal_var::GameState::Play)),
+            (
+                access_quadtree_physics.run_if(in_state(tkglobal_var::GameState::Play)),
+                tk_show_collision_box.run_if(in_state(tkglobal_var::GameState::Play)),
+            ), // ini hanya akan berjalan ketika game state
+               // adalah play
         );
     }
 }
@@ -59,6 +63,22 @@ impl TkRectangle {
         let y1 = tr.y + self.height / 2.;
         [x0, y0, x1, y1]
     }
+    /// Fungsi yang mereturn Vec2 ukuran dari dua rectangle yang intersect
+    pub fn intersect_size(&self, other: &TkRectangle, self_pos: &Vec3, other_pos: &Vec3) -> Vec2 {
+        let current_pos = self.unwrap_coord(self_pos);
+        let next_pos = other.unwrap_coord(other_pos);
+        if !(current_pos[0] <= next_pos[2]
+            && current_pos[2] >= next_pos[0]
+            && current_pos[1] <= next_pos[3]
+            && current_pos[3] >= next_pos[1])
+        {
+            return Vec2::ZERO;
+        }
+        Vec2::new(
+            current_pos[2].min(next_pos[2]) - current_pos[0].max(next_pos[0]),
+            current_pos[3].min(next_pos[3]) - current_pos[1].max(next_pos[1]),
+        )
+    }
 }
 
 /// Struct untuk bentuk Capsules (tidur)
@@ -78,7 +98,7 @@ impl TkCapsules {
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 pub struct EntityColliding {
     colliding: bool,
     col_type: CollisionType,
@@ -93,12 +113,10 @@ impl EntityColliding {
     }
 }
 
-pub fn get_quadtree_information() {}
-
 /// Fungsi untuk mengakses Quadtree serta melakukan pengecekan collision berdasarkan isi dari
-/// Quadtree tersebut
+/// Quadtree tersebut.
 pub fn access_quadtree_physics(
-    mut qr: Query<(&mut EntityColliding, &TkRectangle, &Transform), With<tkquadtree::QuadtreeUnit>>,
+    mut qr: Query<(&EntityColliding, &TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
     qt: Res<tkquadtree::TkQuadTree>,
 ) {
     //println!("List: {:?}", qt.get_all_entity());
@@ -106,47 +124,81 @@ pub fn access_quadtree_physics(
     if let Some(all_en) = qt.get_all_entity() {
         // iterasikan vector tersebut untuk mengakses vector di dalamnya
         for part_all_en in all_en {
+            let mut collision_value: Option<(Entity, Entity, Vec2, bool, bool)> = None;
             // apabila len 1, make skip
             if part_all_en.len() == 1 {
                 continue;
             }
-            // TODO: lakukan fungsi untuk mengecek collision antara 2 unit tersebut
             // 2D Array Iteration
             println!("Cek Pada {:?}", part_all_en);
             for i in part_all_en {
-                if let Ok((mut current_ecol, current_rectang, current_tr)) = qr.get(*i) {
-                    let current_min_pos: Vec2 = Vec2::new(
-                        current_tr.translation.x - current_rectang.width / 2.0,
-                        current_tr.translation.y - current_rectang.height / 2.0,
-                    );
-                    let current_max_pos: Vec2 = Vec2::new(
-                        current_tr.translation.x + current_rectang.width / 2.0,
-                        current_tr.translation.y + current_rectang.height / 2.0,
-                    );
+                if let Ok((current_ecol, current_rectang, current_tr)) = qr.get(*i) {
+                    // Pastikan yang saat ini adalah Unit dan bukan items
+                    match current_ecol.col_type {
+                        CollisionType::ITEMS => {
+                            continue;
+                        }
+                        _ => {}
+                    }
+                    // Mendapatkan Kordinat Kotak untuk current
+                    let current_pos = current_rectang.unwrap_coord(&current_tr.translation);
                     for j in part_all_en {
                         // if check untuk memastikan entity i bukanlah entity i itu sendiri
                         if i != j {
                             // if check untuk memastikan entity i bukanlah entity i itu sendiri
-                            if let Ok((mut next_ecol, next_rectang, next_tr)) = qr.get(*j) {
-                                let next_min_pos: Vec2 = Vec2::new(
-                                    next_tr.translation.x - next_rectang.width / 2.0,
-                                    next_tr.translation.y - next_rectang.height / 2.0,
-                                );
-                                let next_max_pos: Vec2 = Vec2::new(
-                                    next_tr.translation.x + next_rectang.width / 2.0,
-                                    next_tr.translation.y + next_rectang.height / 2.0,
-                                );
+                            if let Ok((next_ecol, next_rectang, next_tr)) = qr.get(*j) {
+                                // Mendapatkan Kordinat Kotak untuk next
+                                let next_pos = next_rectang.unwrap_coord(&next_tr.translation);
 
-                                if current_min_pos.x <= next_max_pos.x
-                                    && current_max_pos.x >= next_min_pos.x
-                                    && current_min_pos.y <= next_max_pos.y
-                                    && current_max_pos.y >= next_min_pos.y
+                                if current_pos[0] <= next_pos[2]
+                                    && current_pos[2] >= next_pos[0]
+                                    && current_pos[1] <= next_pos[3]
+                                    && current_pos[3] >= next_pos[1]
                                 {
-                                    println!(
-                                        "this min {current_min_pos}, this max {current_max_pos} \n next min {next_min_pos}, next max {next_max_pos} \n{i} Ditabrak dengan {j}\nLebih Baik Kau Diam"
-                                    );
+                                    //println!(
+                                    //    "current {:?} \nnext {:?} \n{i} Ditabrak dengan {j}\nLebih Baik Kau Diam",
+                                    //    current_pos, next_pos
+                                    //);
+                                    // Check
+                                    match next_ecol.col_type {
+                                        CollisionType::UNIT => {
+                                            let overlap_value = current_rectang.intersect_size(
+                                                next_rectang,
+                                                &current_tr.translation,
+                                                &next_tr.translation,
+                                            );
+                                            collision_value = Some((
+                                                *i,
+                                                *j,
+                                                overlap_value,
+                                                current_tr.translation.x < next_tr.translation.x,
+                                                current_tr.translation.y < next_tr.translation.y,
+                                            ))
+                                        }
+                                        CollisionType::ITEMS => {}
+                                    }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+
+            // TODO Perbaiki Collision
+            if let Some(colval) = collision_value {
+                //println!("posisi: {:?}", colval.2);
+                if let Ok((current_ecol, _, mut current_tr)) = qr.get_mut(colval.0) {
+                    if colval.2.x < colval.2.y {
+                        if colval.3 {
+                            current_tr.translation.x -= colval.2.x
+                        } else {
+                            current_tr.translation.x += colval.2.x
+                        }
+                    } else {
+                        if colval.4 {
+                            current_tr.translation.y -= colval.2.y
+                        } else {
+                            current_tr.translation.y += colval.2.y
                         }
                     }
                 }
@@ -155,38 +207,15 @@ pub fn access_quadtree_physics(
     }
 }
 
-pub fn check_collision(
-    mut qr: Query<
-        (&mut EntityColliding, &TkRectangle, &Transform, Entity),
-        With<tkquadtree::QuadtreeUnit>,
-    >,
+pub fn tk_show_collision_box(
+    qr: Query<(&Transform, &TkRectangle), (With<EntityColliding>)>,
+    mut gizmos: Gizmos,
 ) {
-    //
-
-    //for (mut entycoll, rectang, tr, entity) in &qr {
-    //    let this_min_x = tr.translation.x - rectang.width / 2.0;
-    //    let this_max_x = tr.translation.x + rectang.width / 2.0;
-    //    let this_min_y = tr.translation.y - rectang.height / 2.0;
-    //    let this_max_y = tr.translation.y + rectang.height / 2.0;
-    //    for (mut other_entycoll, other_rectang, other_tr, other_entiti) in &qr {
-    //        let other_min_x = other_tr.translation.x - other_rectang.width / 2.0;
-    //        let other_max_x = other_tr.translation.x + other_rectang.width / 2.0;
-    //        let other_min_y = other_tr.translation.y - other_rectang.height / 2.0;
-    //        let other_max_y = other_tr.translation.y + other_rectang.height / 2.0;
-    //        if entity != other_entiti {
-    //            if this_min_x <= other_max_x
-    //                && this_max_x >= other_min_x
-    //                && this_min_y <= other_max_y
-    //                && this_max_y >= other_min_y
-    //            {
-    //                println!("Other min x: {}, This max x: {}", other_min_x, this_max_x);
-    //                println!("Other min y: {}, This max y: {}", other_min_y, this_max_y);
-    //                println!("Other max x: {}, This min x: {}", other_max_x, this_min_x);
-    //                println!("Other max y: {}, This min y: {}", other_max_y, this_min_y);
-    //                println!("Ditabrak dengan {}", other_entiti);
-    //                println!("Terdapat Tabrakan")
-    //            }
-    //        }
-    //    }
-    //}
+    for (tr, re) in &qr {
+        gizmos.rect_2d(
+            Vec2::new(tr.translation.x, tr.translation.y),
+            Vec2::new(re.width, re.height),
+            Color::linear_rgb(1.0, 0.0, 0.0),
+        );
+    }
 }

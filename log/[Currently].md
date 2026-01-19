@@ -1,7 +1,8 @@
 # Apa yang akan dilakukan
 
 === To Fix ===
-- [ ] Fugsi pengecekan bekerja pada satu saja
+- [x] Fugsi pengecekan bekerja pada satu saja
+- [ ] Pengecekan pada quadtree multi partisi agak awur / tidak memiliki nilai - nilai tertentu
 - [ ] masih ingat dengan tipe data doubly linked list yang saya buat, ayo kita ubah dari doubly linked list menjadi linked list biasa
     untuk menyimpan lebih banyak memori
 
@@ -11,7 +12,7 @@
     collision pada semua EntityColliding
 - [x] system untuk mengecek collision berdasarkan hasil quadtree
 - [ ] update system
-- [] implementasi simpel untuk EntityColliding
+- [x] implementasi simpel untuk EntityColliding
 
 === System Inventory & Building ===
 - [ ] membuat indikator untuk mengecek inventory secara sederhana dengan menggunakan bevy native ui
