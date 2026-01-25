@@ -9,30 +9,13 @@
 </div>
 
 ## About
-Throwback Kingdom is a game written in Rust Programming languange with Bevy.
+Throwback Kingdom is a game written in Rust Programming language with Bevy.
 Throwback Kingdom Combine RPG and RTS into one game
 
-
-
-## Vision
-
-## Week Run
-- [x] Implementasi Quadtree
-- [ ] Refactoring Quadtree
-- [ ] Test Quadtree
-
-## To Revise
-- [ ] Scale ketika melakukan
-- [ ] Quadtree Grab System (multiple / rectangle)
-- [ ] how to render with Quadtree
-
-(7/2025)
-## Target One Month
-- [x] quadtree for object in map
-- Implementasi Quadtree
-- Memperbaiki fungsi Move dan select
-
-## Roadmap
+## Roadmap (March)
+1. Physics Support For Capsule (Horizontal) Shapes
+2. Inventory Systems and GIS
+3. RTS Movement
 
 ## Notes
 - windows cursor position = - 0.5 * resoulution
