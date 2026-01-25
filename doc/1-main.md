@@ -46,3 +46,16 @@ TkQuadTree
 |   get_all_entity
 |
 |   ray_partition()
+
+Beberapa Lainnya adalah Global Variable seperti
+1. World Sizes
+2. GameState
+3. CurrentId
+
+Ataupun Local Variable Struct seperti:
+1. Marquee Cursor Position
+
+dan beberapa lainnya adalah resources switch technique yang mana akan diaktifkan dan sinyal aktif tersebut
+akan dapat dibaca oleh semua yang membutuhkan, beberapa darinya adalah
+1. Quadtree (Distribute, Delete)
+2. Inventory (Insert)

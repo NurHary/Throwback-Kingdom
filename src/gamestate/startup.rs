@@ -1,6 +1,16 @@
-use crate::{tkanimations, tkbundles, tkcamera, tkentities, tkphysics, toolplugin::tkinventory};
-use bevy::{prelude::*, render::texture};
+use crate::{
+    tkanimations, tkbundles, tkcamera, tkentities, tkgameui, tkphysics, toolplugin::tkinventory,
+};
+use bevy::{color::palettes, prelude::*, render::texture};
 use bevy_pancam;
+
+const COLORPALETTES: [Color; 5] = [
+    Color::linear_rgba(0., 0., 0., 1.),
+    Color::linear_rgba(0., 0., 0., 1.),
+    Color::linear_rgba(0., 0., 0., 1.),
+    Color::linear_rgba(0., 0., 0., 1.),
+    Color::linear_rgba(0., 0., 0., 1.),
+];
 
 pub fn spawn_character(
     mut command: Commands,
@@ -19,7 +29,7 @@ pub fn spawn_character(
         TextureAtlasLayout::from_grid(UVec2::splat(16), 2, 2, None, None);
     let texture_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout);
 
-    // Test Texture Atlas untuk tilemap
+    // // //  TEST TEXTURE ATLAS // // //
     command.spawn((
         Sprite {
             image: testure,
@@ -33,9 +43,8 @@ pub fn spawn_character(
         Transform::from_xyz(-25.0, -100.0, 0.0),
     ));
 
-    // Test
-    // // //
-
+    // // // CAMERA // // //
+    //
     command.spawn((
         Camera2d,
         tkcamera::MainCamera,
@@ -50,6 +59,8 @@ pub fn spawn_character(
             ..Default::default()
         },
     ));
+
+    // // // UNIT // // //
 
     let player_texture: Handle<Image> = asset_server.load("test_chara.png");
     let player_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(
@@ -167,7 +178,7 @@ pub fn spawn_character(
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
         Transform::from_xyz(-90.0, 25.0, 0.0),
     ));
-    // NOTE Nonaktifkan Sementara
+
     command.spawn((
         tkbundles::HeroesBundles::new(
             tkentities::Heroes::new("Fulan"),
@@ -246,8 +257,47 @@ pub fn spawn_character(
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
         Transform::from_xyz(-100.0, -50.0, 0.0),
     ));
-}
 
+    // // // UI // // //
+
+    tkgameui::rpg_slot_items_ui(&mut command, asset_server);
+
+    //    command
+    //        .spawn((
+    //            Node {
+    //                height: Val::Percent(100.),
+    //                width: Val::Percent(100.),
+    //                padding: UiRect::all(Val::Px(20.)),
+    //                justify_content: JustifyContent::Center,
+    //                ..Default::default()
+    //            },
+    //            //BackgroundColor(Color::linear_rgba(0., 0.5, 0.5, 0.15)),
+    //        ))
+    //        .with_children(|parent| {
+    //            parent
+    //                .spawn((
+    //                    Node {
+    //                        padding: UiRect::all(Val::Px(10.)),
+    //                        display: Display::Flex,
+    //                        align_self: AlignSelf::FlexEnd,
+    //                        justify_content: JustifyContent::Center,
+    //                        align_items: AlignItems::FlexEnd,
+    //                        height: Val::Percent(12.),
+    //                        width: Val::Percent(30.),
+    //                        ..Default::default()
+    //                    },
+    //                    BackgroundColor(Color::linear_rgba(
+    //                        0.94901960784,
+    //                        0.94901960784,
+    //                        0.94901960784,
+    //                        0.12,
+    //                    )),
+    //                ))
+    //                .with_children(|parentsecond| {
+    //                    spawn_slot_items_ui(parentsecond);
+    //                });
+    //        });
+}
 pub fn camera_startup(
     mut camera: Single<&mut Transform, (With<tkcamera::MainCamera>, Without<tkentities::TkUnit>)>,
     king_edward: Query<(&Transform, &tkentities::HeroesId), With<tkentities::TkUnit>>,
@@ -259,5 +309,25 @@ pub fn camera_startup(
 
             camera.translation = mc_position;
         }
+    }
+}
+
+/// Fungsi untuk spawn ui untuk bagian bawah / slot items
+fn spawn_slot_items_ui(builder: &mut ChildSpawnerCommands) {
+    for i in 0..5 {
+        builder.spawn((
+            Node {
+                //justify_content: JustifyContent::Stretch,
+                width: Val::Px(60.),
+                height: Val::Px(60.),
+                margin: UiRect::all(Val::Px(2.)),
+                ..Default::default()
+            },
+            BackgroundColor(Color::linear_rgb(
+                0.55294117647,
+                0.55294117647,
+                0.55294117647,
+            )),
+        ));
     }
 }

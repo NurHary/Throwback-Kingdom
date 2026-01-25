@@ -1,3 +1,9 @@
+//! RECENT CHANGES: ADD THE INVENTORY SLOT COMPONENT
+//!
+//!
+//! DESCRIPTION: FILE YANG MENYIMPAN KESELURUHAN SYSTEM UNTUK ENTITAS BAIK ENTITAS KAWAN ATAUPUN
+//! ENTITAS LAWAN
+
 use bevy::prelude::*;
 use std::{
     ops::Deref,
@@ -37,6 +43,7 @@ pub enum TkUnitState {
     Walk,
 }
 
+// TODO: mengubah system dari bool selected menjadi option<vec3> target
 #[derive(Component)]
 pub struct UnitSelectable {
     pub selected: bool,
@@ -153,3 +160,5 @@ impl DynamicHeroList {
     //    }
     //}
 }
+
+// // // INVENTORY SLOT // // //

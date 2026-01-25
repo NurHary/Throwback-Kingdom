@@ -1,13 +1,20 @@
+//!
+//!
+//! DESCRIPTION: FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM inventory
+//!
+//!
+
 use crate::toolplugin::tkitems;
 use bevy::prelude::*;
 
 use crate::*;
 
-/// Struct inventory yang akan dipegang oleh semua unit dengan system inventory
+/// Struct Component inventory yang akan dipegang oleh semua unit dengan system inventory dimana
+/// memberikan akses slot untuk semua
 #[derive(Clone, Component)]
 pub struct TkInventory {
     slot_amount: usize,
-    slot: Vec<tkitems::TkItems>,
+    pub slot: Vec<tkitems::TkItems>,
 }
 
 impl TkInventory {

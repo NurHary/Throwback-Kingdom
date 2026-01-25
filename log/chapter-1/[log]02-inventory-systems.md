@@ -1,5 +1,10 @@
+# System Items dalam Throwback Kingdoms
+jadi untuk system items ditampung oleh struct dengan nama TkItems dimana TkItems itu sendiri memiliki
+nilai berupa
+
+
 # Inventory System dalam Throwback Kingdoms
-jadi untuk sistem inventory, saya berniat untuk **menggunakan satu Komponen sebagai tempat penyimpanan
+jadi untuk system inventory, saya berniat untuk **menggunakan satu Komponen sebagai tempat penyimpanan
 dan satu komponen lagi untuk memberikan indikasi jarak akses dari inventory tersebut (bisa antara
 diganti dengan Enum atau murni itu saja, menurutku pakai bentuk komponen saja karena bisa menghemat
 memori karena yang dilakukan proses hanyalah yang memilikinya)**

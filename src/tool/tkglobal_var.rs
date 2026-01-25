@@ -1,11 +1,18 @@
+//!
+//!
+//! DESCRIPTION: FILE YANG MENYIMPAN SEMUA ATTRIBUTE GLOBAL VARIABLES BAIK UNTUK MENYIMPAN DATA
+//! ATAUPUN UNTUK MELAKUKAN RESOURCE SWITCH
+//!
+//!
+//!
+
 use crate::{
     tkrun_condition::*,
     toolplugin::tkitems::{TkItems, ITEMIDS},
 };
 use bevy::{prelude::*, scene::ron::Options};
 
-// Variable Global
-// Untuk pemilihan Karakter
+/// Variable Global untuk mengingat saat ini memilih karakter yang mana (RPG MODES)
 #[derive(Resource)]
 pub struct CurrentId {
     pub id: usize,
@@ -17,7 +24,10 @@ impl CurrentId {
     }
 }
 
-// Enum GameState
+// // // GAMESTATE // // //
+
+/// Enum Untuk Menentukan GameState Yang Dilakukan Dalam Games Seperti Main Menu, Play, Atau ketika
+/// Pause Terjadi
 #[derive(States, Debug, PartialEq, Eq, Hash, Default, Clone)]
 pub enum GameState {
     Menu,
@@ -45,15 +55,15 @@ impl GStatus {
     }
 }
 
-// Variable Local
-// ini untuk menyimpan nilai sementara dari klik mouse terakhir
+// // // MARQUE SELECT // // //
+
+/// ini untuk menyimpan nilai sementara dari klik mouse terakhir
 #[derive(Default)]
 pub struct MarqueeCursorPosition {
     pub pos_start: Option<Vec2>,
     pub pos_end: Option<Vec2>,
 }
 
-// NOTE
 // // // WORLDSIZEE // // //
 
 #[derive(Resource)]
@@ -131,12 +141,15 @@ impl QTRC for QTDeleteConditions {
     }
 }
 
-// Inventory //
+// // // Inventory // // //
 
+/// Resource Switch yang digunakan ketika ada suatu items yang Ditabrak oleh suatu entitas / Unit
 #[derive(Resource, Clone, Copy)]
 pub struct InvDSys {
     pub items: Option<ITEMIDS>,
     pub amount: u8,
+    // TODO: Menambahkan Entity dimana Entity Tersebut menunjuk pada unit yang menabrak sehingga
+    // siap dilakukan penambahan inventory
     pub condition: bool,
 }
 

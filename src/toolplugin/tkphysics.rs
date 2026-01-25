@@ -131,7 +131,8 @@ pub fn access_quadtree_physics(
                 continue;
             }
             // 2D Array Iteration
-            println!("Cek Pada {:?}", part_all_en);
+            // NOTE Uncheck
+            //println!("Cek Pada {:?}", part_all_en);
             for i in part_all_en {
                 if let Ok((current_ecol, current_rectang, current_tr)) = qr.get(*i) {
                     // Pastikan yang saat ini adalah Unit dan bukan items

@@ -1,8 +1,8 @@
 use crate::{gamestate::play::UNIT_SPEED, *};
 use bevy::prelude::*;
 
-// To Handle Movement in Rpg Mode and to change character and other utility on Rpg Mode
-pub fn rpg_function(
+/// To Handle Movement in Rpg Mode and to change character and other utility on Rpg Mode
+pub fn rpg_play(
     key: Res<ButtonInput<KeyCode>>,
     windows: Query<&Window>,
     mut heroes: Query<(&mut Transform, &HeroesId, &mut TkUnit), With<Heroes>>,
@@ -74,9 +74,11 @@ pub fn rpg_function(
             windows.single().unwrap().resolution.width()
         )
     }
+
+    // TODO: Menambahkan Fungsi untuk memanggil Ui RPG disini
 }
 
-// To Handle RPG camera Movement
+/// To Handle RPG camera Movement
 pub fn rpg_camera_move(
     selected_player: Query<(&Transform, &HeroesId, &mut TkUnit), With<Heroes>>,
     mut camera: Single<&mut Transform, (With<MainCamera>, Without<Heroes>)>,

@@ -22,6 +22,7 @@ impl Plugin for GameplayPlugin {
 
                 // // // // Main GameLoop, berjalan tak peduli di mode apapun
                 gamestate::play::maingameloop,
+                tkgameui::handle_rpg_slot_items,
                 //(
                 //tkinventory::test_insert_item_to_inventory,
                 //tkinventory::distribute_items.run_if(inv_distribute),
@@ -29,7 +30,7 @@ impl Plugin for GameplayPlugin {
                 //    .chain(),
                 // // // // RPG GameLoop, berjalan hanya ketika ada dalam mode rpg
                 (
-                    gamestate::play_rpg::rpg_function,
+                    gamestate::play_rpg::rpg_play,
                     gamestate::play_rpg::rpg_camera_move,
                 )
                     .chain()

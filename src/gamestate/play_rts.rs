@@ -93,6 +93,7 @@ pub fn rts_handle_movement(
             for (id, mut tr, slc, mut unit) in &mut unit_query {
                 let mut direction = Vec2::ZERO;
                 if slc.selected {
+                    // TODO: MENGUBAH SYSTEM
                     direction.x = (position.x > tr.translation.x) as i32 as f32
                         - (position.x < tr.translation.x) as i32 as f32;
                     direction.y = (position.y > tr.translation.y) as i32 as f32
@@ -123,4 +124,6 @@ pub fn rts_handle_movement(
 
     //direction.x = tr.translation.x
     //}
+
+    // TODO: Menambahkan Fungsi untuk memanggil Ui RTS disini
 }
