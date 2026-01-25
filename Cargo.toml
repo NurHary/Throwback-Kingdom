@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = "0.16.1" # Bevy
-bevy_egui = "0.36.0" # ini untuk inspector doang
-bevy_pancam = "0.18.0" # ini untuk pergerakan Camera dalam mode rts
+bevy = "0.18.0" # Bevy
+bevy_egui = "0.39.0" # ini untuk inspector doang
+bevy_pancam = "0.20.0" # ini untuk pergerakan Camera dalam mode rts
 
 [workspace]
 resolver = "2" # Important! wgpu/Bevy needs this!

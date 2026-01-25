@@ -259,44 +259,6 @@ pub fn spawn_character(
     ));
 
     // // // UI // // //
-
-    tkgameui::rpg_slot_items_ui(&mut command, asset_server);
-
-    //    command
-    //        .spawn((
-    //            Node {
-    //                height: Val::Percent(100.),
-    //                width: Val::Percent(100.),
-    //                padding: UiRect::all(Val::Px(20.)),
-    //                justify_content: JustifyContent::Center,
-    //                ..Default::default()
-    //            },
-    //            //BackgroundColor(Color::linear_rgba(0., 0.5, 0.5, 0.15)),
-    //        ))
-    //        .with_children(|parent| {
-    //            parent
-    //                .spawn((
-    //                    Node {
-    //                        padding: UiRect::all(Val::Px(10.)),
-    //                        display: Display::Flex,
-    //                        align_self: AlignSelf::FlexEnd,
-    //                        justify_content: JustifyContent::Center,
-    //                        align_items: AlignItems::FlexEnd,
-    //                        height: Val::Percent(12.),
-    //                        width: Val::Percent(30.),
-    //                        ..Default::default()
-    //                    },
-    //                    BackgroundColor(Color::linear_rgba(
-    //                        0.94901960784,
-    //                        0.94901960784,
-    //                        0.94901960784,
-    //                        0.12,
-    //                    )),
-    //                ))
-    //                .with_children(|parentsecond| {
-    //                    spawn_slot_items_ui(parentsecond);
-    //                });
-    //        });
 }
 pub fn camera_startup(
     mut camera: Single<&mut Transform, (With<tkcamera::MainCamera>, Without<tkentities::TkUnit>)>,

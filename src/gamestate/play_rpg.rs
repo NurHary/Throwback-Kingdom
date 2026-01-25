@@ -3,6 +3,8 @@ use bevy::prelude::*;
 
 /// To Handle Movement in Rpg Mode and to change character and other utility on Rpg Mode
 pub fn rpg_play(
+    mut command: Commands,
+    asset_server: Res<AssetServer>,
     key: Res<ButtonInput<KeyCode>>,
     windows: Query<&Window>,
     mut heroes: Query<(&mut Transform, &HeroesId, &mut TkUnit), With<Heroes>>,
@@ -75,7 +77,9 @@ pub fn rpg_play(
         )
     }
 
-    // TODO: Menambahkan Fungsi untuk memanggil Ui RPG disini
+    // TODO: Menambahkan Fungsi untuk mengecek apakah dalam mode rts atau rpg
+    // dan apabila ada dalam mode rts, make despawn fungsi dibawah ini
+    tkgameui::rpg_slot_items_ui(&mut command, asset_server);
 }
 
 /// To Handle RPG camera Movement

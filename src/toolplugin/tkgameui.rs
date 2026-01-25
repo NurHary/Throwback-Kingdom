@@ -81,6 +81,7 @@ pub fn rpg_slot_items_ui(builder: &mut Commands, asset_server: Res<AssetServer>)
                             )),
                             TkItemSlot::new(i),
                             Button,
+                            // TODO: Menambahkan untuk menggambar Sprite
                             children![(
                                 Node {
                                     align_self: AlignSelf::Start,
@@ -108,7 +109,6 @@ pub fn rts_bottom_bar_ui() {}
 pub fn quick_info_minipanel_ui() {}
 
 // // // IMPLEMENTATION // // //
-//
 
 /// Fungsi untuk Menghandle Slot Item Button serta input angka untuk mengakses button tersebut
 pub fn handle_rpg_slot_items(
@@ -124,5 +124,13 @@ pub fn handle_rpg_slot_items(
                 *bck = Color::linear_rgb(0.55294117647, 0.55294117647, 0.55294117647).into()
             }
         }
+    }
+}
+
+// // // PLUGIN // // //
+pub struct TkGameUi;
+impl Plugin for TkGameUi {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Update, (handle_rpg_slot_items));
     }
 }

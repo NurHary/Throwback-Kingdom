@@ -10,7 +10,6 @@ use tool::*;
 use toolplugin::*;
 
 #[cfg(not(target_arch = "wasm32"))]
-use bevy::sprite::Wireframe2dPlugin;
 use bevy::window::WindowMode;
 use bevy::{prelude::*, window::PrimaryWindow};
 
@@ -20,13 +19,15 @@ use bevy_pancam::*;
 
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
+    use bevy::window::WindowResolution;
+
     App::new()
         .add_plugins((
             DefaultPlugins
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         position: WindowPosition::Automatic,
-                        resolution: Vec2::new(600., 600.).into(),
+                        resolution: WindowResolution::new(600, 600),
                         mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
                         ..Default::default()
                     }),
@@ -34,19 +35,11 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
             #[cfg(not(target_arch = "wasm32"))]
-            Wireframe2dPlugin::default(),
             PanCamPlugin::default(),
             EguiPlugin::default(),
             TkAnimationPlugin,
             GameplayPlugin,
-            TkQuadTreePlugin,
-            TkPhysicsPlugin,
         ))
-        .insert_resource(CurrentId::new(0))
-        .insert_resource(GStatus::default()) // ini untuk menentukan rts atau rpg
-        .insert_resource(DynamicHeroList::new()) // ini untuk memberikan id ke setiap heroes
-        .insert_resource(DebugCurrentPosition { pos: Vec3::ZERO })
-        .insert_resource(tkglobal_var::InvDSys::new())
         .init_state::<GameState>()
         .run();
 }

@@ -7,6 +7,7 @@ use toolplugin::tkinventory;
 pub struct GameplayPlugin;
 impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
+        app.add_plugins((tkphysics::TkPhysicsPlugin, tkquadtree::TkQuadTreePlugin));
         app.add_systems(
             OnEnter(GameState::Play),
             (
@@ -47,5 +48,10 @@ impl Plugin for GameplayPlugin {
                                                     // adalah play
         );
         app.add_systems(EguiPrimaryContextPass, show_current_position);
+        app.insert_resource(CurrentId::new(0));
+        app.insert_resource(GStatus::default()); // ini untuk menentukan rts atau rpg
+        app.insert_resource(DynamicHeroList::new()); // ini untuk memberikan id ke setiap heroes
+        app.insert_resource(DebugCurrentPosition { pos: Vec3::ZERO });
+        app.insert_resource(tkglobal_var::InvDSys::new());
     }
 }

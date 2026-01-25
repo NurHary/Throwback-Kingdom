@@ -2,7 +2,7 @@
 
 === To Fix ===
 - [x] Fugsi pengecekan bekerja pada satu saja
-- [ ] Pengecekan pada quadtree multi partisi agak awur / tidak memiliki nilai - nilai tertentu
+- [x] Pengecekan pada quadtree multi partisi agak awur / tidak memiliki nilai - nilai tertentu
 - [ ] masih ingat dengan tipe data doubly linked list yang saya buat, ayo kita ubah dari doubly linked list menjadi linked list biasa
     untuk menyimpan lebih banyak memori
 
