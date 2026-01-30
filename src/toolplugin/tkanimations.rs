@@ -77,4 +77,4 @@ pub fn handle_animation(
         }
         sprite.flip_x = ch_state.flip;
     }
-}
+} // jajal

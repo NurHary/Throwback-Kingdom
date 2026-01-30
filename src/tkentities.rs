@@ -5,10 +5,7 @@
 //! ENTITAS LAWAN
 
 use bevy::prelude::*;
-use std::{
-    ops::Deref,
-    sync::{Arc, Mutex, Weak},
-};
+use std::sync::{Arc, Mutex, Weak};
 
 // Heroes adalah mereka karakter yang dapat dikendalikan hanya dalam mode RPG
 #[derive(Component)]
@@ -130,7 +127,7 @@ impl DynamicHeroList {
         Arc::clone(&new_value)
     }
 
-    pub fn delete_index(&mut self, idx: Arc<Mutex<DynamicHeroId>>) {
+    pub fn _delete_index(&mut self, idx: Arc<Mutex<DynamicHeroId>>) {
         let (prev_val, nxt_val) = {
             let idx_guard = idx.lock().unwrap();
             (idx_guard.parent.clone(), idx_guard.child.clone())

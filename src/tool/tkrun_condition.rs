@@ -6,7 +6,7 @@ use bevy::prelude::*;
 
 /// ini digunakan untuk mentrigger perubahan game mode
 pub fn rc_gamemode(mode: Res<GStatus>) -> bool {
-    mode.mode
+    mode.mode // apabila true, make rpg
 }
 
 /// ini digunakan untuk mentrigger Panggilan untuk melakukan distribute pada anakan quadtree

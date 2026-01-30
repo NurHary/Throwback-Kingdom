@@ -13,7 +13,7 @@ use toolplugin::*;
 use bevy::window::WindowMode;
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use bevy_egui::{egui, EguiPlugin};
+use bevy_egui::EguiPlugin;
 
 use bevy_pancam::*;
 
@@ -37,7 +37,6 @@ fn main() {
             #[cfg(not(target_arch = "wasm32"))]
             PanCamPlugin::default(),
             EguiPlugin::default(),
-            TkAnimationPlugin,
             GameplayPlugin,
         ))
         .init_state::<GameState>()

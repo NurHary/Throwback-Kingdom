@@ -7,7 +7,7 @@ use bevy::prelude::*;
 #[derive(Copy, Clone)]
 pub enum CollisionType {
     UNIT,
-    ITEMS(tkitems::TkItems),
+    ITEMS,
 }
 
 pub struct TkPhysicsPlugin;
@@ -137,7 +137,7 @@ pub fn access_quadtree_physics(
                 if let Ok((current_ecol, current_rectang, current_tr)) = qr.get(*i) {
                     // Pastikan yang saat ini adalah Unit dan bukan items
                     match current_ecol.col_type {
-                        CollisionType::ITEMS(_) => {
+                        CollisionType::ITEMS => {
                             continue;
                         }
                         _ => {}
@@ -157,11 +157,6 @@ pub fn access_quadtree_physics(
                                     && current_pos[1] <= next_pos[3]
                                     && current_pos[3] >= next_pos[1]
                                 {
-                                    //println!(
-                                    //    "current {:?} \nnext {:?} \n{i} Ditabrak dengan {j}\nLebih Baik Kau Diam",
-                                    //    current_pos, next_pos
-                                    //);
-                                    // Check
                                     match next_ecol.col_type {
                                         CollisionType::UNIT => {
                                             let overlap_value = current_rectang.intersect_size(
@@ -179,9 +174,9 @@ pub fn access_quadtree_physics(
                                         } // TODO, antara lakukan system pengambilan item disini
                                         // atau di tempat lainnya
                                         // PLACEHOLDER
-                                        CollisionType::ITEMS(collisionitems) => {
-                                            invdsys
-                                                .activate(collisionitems.id, collisionitems.amount);
+                                        CollisionType::ITEMS => {
+                                            //invdsys
+                                            //    .activate(collisionitems.id, collisionitems.amount);
                                         }
                                     }
                                 }

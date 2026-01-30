@@ -11,8 +11,9 @@
 - [x] membuat kode / implementasi simpel untuk mengakses quadtree serta menggunakannya sebagai sarana utama untuk melakukan pengecekan
     collision pada semua EntityColliding
 - [x] system untuk mengecek collision berdasarkan hasil quadtree
-- [ ] update system
 - [x] implementasi simpel untuk EntityColliding
+- [ ] belajar bevy events
+- [ ] impelementasi pickup
 
 === System Inventory & Building ===
 - [ ] membuat indikator untuk mengecek inventory secara sederhana dengan menggunakan bevy native ui

@@ -11,3 +11,6 @@ pertarungan. sedangkan untuk mode rts juga sama yaitu dengan cara memilih lalu (
 konsep ini sebenarnya terinspirasi dari game mobile yaitu Last Day On Earth dimana untuk menebang pohon / menambang batu,
 kau hanya perlu memiliki tool tersebut saja di inventory tanpa perlu memilih tool tersebut sedangkan tangan utama selalu
 pada senjata
+
+
+#

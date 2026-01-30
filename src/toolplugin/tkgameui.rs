@@ -1,15 +1,19 @@
 //!
 //!
 //!
-//!
-//!
-//! DESCRIPTION: FILES PENAMPUNG FUNGSI UNTUK LAYOUT UI, COMPONENT UNTUK PENENTUAN \
-//! TOMBOL, DAN UNTUK
+//! DESCRIPTION: FILES DEKLARASI, DEFINISI, SERTA UNTUK MENGHANDLE UI YANG DAPAT DIGUNAKAN OLEH
+//! PEMAIN
 //!
 //!
 //!
 
 use bevy::prelude::*;
+
+use crate::{
+    tkentities,
+    tool::{tkglobal_var, tkrun_condition},
+    toolplugin::TkInventory,
+};
 
 // // // COMPONENT // // //
 #[derive(Component, Copy, Clone)]
@@ -23,6 +27,11 @@ impl TkItemSlot {
     }
 }
 
+#[derive(Component)]
+pub struct TkRpgUi;
+#[derive(Component)]
+pub struct TkRtsUi;
+
 // // // UI LAYOUT // // //
 //
 // // UNIVERSAL // //
@@ -32,9 +41,16 @@ pub fn sidebar_access_button_ui() {}
 pub fn operation_minipanel_ui() {}
 
 // // RPG ONLY // //
-pub fn rpg_slot_items_ui(builder: &mut Commands, asset_server: Res<AssetServer>) {
+pub fn rpg_slot_items_ui(
+    builder: &mut Commands,
+    asset_server: Res<AssetServer>,
+    // HeroesId untuk mendapatkan unit yang saat ini dikendalikan
+    qr: Query<(&tkentities::HeroesId, &TkInventory), With<TkInventory>>,
+    curid: Res<tkglobal_var::CurrentId>,
+) {
     builder
         .spawn((
+            TkRpgUi,
             Node {
                 height: Val::Percent(100.),
                 width: Val::Percent(100.),
@@ -82,21 +98,6 @@ pub fn rpg_slot_items_ui(builder: &mut Commands, asset_server: Res<AssetServer>)
                             TkItemSlot::new(i),
                             Button,
                             // TODO: Menambahkan untuk menggambar Sprite
-                            children![(
-                                Node {
-                                    align_self: AlignSelf::Start,
-                                    justify_self: JustifySelf::Start,
-                                    margin: UiRect::all(Val::Px(2.)),
-                                    ..Default::default()
-                                },
-                                Text::new(format!("{}", i + 1)),
-                                TextFont {
-                                    font: asset_server.load("fonts/Bold.ttf"),
-                                    font_size: 11.,
-                                    ..Default::default()
-                                },
-                                TextColor(Color::BLACK)
-                            )],
                         ));
                     }
                 });
@@ -110,16 +111,38 @@ pub fn quick_info_minipanel_ui() {}
 
 // // // IMPLEMENTATION // // //
 
+/// Fungsi untuk meghandle (Despawn) ui tergantung pada game modenya
+fn handle_ui_changes(
+    mut cmd: Commands,
+    gamemode: Res<tkglobal_var::GStatus>,
+    qr_rpg: Query<Entity, With<TkRpgUi>>,
+    qr_rts: Query<Entity, With<TkRtsUi>>,
+) {
+    if gamemode.mode {
+        for i in &qr_rts {
+            cmd.entity(i).despawn();
+        }
+    } else {
+        for i in &qr_rpg {
+            cmd.entity(i).despawn();
+        }
+    }
+}
+
 /// Fungsi untuk Menghandle Slot Item Button serta input angka untuk mengakses button tersebut
-pub fn handle_rpg_slot_items(
+fn handle_rpg_slot_items(
     mut qr: Query<(&Interaction, &mut BackgroundColor, &TkItemSlot), Changed<Interaction>>,
 ) {
     for (inter, mut bck, iteslot) in &mut qr {
         match inter {
             Interaction::Pressed => {
                 println!("Click Button")
+                // TODO handle drag and drop?
             }
-            Interaction::Hovered => *bck = Color::WHITE.into(),
+            Interaction::Hovered => {
+                *bck = Color::WHITE.into()
+                // TODO tambahkan informasi item yang ada di situ
+            }
             Interaction::None => {
                 *bck = Color::linear_rgb(0.55294117647, 0.55294117647, 0.55294117647).into()
             }
@@ -128,9 +151,15 @@ pub fn handle_rpg_slot_items(
 }
 
 // // // PLUGIN // // //
-pub struct TkGameUi;
-impl Plugin for TkGameUi {
+pub struct TkGameUiPlugin;
+impl Plugin for TkGameUiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (handle_rpg_slot_items));
+        app.add_systems(
+            Update,
+            (
+                handle_ui_changes,
+                (handle_rpg_slot_items).run_if(tkrun_condition::rc_gamemode),
+            ),
+        );
     }
 }

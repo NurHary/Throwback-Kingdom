@@ -9,7 +9,7 @@ pub fn rpg_play(
     windows: Query<&Window>,
     mut heroes: Query<(&mut Transform, &HeroesId, &mut TkUnit), With<Heroes>>,
     time: Res<Time>,
-    mut current_id: ResMut<CurrentId>,
+    mut current_id: ResMut<tkglobal_var::CurrentId>,
     mut enable_camera_motion: Single<&mut PanCam, With<MainCamera>>,
     mut debug_pos: ResMut<DebugCurrentPosition>,
     //mut command: Commands,

@@ -1,21 +1,17 @@
-use crate::{
-    tkanimations, tkbundles, tkcamera, tkentities, tkgameui, tkphysics, toolplugin::tkinventory,
-};
-use bevy::{color::palettes, prelude::*, render::texture};
+use crate::{tkanimations, tkbundles, tkcamera, tkentities, tkphysics, toolplugin::tkinventory};
+use bevy::prelude::*;
 use bevy_pancam;
 
-const COLORPALETTES: [Color; 5] = [
-    Color::linear_rgba(0., 0., 0., 1.),
-    Color::linear_rgba(0., 0., 0., 1.),
-    Color::linear_rgba(0., 0., 0., 1.),
-    Color::linear_rgba(0., 0., 0., 1.),
-    Color::linear_rgba(0., 0., 0., 1.),
-];
+//const COLORPALETTES: [Color; 5] = [
+//    Color::linear_rgba(0., 0., 0., 1.),
+//    Color::linear_rgba(0., 0., 0., 1.),
+//    Color::linear_rgba(0., 0., 0., 1.),
+//    Color::linear_rgba(0., 0., 0., 1.),
+//    Color::linear_rgba(0., 0., 0., 1.),
+//];
 
 pub fn spawn_character(
     mut command: Commands,
-    mut mesh: ResMut<Assets<Mesh>>,
-    mut material: ResMut<Assets<ColorMaterial>>,
     mut her_id: ResMut<tkentities::DynamicHeroList>,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layout: ResMut<Assets<TextureAtlasLayout>>,
@@ -137,6 +133,7 @@ pub fn spawn_character(
         },
         tkentities::UnitSelectable::new(),
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkinventory::TkInventory::new(5), // Handle Inventories
         Transform::from_xyz(30.0, -20.0, 0.0),
     ));
     command.spawn((
@@ -258,7 +255,26 @@ pub fn spawn_character(
         Transform::from_xyz(-100.0, -50.0, 0.0),
     ));
 
-    // // // UI // // //
+    // // // ITEMS TEST // // //
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
+        Sprite {
+            image: asset_server.load("test_items_atlas.png"),
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    3,
+                    1,
+                    None,
+                    None,
+                )),
+                index: 0,
+            }),
+            custom_size: Some(Vec2::splat(7.)),
+            ..Default::default()
+        },
+        Transform::from_xyz(40.0, 25.0, 0.0),
+    ));
 }
 pub fn camera_startup(
     mut camera: Single<&mut Transform, (With<tkcamera::MainCamera>, Without<tkentities::TkUnit>)>,

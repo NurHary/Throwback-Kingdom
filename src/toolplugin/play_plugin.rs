@@ -7,7 +7,13 @@ use toolplugin::tkinventory;
 pub struct GameplayPlugin;
 impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((tkphysics::TkPhysicsPlugin, tkquadtree::TkQuadTreePlugin));
+        app.add_plugins((
+            tkgameui::TkGameUiPlugin,
+            tkphysics::TkPhysicsPlugin,
+            tkquadtree::TkQuadTreePlugin,
+            tkanimations::TkAnimationPlugin,
+        ));
+
         app.add_systems(
             OnEnter(GameState::Play),
             (
@@ -23,7 +29,6 @@ impl Plugin for GameplayPlugin {
 
                 // // // // Main GameLoop, berjalan tak peduli di mode apapun
                 gamestate::play::maingameloop,
-                tkgameui::handle_rpg_slot_items,
                 //(
                 //tkinventory::test_insert_item_to_inventory,
                 //tkinventory::distribute_items.run_if(inv_distribute),
