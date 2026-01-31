@@ -1,30 +1,42 @@
+//!
+//! DESCRIPTIONS: FILE YANG MENAMPUNG SEMUA AKTIFITAS PHYSICS / PENDETEKSI COLLISION DIMANA
+//! MEMANFAATKAN PARTISI RUANG DARI TKQUADTREE
+//!
+
 use crate::{gamestate::startup, tkglobal_var, tkitems, tkquadtree};
-use bevy::prelude::*;
+use bevy::{ecs::event, prelude::*};
 // Plugins//
 //
 //Ini adalah Plugin yang mana Plugin ini akan berjalan ketika
 
+// // // Resource / Event / Data // // //
+//
 #[derive(Copy, Clone)]
 pub enum CollisionType {
     UNIT,
     ITEMS,
 }
 
-pub struct TkPhysicsPlugin;
-
-impl Plugin for TkPhysicsPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (
-                access_quadtree_physics.run_if(in_state(tkglobal_var::GameState::Play)),
-                tk_show_collision_box.run_if(in_state(tkglobal_var::GameState::Play)),
-            ), // ini hanya akan berjalan ketika game state
-               // adalah play
-        );
-    }
+/// Struct Event yang memberikan signal terkait pengecekan collision kepada system handle collision
+/// untuk setiap unit
+#[derive(Event)]
+pub struct PhysicsColisionEventHandle {
+    enself: Entity,
+    otheren: Entity,
+    intes_size: Vec2,
+    condition: BVec2,
 }
 
+/// Struct Event yang memberikan signal terkait pengecekan collision kepada system pengambilan
+/// items / pemasukkan item ke dalam inventory
+#[derive(Event)]
+pub struct ItemCollisionEventHandle {
+    pub itemen: Entity,
+    pub uniten: Entity,
+}
+
+// // // Component // // //
+//
 /// Struct untuk bentuk segi empat
 /// model dari struct ini dalam model ECS sehingga ia hanya menyimpan informasi terkait width dan
 /// height saja. untuk posisinya diambil dari entity yang memegangnya (dimana pasti memiliki
@@ -113,19 +125,20 @@ impl EntityColliding {
     }
 }
 
+// // // IMPLEMENTATION // // //
+
 /// Fungsi untuk mengakses Quadtree serta melakukan pengecekan collision berdasarkan isi dari
 /// Quadtree tersebut.
 pub fn access_quadtree_physics(
+    mut command: Commands,
     mut qr: Query<(&EntityColliding, &TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
     qt: Res<tkquadtree::TkQuadTree>,
-    mut invdsys: ResMut<tkglobal_var::InvDSys>,
 ) {
     //println!("List: {:?}", qt.get_all_entity());
     // mendapatkan semua entity dalam quadtree
     if let Some(all_en) = qt.get_all_entity() {
         // iterasikan vector tersebut untuk mengakses vector di dalamnya
         for part_all_en in all_en {
-            let mut collision_value: Option<(Entity, Entity, Vec2, bool, bool)> = None;
             // apabila len 1, make skip
             if part_all_en.len() == 1 {
                 continue;
@@ -164,19 +177,23 @@ pub fn access_quadtree_physics(
                                                 &current_tr.translation,
                                                 &next_tr.translation,
                                             );
-                                            collision_value = Some((
-                                                *i,
-                                                *j,
-                                                overlap_value,
-                                                current_tr.translation.x < next_tr.translation.x,
-                                                current_tr.translation.y < next_tr.translation.y,
-                                            ))
-                                        } // TODO, antara lakukan system pengambilan item disini
-                                        // atau di tempat lainnya
-                                        // PLACEHOLDER
+                                            command.trigger(PhysicsColisionEventHandle {
+                                                enself: *i,
+                                                otheren: *j,
+                                                intes_size: overlap_value,
+                                                condition: BVec2::new(
+                                                    current_tr.translation.x
+                                                        < next_tr.translation.x,
+                                                    current_tr.translation.y
+                                                        < next_tr.translation.y,
+                                                ),
+                                            });
+                                        }
                                         CollisionType::ITEMS => {
-                                            //invdsys
-                                            //    .activate(collisionitems.id, collisionitems.amount);
+                                            command.trigger(ItemCollisionEventHandle {
+                                                itemen: *j,
+                                                uniten: *i,
+                                            });
                                         }
                                     }
                                 }
@@ -185,25 +202,27 @@ pub fn access_quadtree_physics(
                     }
                 }
             }
+        }
+    }
+}
 
-            // Melakukan Operasi Collision
-            if let Some(colval) = collision_value {
-                //println!("posisi: {:?}", colval.2);
-                if let Ok((current_ecol, _, mut current_tr)) = qr.get_mut(colval.0) {
-                    if colval.2.x < colval.2.y {
-                        if colval.3 {
-                            current_tr.translation.x -= colval.2.x
-                        } else {
-                            current_tr.translation.x += colval.2.x
-                        }
-                    } else {
-                        if colval.4 {
-                            current_tr.translation.y -= colval.2.y
-                        } else {
-                            current_tr.translation.y += colval.2.y
-                        }
-                    }
-                }
+/// Fungsi untuk menghandle collision yang
+fn handle_collision(
+    colval: On<PhysicsColisionEventHandle>,
+    mut qr: Query<(&TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
+) {
+    if let Ok((_, mut current_tr)) = qr.get_mut(colval.enself) {
+        if colval.intes_size.x < colval.intes_size.y {
+            if colval.condition.x {
+                current_tr.translation.x -= colval.intes_size.x
+            } else {
+                current_tr.translation.x += colval.intes_size.x
+            }
+        } else {
+            if colval.condition.y {
+                current_tr.translation.y -= colval.intes_size.y
+            } else {
+                current_tr.translation.y += colval.intes_size.y
             }
         }
     }
@@ -219,5 +238,23 @@ pub fn tk_show_collision_box(
             Vec2::new(re.width, re.height),
             Color::linear_rgb(1.0, 0.0, 0.0),
         );
+    }
+}
+
+// // // PLUGIN // // //
+//
+pub struct TkPhysicsPlugin;
+
+impl Plugin for TkPhysicsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            (
+                access_quadtree_physics.run_if(in_state(tkglobal_var::GameState::Play)),
+                tk_show_collision_box.run_if(in_state(tkglobal_var::GameState::Play)),
+            ), // ini hanya akan berjalan ketika game state
+               // adalah play
+        );
+        app.add_observer(handle_collision);
     }
 }

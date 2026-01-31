@@ -1,4 +1,4 @@
-//!
+//! Last Change: Menghapus semua
 //!
 //! DESCRIPTION: FILE YANG MENYIMPAN SEMUA ATTRIBUTE GLOBAL VARIABLES BAIK UNTUK MENYIMPAN DATA
 //! ATAUPUN UNTUK MELAKUKAN RESOURCE SWITCH
@@ -138,36 +138,5 @@ impl QTRC for QTDeleteConditions {
     fn activate(&mut self, tr: Vec3) {
         self.pos.push(tr);
         self.condition = true
-    }
-}
-
-// // // Inventory // // //
-
-/// Resource Switch yang digunakan ketika ada suatu items yang Ditabrak oleh suatu entitas / Unit
-#[derive(Resource, Clone, Copy)]
-pub struct InvDSys {
-    pub items: Option<ITEMIDS>,
-    pub amount: u8,
-    // TODO: Menambahkan Entity dimana Entity Tersebut menunjuk pada unit yang menabrak sehingga
-    // siap dilakukan penambahan inventory
-    pub condition: bool,
-}
-
-impl InvDSys {
-    pub fn new() -> Self {
-        Self {
-            items: None,
-            amount: 0,
-            condition: false,
-        }
-    }
-    pub fn activate(&mut self, items: ITEMIDS, amount: u8) {
-        self.items = Some(items);
-        self.amount = amount
-    }
-    pub fn clear(&mut self) {
-        self.items = None;
-        self.amount = 0;
-        self.condition = false
     }
 }

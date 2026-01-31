@@ -1,4 +1,7 @@
-use crate::{tkanimations, tkbundles, tkcamera, tkentities, tkphysics, toolplugin::tkinventory};
+use crate::{
+    tkanimations, tkbundles, tkcamera, tkentities, tkphysics,
+    toolplugin::{tkinventory, tkitems},
+};
 use bevy::prelude::*;
 use bevy_pancam;
 
@@ -258,6 +261,7 @@ pub fn spawn_character(
     // // // ITEMS TEST // // //
     command.spawn((
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
+        tkitems::TkItems::new(tkitems::ITEMIDS::Wood, 2),
         Sprite {
             image: asset_server.load("test_items_atlas.png"),
             texture_atlas: Some(TextureAtlas {

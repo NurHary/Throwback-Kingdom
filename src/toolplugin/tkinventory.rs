@@ -4,10 +4,12 @@
 //!
 //!
 
-use crate::toolplugin::tkitems;
+use crate::{tkentities, tkglobal_var, tkitems, tkphysics};
 use bevy::prelude::*;
 
-use crate::*;
+// // // // // // // // // //
+// // // COMPONENT // // //
+// // // // // // // // // //
 
 /// Struct Component inventory yang akan dipegang oleh semua unit dengan system inventory dimana
 /// memberikan akses slot untuk semua
@@ -63,8 +65,12 @@ impl TkInventory {
 // NOTE: Ada Kemungkinan saya akan menggantinya dari kotak menjadi bentuk lingkaran dengan
 // memanfaatkan rumus lingkaran. mungkin itu akan jadi lebih gampang karena itu hanya mengecek
 // apakah suatu unit ada **Didalam** lingkaran itu
-#[derive(Copy, Clone, Component, Debug)]
-pub struct TkSharedInventory(Vec2);
+//#[derive(Copy, Clone, Component, Debug)]
+//pub struct TkSharedInventory(Vec2);
+
+// // // // // // // // // // //
+// // // IMPLEMENTATION // // //
+// // // // // // // // // // //
 
 /// Fungsi untuk memasukkan suatu item ke dalam inventory karakter
 /// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
@@ -76,13 +82,12 @@ pub fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
 /// /// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter. sehingga untuk fungsi tes
 /// ini kita tidak akan menggunakan collision itu terlebih dahulu
 pub fn test_insert_item_to_inventory(
-    qr: Query<(Entity, &mut TkInventory, &HeroesId)>,
+    qr: Query<(Entity, &mut TkInventory, &tkentities::HeroesId)>,
     key: Res<ButtonInput<KeyCode>>,
 
     // Variable dari item yang akan dimasukkan
     mut item_select: ResMut<tkitems::DemoItemsSelect>,
-    current_id: Res<CurrentId>,
-    mut invdsys: ResMut<InvDSys>,
+    current_id: Res<tkglobal_var::CurrentId>,
 ) {
     if key.just_pressed(KeyCode::Digit1) {
         item_select.id = tkitems::ITEMIDS::Wood
@@ -104,7 +109,7 @@ pub fn test_insert_item_to_inventory(
                             let (condition, distr) = i.add_amount(item_select.amount);
                             if condition {
                                 // NOTE: Unfinished
-                                invdsys.activate(item_select.id, distr);
+                                //invdsys.activate(item_select.id, distr);
                             }
                         }
                     }
@@ -114,4 +119,22 @@ pub fn test_insert_item_to_inventory(
     }
 }
 
-pub fn distribute_items(mut invdsys: ResMut<InvDSys>) {}
+pub fn test_items_collision(
+    mut invc: On<tkphysics::ItemCollisionEventHandle>,
+    qritem: Query<(Entity, &tkitems::TkItems)>,
+    //qrunit: Query<(Entity, &mut TkInventory)>,
+) {
+    if let Ok((_, item)) = qritem.get(invc.itemen) {
+        println!("Kita Dapat Info Item Sebagai Berikut Ges");
+    }
+}
+// // // // // // // // //
+// // // PLUGINS // // //
+// // // // // // // // //
+
+pub struct TkInventoryPlugins;
+impl Plugin for TkInventoryPlugins {
+    fn build(&self, app: &mut App) {
+        app.add_observer(test_items_collision);
+    }
+}

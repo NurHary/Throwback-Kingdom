@@ -1,5 +1,5 @@
 use crate::{gamestate::play::UNIT_SPEED, tkcamera, tkentities, tkglobal_var};
-use bevy::{math::VectorSpace, prelude::*, window::CursorGrabMode, window::PrimaryWindow};
+use bevy::{math::VectorSpace, prelude::*, window::PrimaryWindow};
 use bevy_pancam;
 
 pub fn rts_play(

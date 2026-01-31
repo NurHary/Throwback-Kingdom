@@ -12,6 +12,7 @@ impl Plugin for GameplayPlugin {
             tkphysics::TkPhysicsPlugin,
             tkquadtree::TkQuadTreePlugin,
             tkanimations::TkAnimationPlugin,
+            tkinventory::TkInventoryPlugins,
         ));
 
         app.add_systems(
@@ -57,6 +58,5 @@ impl Plugin for GameplayPlugin {
         app.insert_resource(GStatus::default()); // ini untuk menentukan rts atau rpg
         app.insert_resource(DynamicHeroList::new()); // ini untuk memberikan id ke setiap heroes
         app.insert_resource(DebugCurrentPosition { pos: Vec3::ZERO });
-        app.insert_resource(tkglobal_var::InvDSys::new());
     }
 }

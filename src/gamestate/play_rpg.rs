@@ -79,7 +79,6 @@ pub fn rpg_play(
 
     // TODO: Menambahkan Fungsi untuk mengecek apakah dalam mode rts atau rpg
     // dan apabila ada dalam mode rts, make despawn fungsi dibawah ini
-    tkgameui::rpg_slot_items_ui(&mut command, asset_server);
 }
 
 /// To Handle RPG camera Movement

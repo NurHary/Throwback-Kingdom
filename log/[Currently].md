@@ -3,8 +3,9 @@
 === To Fix ===
 - [x] Fugsi pengecekan bekerja pada satu saja
 - [x] Pengecekan pada quadtree multi partisi agak awur / tidak memiliki nilai - nilai tertentu
-- [ ] masih ingat dengan tipe data doubly linked list yang saya buat, ayo kita ubah dari doubly linked list menjadi linked list biasa
+- [ ]   masih ingat dengan tipe data doubly linked list yang saya buat, ayo kita ubah dari doubly linked list menjadi linked list biasa
     untuk menyimpan lebih banyak memori
+- [ ] Mengubah hampir semua resource switch menjadi events seperti di quadtree (distribute / delete)
 
 
 === System Pickup Items ===
