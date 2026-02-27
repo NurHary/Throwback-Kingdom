@@ -4,12 +4,12 @@ use bevy::prelude::*;
 #[derive(Bundle)]
 pub struct HeroesBundles {
     hero: Heroes,
-    id: HeroesId,
+    id: DynamicHeroId,
     unit: TkUnit,
 }
 
 impl HeroesBundles {
-    pub fn new(hero: Heroes, id: HeroesId, st: TkUnitState) -> Self {
+    pub fn new(hero: Heroes, id: DynamicHeroId, st: TkUnitState) -> Self {
         Self {
             hero,
             id,

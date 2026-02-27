@@ -14,7 +14,7 @@ pub fn rts_play(
 pub fn rts_handle_movement(
     mut unit_query: Query<
         (
-            &tkentities::HeroesId,
+            &tkentities::DynamicHeroId,
             &mut Transform,
             &mut tkentities::UnitSelectable,
             &mut tkentities::TkUnit,

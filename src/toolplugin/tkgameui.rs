@@ -44,7 +44,7 @@ pub fn rpg_slot_items_ui(
     builder: &mut Commands,
     asset_server: Res<AssetServer>,
     // HeroesId untuk mendapatkan unit yang saat ini dikendalikan
-    qr: Query<(&tkentities::HeroesId, &TkInventory), With<TkInventory>>,
+    qr: Query<(&tkentities::DynamicHeroId, &TkInventory), With<TkInventory>>,
     curid: Res<tkglobal_var::CurrentId>,
 ) {
     builder

@@ -10,35 +10,6 @@ use crate::tool::{qt_distribute, QTDeleteConditions};
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts, EguiPrimaryContextPass};
 
-//#[derive(Debug, Clone, PartialEq)]
-//struct TkBoundaries {
-//    min: Vec2,
-//    max: Vec2,
-//}
-//
-///// TkRectangle untuk contains lebih simple
-//impl TkBoundaries {
-//    pub fn new(x0: f32, y0: f32, x1: f32, y1: f32) -> Self {
-//        Self::from_corners(Vec2::new(x0, y0), Vec2::new(x1, y1))
-//    }
-//
-//    fn from_corners(p0: Vec2, p1: Vec2) -> Self {
-//        Self {
-//            min: p0.min(p1),
-//            max: p0.max(p1),
-//        }
-//    }
-//    pub fn size(&self) -> Vec2 {
-//        self.max - self.min
-//    }
-//    pub fn center(&self) -> Vec2 {
-//        (self.min + self.max) * 0.5
-//    }
-//    pub fn contains(&self, point: Vec2) -> bool {
-//        (point.cmpgt(self.min) & point.cmplt(self.max)).all()
-//    }
-//}
-
 /// Quadtree itu sendiri
 #[derive(Resource, Debug, Clone, PartialEq)]
 pub struct TkQuadTree {
@@ -497,6 +468,7 @@ impl QuadtreeUnitPosition {
             Some(_) => match self.new_val {
                 Some(_) => {
                     println!("\n \n");
+                    error!("Holy Shit, kok nambah");
                     panic!("Holy Shit, kok nambah {}", rhs_val)
                 }
                 None => {

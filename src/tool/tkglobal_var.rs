@@ -13,7 +13,7 @@ use crate::{
 use bevy::prelude::*;
 
 /// Variable Global untuk mengingat saat ini memilih karakter yang mana (RPG MODES)
-#[derive(Resource)]
+#[derive(Resource, Debug)]
 pub struct CurrentId {
     pub id: usize,
 }

@@ -1,11 +1,16 @@
-//!
+//! NAME: tkinventory
 //!
 //! DESCRIPTION: FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM inventory
 //!
 //!
 
-use crate::{tkentities, tkglobal_var, tkitems, tkphysics};
-use bevy::prelude::*;
+use crate::{
+    tkentities::{self, DynamicHeroId},
+    tkglobal_var, tkitems, tkphysics,
+    tool::CurrentId,
+};
+use bevy::{ecs::query::QueryData, prelude::*};
+use bevy_egui::EguiContexts;
 
 // // // // // // // // // //
 // // // COMPONENT // // //
@@ -68,6 +73,18 @@ impl TkInventory {
 //#[derive(Copy, Clone, Component, Debug)]
 //pub struct TkSharedInventory(Vec2);
 
+// // // // // // // // //
+// // // PLUGINS // // //
+// // // // // // // // //
+
+pub struct TkInventoryPlugins;
+impl Plugin for TkInventoryPlugins {
+    fn build(&self, app: &mut App) {
+        // Implementation
+        app.add_observer(test_items_collision);
+    }
+}
+
 // // // // // // // // // // //
 // // // IMPLEMENTATION // // //
 // // // // // // // // // // //
@@ -82,7 +99,7 @@ pub fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
 /// /// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter. sehingga untuk fungsi tes
 /// ini kita tidak akan menggunakan collision itu terlebih dahulu
 pub fn test_insert_item_to_inventory(
-    qr: Query<(Entity, &mut TkInventory, &tkentities::HeroesId)>,
+    qr: Query<(Entity, &mut TkInventory, &tkentities::DynamicHeroId)>,
     key: Res<ButtonInput<KeyCode>>,
 
     // Variable dari item yang akan dimasukkan
@@ -99,7 +116,7 @@ pub fn test_insert_item_to_inventory(
         item_select.id = tkitems::ITEMIDS::Fiber
     }
     for (en, mut inv, id) in qr {
-        if id.id.lock().unwrap().value == current_id.id {
+        if id.id == current_id.id {
             // Apabila P di klik make aktifkan
             if key.just_pressed(KeyCode::KeyP) {
                 // insert item to inventory
@@ -122,19 +139,23 @@ pub fn test_insert_item_to_inventory(
 pub fn test_items_collision(
     mut invc: On<tkphysics::ItemCollisionEventHandle>,
     qritem: Query<(Entity, &tkitems::TkItems)>,
+    mut command: Commands,
     //qrunit: Query<(Entity, &mut TkInventory)>,
 ) {
-    if let Ok((_, item)) = qritem.get(invc.itemen) {
-        println!("Kita Dapat Info Item Sebagai Berikut Ges");
+    if let Some(itemada) = invc.itemen {
+        command.entity(itemada).despawn();
+        println!("\n \n \n THIS SHOULD BE ONE \n \n \n")
     }
 }
-// // // // // // // // //
-// // // PLUGINS // // //
-// // // // // // // // //
 
-pub struct TkInventoryPlugins;
-impl Plugin for TkInventoryPlugins {
-    fn build(&self, app: &mut App) {
-        app.add_observer(test_items_collision);
+// Membuat system untuk melihat inventory dengan menggunakan egui
+
+fn debug_show_inventoryzero(
+    mut contest: EguiContexts,
+    qr: Query<(&tkentities::DynamicHeroId, &TkInventory)>,
+    gid: Res<CurrentId>,
+) {
+    for (id, inv) in qr {
+        if id.id == gid.id {}
     }
 }

@@ -52,110 +52,57 @@ impl UnitSelectable {
     }
 }
 
-// System Id
-// //
-// //
 #[derive(Component)]
-pub struct HeroesId {
-    pub id: Arc<Mutex<DynamicHeroId>>,
+pub struct DynamicHeroId {
+    pub id: usize,
 }
 
-impl HeroesId {
-    pub fn new(id: Arc<Mutex<DynamicHeroId>>) -> Self {
+impl DynamicHeroId {
+    pub fn new(id: usize) -> Self {
         Self { id }
     }
 }
 
-// NOTE: TO FIX HERE
-#[derive(Debug)]
-pub struct DynamicHeroId {
-    parent: Option<Weak<Mutex<Self>>>,
-    pub value: usize,
-    child: Option<Arc<Mutex<Self>>>,
+#[derive(Resource)]
+pub struct DynamicIdAllocator {
+    pub unit: Vec<usize>,
 }
 
-impl DynamicHeroId {
-    pub fn new(x: usize) -> Self {
-        Self {
-            parent: None,
-            value: x,
-            child: None,
-        }
-    }
-
-    pub fn reduce(&mut self) {
-        if self.value > 0 {
-            self.value -= 1;
-        }
-        match &self.child {
-            Some(x) => x.as_ref().lock().unwrap().reduce(),
-            None => {}
-        }
-    }
-}
-
-#[derive(Clone, Debug, Resource)]
-pub struct DynamicHeroList {
-    val_front: Option<Arc<Mutex<DynamicHeroId>>>,
-    panjang: usize,
-    val_back: Option<Arc<Mutex<DynamicHeroId>>>,
-}
-
-impl DynamicHeroList {
+impl DynamicIdAllocator {
     pub fn new() -> Self {
-        Self {
-            val_front: None,
-            panjang: 0,
-            val_back: None,
-        }
+        Self { unit: Vec::new() }
     }
-
-    pub fn add_id(&mut self) -> Arc<Mutex<DynamicHeroId>> {
-        let mut new_value = Arc::new(Mutex::new(DynamicHeroId::new(self.panjang)));
-        match self.val_back.take() {
-            Some(y) => {
-                new_value.lock().unwrap().parent = Some(Arc::downgrade(&y));
-                y.lock().unwrap().child = Some(Arc::clone(&new_value));
-                self.val_back = Some(Arc::clone(&new_value));
-            }
-            None => {
-                self.val_front = Some(Arc::clone(&new_value));
-                self.val_back = Some(Arc::clone(&new_value));
-            }
-        }
-        self.panjang += 1;
-        Arc::clone(&new_value)
-    }
-
-    pub fn _delete_index(&mut self, idx: Arc<Mutex<DynamicHeroId>>) {
-        let (prev_val, nxt_val) = {
-            let idx_guard = idx.lock().unwrap();
-            (idx_guard.parent.clone(), idx_guard.child.clone())
-        };
-
-        // Previous Value
-        if let Some(prev_weak) = &prev_val {
-            if let Some(prev) = prev_weak.upgrade() {
-                prev.lock().unwrap().child = nxt_val.clone();
-            }
+    pub fn new_unit(&mut self) -> usize {
+        if self.unit.is_empty() {
+            self.unit.push(0);
+            return 0;
+        } else if let Some(i) = self.unit.last() {
+            let apx: usize = *i + 1;
+            self.unit.push(apx);
+            return apx;
         } else {
-            self.val_front = nxt_val.clone();
-        }
-
-        // Next Value
-        if let Some(nxt) = &nxt_val {
-            nxt.lock().unwrap().parent = prev_val.clone();
-            nxt.lock().unwrap().reduce();
-        } else {
-            self.val_back = prev_val.and_then(|w| w.upgrade());
+            error!("KESALAHAN DALAM INIT ID");
+            return 0;
         }
     }
-    //pub fn print_member(&self) {
-    //    match &self.val_front {
-    //        Some(x) => x.lock().unwrap().print_child(),
-    //        None => {}
-    //    }
-    //}
+    pub fn delete_unit(&mut self, val: usize) {
+        if let Some(idx) = self.unit.iter().position(|x| *x == val) {
+            self.unit.remove(idx);
+        } else {
+            error!("GAGAL MENGHAPUS ID")
+        }
+    }
+    //pub fn get_idx_pos(&self, ptr: usize) {}
+    pub fn get_next_values(&self, val: usize) -> usize {
+        if let Some(idx) = self.unit.iter().position(|x| *x == val) {
+            if self.unit.len() > idx + 1 {
+                return self.unit[idx + 1];
+            } else {
+                return self.unit[0];
+            }
+        }
+        return self.unit[0];
+    }
 }
 
 // // // INVENTORY SLOT // // //

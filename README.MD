@@ -12,10 +12,30 @@
 Throwback Kingdom is a game written in Rust Programming language with Bevy.
 Throwback Kingdom Combine RPG and RTS into one game
 
-## Roadmap (March)
-1. Physics Support For Capsule (Horizontal) Shapes
-2. Inventory Systems and GIS
-3. RTS Movement
+## Target Pengembangnan Throwback Kingdoms 2027 - 2028
+Target utama dari pengembangan ini adalah untuk setidaknya terlihat baik di publik dimana itu digunakann untuk promorsi dan start
+akun Killing Whales. Sehingga saya harus bisa membuat hal - hal berikut:
+
+### Arts
+- Beberapa Sprite Animation
+- Intro Animation - Seperti ketika di khianati ataupun dibantu buttler alfred
+
+### Musics
+- Massive Sfx
+- Compose Orchestra
+
+### Systems
+- Chopping Down Tree - To Showcase Intro / Base Buildings -> Quadtree
+- Inventory Systems - To Showcase Intro / Base Buildings
+- Buildings - To Showcase Intro / Base Buildings -> Quadtree
+
+- Conquer Lands - To Showcase Base Buildings -> Quadtree, Pathfindings
+
+- Pathfindings Ai - To Showcase Control RTS -> Pathfindings, Ai
+- Simple Enemies - To Showcase Battle -> Ai
+- Combat Systems - To Showcase Battle -> YES
+- Command Systems - To Showcase Battle -> YES
+
 
 ## Notes
 - windows cursor position = - 0.5 * resoulution

@@ -31,8 +31,13 @@ pub struct PhysicsColisionEventHandle {
 /// items / pemasukkan item ke dalam inventory
 #[derive(Event)]
 pub struct ItemCollisionEventHandle {
-    pub itemen: Entity,
+    pub itemen: Option<Entity>,
     pub uniten: Entity,
+}
+impl ItemCollisionEventHandle {
+    pub fn clear(&mut self) {
+        self.itemen = None
+    }
 }
 
 // // // Component // // //
@@ -134,18 +139,14 @@ pub fn access_quadtree_physics(
     mut qr: Query<(&EntityColliding, &TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
     qt: Res<tkquadtree::TkQuadTree>,
 ) {
-    //println!("List: {:?}", qt.get_all_entity());
     // mendapatkan semua entity dalam quadtree
     if let Some(all_en) = qt.get_all_entity() {
         // iterasikan vector tersebut untuk mengakses vector di dalamnya
         for part_all_en in all_en {
-            // apabila len 1, make skip
             if part_all_en.len() == 1 {
                 continue;
             }
-            // 2D Array Iteration
-            // NOTE Uncheck
-            //println!("Cek Pada {:?}", part_all_en);
+
             for i in part_all_en {
                 if let Ok((current_ecol, current_rectang, current_tr)) = qr.get(*i) {
                     // Pastikan yang saat ini adalah Unit dan bukan items
@@ -158,7 +159,7 @@ pub fn access_quadtree_physics(
                     // Mendapatkan Kordinat Kotak untuk current
                     let current_pos = current_rectang.unwrap_coord(&current_tr.translation);
                     for j in part_all_en {
-                        // if check untuk memastikan entity i bukanlah entity i itu sendiri
+                        // if check untuk memastikan entity i bukanlah dirinya sendiri
                         if i != j {
                             // if check untuk memastikan entity i bukanlah entity i itu sendiri
                             if let Ok((next_ecol, next_rectang, next_tr)) = qr.get(*j) {
@@ -191,7 +192,7 @@ pub fn access_quadtree_physics(
                                         }
                                         CollisionType::ITEMS => {
                                             command.trigger(ItemCollisionEventHandle {
-                                                itemen: *j,
+                                                itemen: Some(*j),
                                                 uniten: *i,
                                             });
                                         }
@@ -207,7 +208,7 @@ pub fn access_quadtree_physics(
 }
 
 /// Fungsi untuk menghandle collision yang
-fn handle_collision(
+fn handle_unit_collision(
     colval: On<PhysicsColisionEventHandle>,
     mut qr: Query<(&TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
 ) {
@@ -255,6 +256,6 @@ impl Plugin for TkPhysicsPlugin {
             ), // ini hanya akan berjalan ketika game state
                // adalah play
         );
-        app.add_observer(handle_collision);
+        app.add_observer(handle_unit_collision);
     }
 }

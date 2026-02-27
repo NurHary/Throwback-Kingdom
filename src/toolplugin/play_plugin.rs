@@ -56,7 +56,7 @@ impl Plugin for GameplayPlugin {
         app.add_systems(EguiPrimaryContextPass, show_current_position);
         app.insert_resource(CurrentId::new(0));
         app.insert_resource(GStatus::default()); // ini untuk menentukan rts atau rpg
-        app.insert_resource(DynamicHeroList::new()); // ini untuk memberikan id ke setiap heroes
+        app.insert_resource(DynamicIdAllocator::new()); // ini untuk memberikan id ke setiap heroes
         app.insert_resource(DebugCurrentPosition { pos: Vec3::ZERO });
     }
 }

@@ -15,7 +15,7 @@ use bevy_pancam;
 
 pub fn spawn_character(
     mut command: Commands,
-    mut her_id: ResMut<tkentities::DynamicHeroList>,
+    mut her_id: ResMut<tkentities::DynamicIdAllocator>,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layout: ResMut<Assets<TextureAtlasLayout>>,
     time: Res<Time>,
@@ -70,7 +70,7 @@ pub fn spawn_character(
     command.spawn((
         tkbundles::HeroesBundles::new(
             tkentities::Heroes::new("King Edward"),
-            tkentities::HeroesId::new(her_id.add_id()),
+            tkentities::DynamicHeroId::new(her_id.new_unit()),
             tkentities::TkUnitState::Idle,
         ),
         Sprite {
@@ -102,7 +102,7 @@ pub fn spawn_character(
     command.spawn((
         tkbundles::HeroesBundles::new(
             tkentities::Heroes::new("Alfred"),
-            tkentities::HeroesId::new(her_id.add_id()),
+            tkentities::DynamicHeroId::new(her_id.new_unit()),
             tkentities::TkUnitState::Idle,
         ),
         Sprite {
@@ -142,7 +142,7 @@ pub fn spawn_character(
     command.spawn((
         tkbundles::HeroesBundles::new(
             tkentities::Heroes::new("Fulan"),
-            tkentities::HeroesId::new(her_id.add_id()),
+            tkentities::DynamicHeroId::new(her_id.new_unit()),
             tkentities::TkUnitState::Idle,
         ),
         Sprite {
@@ -182,7 +182,7 @@ pub fn spawn_character(
     command.spawn((
         tkbundles::HeroesBundles::new(
             tkentities::Heroes::new("Fulan"),
-            tkentities::HeroesId::new(her_id.add_id()),
+            tkentities::DynamicHeroId::new(her_id.new_unit()),
             tkentities::TkUnitState::Idle,
         ),
         Sprite {
@@ -221,7 +221,7 @@ pub fn spawn_character(
     command.spawn((
         tkbundles::HeroesBundles::new(
             tkentities::Heroes::new("Fulan"),
-            tkentities::HeroesId::new(her_id.add_id()),
+            tkentities::DynamicHeroId::new(her_id.new_unit()),
             tkentities::TkUnitState::Idle,
         ),
         Sprite {
@@ -282,10 +282,10 @@ pub fn spawn_character(
 }
 pub fn camera_startup(
     mut camera: Single<&mut Transform, (With<tkcamera::MainCamera>, Without<tkentities::TkUnit>)>,
-    king_edward: Query<(&Transform, &tkentities::HeroesId), With<tkentities::TkUnit>>,
+    king_edward: Query<(&Transform, &tkentities::DynamicHeroId), With<tkentities::TkUnit>>,
 ) {
     for (tr, id) in king_edward {
-        if id.id.lock().unwrap().value == 0 {
+        if id.id == 0 {
             let Vec3 { x, y, .. } = tr.translation;
             let mc_position = Vec3::new(x, y, camera.translation.z);
 
