@@ -4,4 +4,3 @@ pub mod startup;
 
 pub mod play_rpg;
 pub mod play_rts;
-pub use main_menu::*;

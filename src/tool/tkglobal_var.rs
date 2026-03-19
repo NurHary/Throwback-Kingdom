@@ -6,10 +6,6 @@
 //!
 //!
 
-use crate::{
-    tkrun_condition::*,
-    toolplugin::tkitems::{TkItems, ITEMIDS},
-};
 use bevy::prelude::*;
 
 /// Variable Global untuk mengingat saat ini memilih karakter yang mana (RPG MODES)
@@ -84,6 +80,7 @@ pub trait QTRC {
     fn activate(&mut self, tr: Vec3);
 }
 
+// NOTE: Ubah ini menjadi event / message
 /// Resource Switch yang berguna untuk memberitahu jika diperlukan operasi pendistribusian partisi pada
 /// suatu Quadtree
 #[derive(Resource)]
@@ -140,3 +137,15 @@ impl QTRC for QTDeleteConditions {
         self.condition = true
     }
 }
+
+// // // EVENTS // // //
+
+#[derive(Event)]
+/// Struct event untuk mengirimkan sinyal kalau karater (rpg) saat ini berganti, berguna baik untuk
+/// ui ataupun command mode dan lainnya
+pub struct IsHeroesChanged;
+
+#[derive(Event)]
+/// Struct event untuk mengirimkan sinyal kalau karater (rpg) saat ini berganti, berguna baik untuk
+/// ui ataupun command mode dan lainnya
+pub struct InventoryItemInserts;

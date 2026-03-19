@@ -7,7 +7,6 @@ use bevy_egui::egui::Ui;
 use crate::tool::qt_delete;
 use crate::tool::{qt_distribute, QTDeleteConditions};
 
-use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts, EguiPrimaryContextPass};
 
 /// Quadtree itu sendiri

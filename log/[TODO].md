@@ -1,4 +1,4 @@
-# TODAYS (27-02-2026)
+# Target Cycle
 - [ ] System Inventory
 - [ ] Memperbaiki Quadtree
 

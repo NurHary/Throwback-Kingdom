@@ -16,10 +16,9 @@ pub fn rpg_play(
 ) {
     enable_camera_motion.enabled = false;
     if key.just_pressed(KeyCode::KeyR) {
-        // TODO Ganti ke DynamicIdAllocator
         current_id.id = dynid.get_next_values(current_id.id);
-        //current_id.id = current_id.id.rem_euclid(dynid.unit.len());
-        info!("SUATU HAL TERJADI {:?}", current_id.id);
+        // TODO: msgre
+        command.trigger(tkglobal_var::IsHeroesChanged);
     }
     if current_id.id > *dynid.unit.last().unwrap() {
         current_id.id = 0

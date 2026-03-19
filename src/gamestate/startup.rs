@@ -98,6 +98,7 @@ pub fn spawn_character(
         tkentities::UnitSelectable::new(),
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
         Transform::from_xyz(25.0, 25.0, 0.0),
+        tkinventory::TkInventory::new(3),
     ));
     command.spawn((
         tkbundles::HeroesBundles::new(
@@ -136,7 +137,7 @@ pub fn spawn_character(
         },
         tkentities::UnitSelectable::new(),
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
-        tkinventory::TkInventory::new(5), // Handle Inventories
+        tkinventory::TkInventory::new(4), // Handle Inventories
         Transform::from_xyz(30.0, -20.0, 0.0),
     ));
     command.spawn((
@@ -176,6 +177,7 @@ pub fn spawn_character(
         },
         tkentities::UnitSelectable::new(),
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkinventory::TkInventory::new(5),
         Transform::from_xyz(-90.0, 25.0, 0.0),
     ));
 
@@ -216,6 +218,7 @@ pub fn spawn_character(
         },
         tkentities::UnitSelectable::new(),
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkinventory::TkInventory::new(2),
         Transform::from_xyz(220.0, 0.0, 0.0),
     ));
     command.spawn((
@@ -256,6 +259,7 @@ pub fn spawn_character(
         tkentities::UnitSelectable::new(),
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
         Transform::from_xyz(-100.0, -50.0, 0.0),
+        tkinventory::TkInventory::new(7),
     ));
 
     // // // ITEMS TEST // // //
@@ -272,7 +276,7 @@ pub fn spawn_character(
                     None,
                     None,
                 )),
-                index: 0,
+                index: tkitems::item_conversion_index(tkitems::ITEMIDS::Wood),
             }),
             custom_size: Some(Vec2::splat(7.)),
             ..Default::default()
@@ -295,8 +299,8 @@ pub fn camera_startup(
 }
 
 /// Fungsi untuk spawn ui untuk bagian bawah / slot items
-fn spawn_slot_items_ui(builder: &mut ChildSpawnerCommands) {
-    for i in 0..5 {
+fn _spawn_slot_items_ui(builder: &mut ChildSpawnerCommands) {
+    for _ in 0..5 {
         builder.spawn((
             Node {
                 //justify_content: JustifyContent::Stretch,

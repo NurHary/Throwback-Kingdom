@@ -1,15 +1,12 @@
-//! NAME: tkinventory
-//!
-//! DESCRIPTION: FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM inventory
-//!
-//!
+//! FILES       :   tkinventory.rs
+//! DESCRIPTION :   FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM inventory
 
 use crate::{
-    tkentities::{self, DynamicHeroId},
-    tkglobal_var, tkitems, tkphysics,
-    tool::CurrentId,
+    tkentities, tkitems, tkphysics,
+    tool::{tkglobal_var, CurrentId},
+    toolplugin::TkItems,
 };
-use bevy::{ecs::query::QueryData, prelude::*};
+use bevy::prelude::*;
 use bevy_egui::EguiContexts;
 
 // // // // // // // // // //
@@ -18,14 +15,14 @@ use bevy_egui::EguiContexts;
 
 /// Struct Component inventory yang akan dipegang oleh semua unit dengan system inventory dimana
 /// memberikan akses slot untuk semua
-#[derive(Clone, Component)]
+#[derive(Clone, Component, Debug)]
 pub struct TkInventory {
-    slot_amount: usize,
+    pub slot_amount: u8,
     pub slot: Vec<tkitems::TkItems>,
 }
 
 impl TkInventory {
-    pub fn new(slot_amount: usize) -> Self {
+    pub fn new(slot_amount: u8) -> Self {
         Self {
             slot_amount,
             slot: Vec::new(),
@@ -34,7 +31,7 @@ impl TkInventory {
 
     /// Fungsi untuk mengecek apakah ukuran slot lebih kecil daripada ukuran maksimal slotnya
     fn check_slot_size(&self) -> bool {
-        if self.slot.len() < self.slot_amount {
+        if self.slot.len() < self.slot_amount.into() {
             return true;
         }
         false
@@ -44,24 +41,35 @@ impl TkInventory {
     /// fungsi ini akan dipanggil ketika update inventory / backpack dilakukan
     pub fn extend_maximum_slot() {}
 
-    /// Fungnsi untuk menambahkan
-    fn get_slot_to_add(&mut self, items: tkitems::TkItems) -> Vec<&mut tkitems::TkItems> {
-        let mut return_value: Vec<&mut tkitems::TkItems> = Vec::new();
-        for i in &mut self.slot {
-            if items.check_items(i) {
-                return_value.push(i);
+    /// fungsi untuk melakukan cek apakah ada suatu items di slot, apabila ada make
+    /// ia akan mereturn index dan juga stacks sisanya
+    /// apabila stack sisa negatif, make lakukan operasi penambahan serta append pada slots
+    fn check_contains_item(&self, items: &tkitems::TkItems) -> Option<(usize, u8)> {
+        for i in 0..self.slot.len() {
+            // apabila ada ataupun non None, make dapatkan sinyal
+            if let Some(chk) = items.check_items(&self.slot[i]) {
+                return Some((i, chk));
             }
         }
-        return_value
+        return None;
     }
 
-    /// fungsi untuk mengecek vector slot pakah contain items tersebut, return true apabila ada,
-    /// return false apabila tidak
-    fn check_contains_item(&self, items: tkitems::TkItems) -> bool {
-        for i in &self.slot {
-            return items.check_items(i);
+    /// fungsi untuk menambahkan data items pada yang sudah ada
+    pub fn append_items_to_items(&mut self, idx: usize, items: &tkitems::TkItems) {
+        println!("BOKEP BOKEP BOKEP BOKEP");
+        // copy shits bruh
+    }
+
+    /// fungsi untuk menambahkan data items pada slots kosong, return bool untuk memberikan
+    /// informamsi terkait keberhasilan proses fungsi, false apabila slot penuh
+    pub fn append_items_to_slots(&mut self, items: &tkitems::TkItems) -> bool {
+        // Cek apabila masih ada ruang kosong
+        if self.check_slot_size() {
+            self.slot
+                .push(tkitems::TkItems::new(items.id, items.amount));
+            return true;
         }
-        false
+        return false;
     }
 }
 
@@ -81,6 +89,7 @@ pub struct TkInventoryPlugins;
 impl Plugin for TkInventoryPlugins {
     fn build(&self, app: &mut App) {
         // Implementation
+        app.add_systems(Update, debug_print_invslot);
         app.add_observer(test_items_collision);
     }
 }
@@ -98,58 +107,47 @@ pub fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
 /// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
 /// /// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter. sehingga untuk fungsi tes
 /// ini kita tidak akan menggunakan collision itu terlebih dahulu
-pub fn test_insert_item_to_inventory(
-    qr: Query<(Entity, &mut TkInventory, &tkentities::DynamicHeroId)>,
-    key: Res<ButtonInput<KeyCode>>,
 
-    // Variable dari item yang akan dimasukkan
-    mut item_select: ResMut<tkitems::DemoItemsSelect>,
-    current_id: Res<tkglobal_var::CurrentId>,
+pub fn test_items_collision(
+    mut invc: On<tkphysics::ItemCollisionEventHandle>,
+    mut qritem: Query<(Entity, &mut tkitems::TkItems)>,
+    mut qrinv: Query<(Entity, &mut TkInventory)>,
+    mut command: Commands,
+    //qrunit: Query<(Entity, &mut TkInventory)>,
 ) {
-    if key.just_pressed(KeyCode::Digit1) {
-        item_select.id = tkitems::ITEMIDS::Wood
-    }
-    if key.just_pressed(KeyCode::Digit2) {
-        item_select.id = tkitems::ITEMIDS::Stone
-    }
-    if key.just_pressed(KeyCode::Digit3) {
-        item_select.id = tkitems::ITEMIDS::Fiber
-    }
-    for (en, mut inv, id) in qr {
-        if id.id == current_id.id {
-            // Apabila P di klik make aktifkan
-            if key.just_pressed(KeyCode::KeyP) {
-                // insert item to inventory
-                if inv.check_contains_item(item_select.into_item()) {
-                    for i in &mut inv.slot {
-                        if i.check_items(&item_select.into_item()) {
-                            let (condition, distr) = i.add_amount(item_select.amount);
-                            if condition {
-                                // NOTE: Unfinished
-                                //invdsys.activate(item_select.id, distr);
+    if let Some(itemada) = invc.itemen {
+        if let Ok((item_en, mut items)) = qritem.get_mut(itemada) {
+            if let Ok((_, mut inv)) = qrinv.get_mut(invc.uniten) {
+                // Cek Inventory apabila ada
+                if let Some((it_index, remainder)) = inv.check_contains_item(&items) {
+                    if remainder != 0 {
+                        // apabila lebih
+                        if let Some(split_items) = items.split_amount(remainder) {
+                            inv.append_items_to_items(it_index, &split_items);
+                            if (inv.append_items_to_slots(&items)) {
+                                command.entity(itemada).despawn();
                             }
+                        }
+                    } else {
+                        // Apabila == 0
+                        inv.append_items_to_items(it_index, &items);
+                        command.entity(itemada).despawn();
+                    }
+                } else {
+                    // apabila tidak ada items sama sekali
+                    if inv.slot.len() < inv.slot_amount.into() {
+                        if inv.append_items_to_slots(&items) {
+                            command.entity(itemada).despawn();
                         }
                     }
                 }
+                command.trigger(tkglobal_var::InventoryItemInserts);
             }
         }
     }
 }
 
-pub fn test_items_collision(
-    mut invc: On<tkphysics::ItemCollisionEventHandle>,
-    qritem: Query<(Entity, &tkitems::TkItems)>,
-    mut command: Commands,
-    //qrunit: Query<(Entity, &mut TkInventory)>,
-) {
-    if let Some(itemada) = invc.itemen {
-        command.entity(itemada).despawn();
-        println!("\n \n \n THIS SHOULD BE ONE \n \n \n")
-    }
-}
-
 // Membuat system untuk melihat inventory dengan menggunakan egui
-
 fn debug_show_inventoryzero(
     mut contest: EguiContexts,
     qr: Query<(&tkentities::DynamicHeroId, &TkInventory)>,
@@ -157,5 +155,21 @@ fn debug_show_inventoryzero(
 ) {
     for (id, inv) in qr {
         if id.id == gid.id {}
+    }
+}
+
+/// Debug function untuk menerima input "t" lalu print setiap item yang ada di inventory slot pada
+/// character yang dipilih
+fn debug_print_invslot(
+    key: Res<ButtonInput<KeyCode>>,
+    qr: Query<(&tkentities::DynamicHeroId, &TkInventory)>,
+    curid: Res<tkglobal_var::CurrentId>,
+) {
+    if key.just_pressed(KeyCode::KeyT) {
+        for (id, inv) in &qr {
+            if id.id == curid.id {
+                info!("Items Terdiri Dari {:?}", inv.slot);
+            }
+        }
     }
 }
