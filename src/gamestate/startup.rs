@@ -265,7 +265,7 @@ pub fn spawn_character(
     // // // ITEMS TEST // // //
     command.spawn((
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkitems::TkItems::new(tkitems::ITEMIDS::Wood, 2),
+        tkitems::TkItems::new(tkitems::ITEMIDS::Wood, 99),
         Sprite {
             image: asset_server.load("test_items_atlas.png"),
             texture_atlas: Some(TextureAtlas {
@@ -282,6 +282,46 @@ pub fn spawn_character(
             ..Default::default()
         },
         Transform::from_xyz(40.0, 25.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
+        tkitems::TkItems::new(tkitems::ITEMIDS::Wood, 1),
+        Sprite {
+            image: asset_server.load("test_items_atlas.png"),
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    3,
+                    1,
+                    None,
+                    None,
+                )),
+                index: tkitems::item_conversion_index(tkitems::ITEMIDS::Wood),
+            }),
+            custom_size: Some(Vec2::splat(7.)),
+            ..Default::default()
+        },
+        Transform::from_xyz(10.0, 65.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
+        tkitems::TkItems::new(tkitems::ITEMIDS::Stone, 1),
+        Sprite {
+            image: asset_server.load("test_items_atlas.png"),
+            texture_atlas: Some(TextureAtlas {
+                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    3,
+                    1,
+                    None,
+                    None,
+                )),
+                index: tkitems::item_conversion_index(tkitems::ITEMIDS::Wood),
+            }),
+            custom_size: Some(Vec2::splat(7.)),
+            ..Default::default()
+        },
+        Transform::from_xyz(30.0, 15.0, 0.0),
     ));
 }
 pub fn camera_startup(

@@ -20,6 +20,7 @@
     - [x] System untuk mendespawn inventory tersebut ketika ganti karakter
 - [x] Implementasi pickup ke dalam inventory
 - [ ] System untuk draw items di dalamnya
+    - [ ] Fix untuk draw hanya pada karakter tertentu
 - [ ] implementasi prerequisites dan pembangunan serta system grid pembangunan
 
 === Quadtree ===

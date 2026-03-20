@@ -2,7 +2,10 @@
 //! DESCRIPTION :   FILES DEKLARASI, DEFINISI, SERTA UNTUK MENGHANDLE UI YANG DAPAT DIGUNAKAN OLEH
 //!                 PEMAIN
 
-use bevy::prelude::*;
+use bevy::{
+    color::palettes::css::{BLACK, WHITE},
+    prelude::*,
+};
 
 use crate::{
     tkentities,
@@ -43,7 +46,11 @@ pub fn operation_minipanel_ui() {}
 // Inventory Systems //
 
 // Fungsi Startup yang membuat system Root untuk membangun Child slots
-fn ui_rpg_inv_root(mut builder: Commands, qr: Query<Entity, With<TkUiRootInv>>) {
+fn ui_rpg_inv_root(
+    mut builder: Commands,
+    qr: Query<Entity, With<TkUiRootInv>>,
+    asset_server: Res<AssetServer>,
+) {
     if !qr.is_empty() {
         return;
     }
@@ -93,7 +100,29 @@ fn ui_rpg_inv_root(mut builder: Commands, qr: Query<Entity, With<TkUiRootInv>>) 
                             )),
                             TkItemSlot::new(i),
                             Button,
-                        ));
+                        ))
+                        .with_children(|papar| {
+                            // Slot Number
+                            papar
+                                .spawn(Node {
+                                    position_type: PositionType::Absolute,
+                                    display: Display::Flex,
+                                    top: Val::Px(2.0),
+                                    left: Val::Px(3.0),
+                                    ..Default::default()
+                                })
+                                .with_children(|papapar| {
+                                    papapar.spawn((
+                                        Text::new(format!("{}", i + 1)),
+                                        TextColor(BLACK.into()),
+                                        TextFont {
+                                            font: asset_server.load("fonts/Medium.ttf"),
+                                            font_size: 12.0,
+                                            ..Default::default()
+                                        }, // JAJAL
+                                    ));
+                                });
+                        });
                     }
                 });
         });
@@ -110,6 +139,7 @@ fn ui_rpg_handle_amount_items_slots(
         With<tkinventory::TkInventory>,
     >,
     curid: Res<tkglobal_var::CurrentId>,
+    asset_server: Res<AssetServer>,
 ) {
     info!("Init Thing Ui");
     // Error Heres; No Entity
@@ -130,22 +160,45 @@ fn ui_rpg_handle_amount_items_slots(
             //info!("Test Kurang Banyak {loc_curslot}, {loc_slot_amount}");
             for i in loc_curslot..loc_slot_amount {
                 command.entity(root).with_children(|parent| {
-                    parent.spawn((
-                        Node {
-                            //justify_content: JustifyContent::Stretch,
-                            width: Val::Px(60.),
-                            height: Val::Px(60.),
-                            margin: UiRect::all(Val::Px(2.)),
-                            ..Default::default()
-                        },
-                        BackgroundColor(Color::linear_rgb(
-                            0.55294117647,
-                            0.55294117647,
-                            0.55294117647,
-                        )),
-                        TkItemSlot::new(i),
-                        Button,
-                    ));
+                    parent
+                        .spawn((
+                            Node {
+                                //justify_content: JustifyContent::Stretch,
+                                width: Val::Px(60.),
+                                height: Val::Px(60.),
+                                margin: UiRect::all(Val::Px(2.)),
+                                ..Default::default()
+                            },
+                            BackgroundColor(Color::linear_rgb(
+                                0.55294117647,
+                                0.55294117647,
+                                0.55294117647,
+                            )),
+                            TkItemSlot::new(i),
+                            Button,
+                        ))
+                        .with_children(|papar| {
+                            papar
+                                .spawn(Node {
+                                    position_type: PositionType::Absolute,
+                                    display: Display::Flex,
+                                    justify_content: JustifyContent::Start,
+                                    align_items: AlignItems::FlexStart,
+                                    ..Default::default()
+                                })
+                                .with_children(|papapar| {
+                                    papapar.spawn((
+                                        Text::new(format!("{}", i + 1)),
+                                        TextColor(BLACK.into()),
+                                        TextFont {
+                                            font: asset_server.load("fonts/Medium.ttf"),
+                                            font_size: 12.0,
+                                            ..Default::default()
+                                        }, // JAJAL
+                                    ));
+                                });
+                            // TODO
+                        });
                 });
             }
         } else if loc_curslot > loc_slot_amount {
@@ -168,22 +221,25 @@ fn ui_rpg_handle_items_sprite_slots(
         (&tkentities::DynamicHeroId, &tkinventory::TkInventory),
         With<tkinventory::TkInventory>,
     >,
-    mut qr_slot: Query<(Entity, &mut TkItemSlot)>,
+    qr_slot: Query<(Entity, &TkItemSlot)>,
     mut texture_atlas_layout: ResMut<Assets<TextureAtlasLayout>>,
     asset_server: Res<AssetServer>,
 ) {
     info!("Init Items Ui");
     for (id, inv) in &qr_inv {
         if id.id == curid.id {
-            for (sloten, mut slot) in &qr_slot {
+            info!("Getting Unit");
+            for (sloten, slot) in &qr_slot {
+                info!("Getting Slot {:?}", slot.id);
                 // Guard untuk tidak melebihi sisanya
-                if inv.slot.len() < (slot.id + 1) as usize {
-                    break;
+                if slot.id as usize >= inv.slot.len() {
+                    info!("unable to Print");
+                    continue;
                 };
                 command.entity(sloten).with_children(|parpar| {
                     // TODO
-                    parpar.spawn(Sprite {
-                        image: asset_server.load("atlas_test.png"),
+                    parpar.spawn(ImageNode {
+                        image: asset_server.load("test_items_atlas.png"),
                         texture_atlas: Some(TextureAtlas {
                             layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
                                 UVec2::splat(32),
@@ -194,9 +250,30 @@ fn ui_rpg_handle_items_sprite_slots(
                             )),
                             index: tkitems::item_conversion_index(inv.slot[slot.id as usize].id),
                         }),
-                        custom_size: Some(Vec2::splat(3.)),
+
                         ..Default::default()
                     });
+                    parpar
+                        .spawn(Node {
+                            position_type: PositionType::Absolute,
+                            bottom: Val::Px(2.0),
+                            right: Val::Px(3.0),
+                            //display: Display::Flex,
+                            //justify_content: JustifyContent::FlexEnd,
+                            //align_items: AlignItems::FlexEnd,
+                            ..Default::default()
+                        })
+                        .with_children(|itemamountbuilder| {
+                            itemamountbuilder.spawn((
+                                Text::new(format!("{}", inv.slot[slot.id as usize].amount)),
+                                TextColor(BLACK.into()),
+                                TextFont {
+                                    font: asset_server.load("fonts/Medium.ttf"),
+                                    font_size: 12.0,
+                                    ..Default::default()
+                                },
+                            ));
+                        });
                 });
             }
         }
