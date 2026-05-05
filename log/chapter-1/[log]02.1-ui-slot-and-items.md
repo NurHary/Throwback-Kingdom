@@ -8,8 +8,6 @@ ui dari games Throwback Kingdoms itu sendiri dibagi menjadi beberapa bagian, bag
     5. Sidebar Access (Bawahnya Healthbar)
     6. Operation Minipanel (Top End)
 
-
-
 ## RPG Modes
 ### Slot Items
 Slot items itu sendiri diatur dengan Component **TkItemSlot** dan juga **Button** dimana button tersebut akan mengatur
@@ -30,3 +28,4 @@ boros. metode untuk mengatasi hal tersebut yang ada dalam pikiran saya saat ini 
 
 ### Masukan
 1.  RPG mode juga memperbolehkan Penggunaan General Inventory Sys (Seperti ketika hendak menebang pohon)
+

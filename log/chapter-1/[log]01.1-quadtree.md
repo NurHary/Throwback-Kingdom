@@ -1,3 +1,4 @@
+_Deskripsi: Log Sistem Quadtree Untuk Collision Detection_
 
 ## Cara Kerja
 1. setiap unit memiliki component QuadtreeUnit dimana itu akan membuat unit itu bisa diakses dalam pemasukan pada quadtree

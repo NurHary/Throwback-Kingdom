@@ -1,6 +1,6 @@
 # Main
 ## Plugin
-main.rs menggunakan Bevy dengan model modular dimana system - system dari game itu sendiri akan di pisah dengan menggunakan model modular plugin itu sendiri
+main.rs menggunakan Bevy dengan model modular dimana system - system dari game itu sendiri akan di pisah dengan menggunakan model modular plugin
 
 untuk saat ini terdapat beberapa plugin yang telah dibuat itu sendiri yaitu:
 
@@ -58,4 +58,4 @@ Ataupun Local Variable Struct seperti:
 dan beberapa lainnya adalah resources switch technique yang mana akan diaktifkan dan sinyal aktif tersebut
 akan dapat dibaca oleh semua yang membutuhkan, beberapa darinya adalah
 1. Quadtree (Distribute, Delete)
-2. Inventory (Insert)
+2. Inventory (Insert, Update)

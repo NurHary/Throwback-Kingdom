@@ -33,6 +33,14 @@ pub struct TkRtsUi;
 // Inventory Root
 #[derive(Component)]
 pub struct TkUiRootInv;
+#[derive(Component)]
+pub struct TkUiSprite;
+// // // COMPONENT // // //
+
+// // // EVENTS // // //
+#[derive(Event)]
+struct RespawnUiEvents;
+// // // EVENTS // // //
 
 // // // UI LAYOUT // // //
 //
@@ -55,11 +63,9 @@ fn ui_rpg_inv_root(
         return;
     }
     // Init Root
-    info!("Init Inv Root");
     if !qr.is_empty() {
         return;
     }
-    builder.trigger(tkglobal_var::IsHeroesChanged);
     builder
         .spawn((Node {
             height: Val::Percent(100.),
@@ -126,10 +132,11 @@ fn ui_rpg_inv_root(
                     }
                 });
         });
+    builder.trigger(tkglobal_var::UiRefreshRpgEvents);
 }
 // Fungsi untuk update dan handle Ui tentang inventories
 fn ui_rpg_handle_amount_items_slots(
-    _: On<tkglobal_var::IsHeroesChanged>,
+    _: On<tkglobal_var::UiRefreshRpgEvents>,
     mut command: Commands,
     //asset_server: Res<AssetServer>,
     qr_root: Query<(Entity, &Children), With<TkUiRootInv>>,
@@ -141,11 +148,8 @@ fn ui_rpg_handle_amount_items_slots(
     curid: Res<tkglobal_var::CurrentId>,
     asset_server: Res<AssetServer>,
 ) {
-    info!("Init Thing Ui");
     // Error Heres; No Entity
     if let Ok((root, child)) = qr_root.single() {
-        info!("Init Getting Root {root}");
-
         let mut loc_slot_amount = 0;
         for (id, inv) in &qr_inv {
             if curid.id == id.id {
@@ -154,10 +158,8 @@ fn ui_rpg_handle_amount_items_slots(
             }
         }
         let loc_curslot = child.len() as u8;
-        info!("Test Print Banyak {loc_curslot}, {loc_slot_amount}");
 
         if loc_curslot < loc_slot_amount {
-            //info!("Test Kurang Banyak {loc_curslot}, {loc_slot_amount}");
             for i in loc_curslot..loc_slot_amount {
                 command.entity(root).with_children(|parent| {
                     parent
@@ -182,8 +184,8 @@ fn ui_rpg_handle_amount_items_slots(
                                 .spawn(Node {
                                     position_type: PositionType::Absolute,
                                     display: Display::Flex,
-                                    justify_content: JustifyContent::Start,
-                                    align_items: AlignItems::FlexStart,
+                                    top: Val::Px(2.0),
+                                    left: Val::Px(3.0),
                                     ..Default::default()
                                 })
                                 .with_children(|papapar| {
@@ -202,19 +204,18 @@ fn ui_rpg_handle_amount_items_slots(
                 });
             }
         } else if loc_curslot > loc_slot_amount {
-            //info!("Test terlalu Banyak {loc_curslot}, {loc_slot_amount}");
             for chilldren in child.iter().skip(loc_slot_amount.into()) {
                 if qr_slot.get(chilldren).is_ok() {
-                    //info!("Delete Shit");
                     command.entity(chilldren).despawn();
                 };
             }
         }
     }
+    command.trigger(tkglobal_var::InventoryItemInsertsEvents);
 }
 
 fn ui_rpg_handle_items_sprite_slots(
-    _: On<tkglobal_var::InventoryItemInserts>,
+    _: On<tkglobal_var::InventoryItemInsertsEvents>,
     mut command: Commands,
     curid: Res<tkglobal_var::CurrentId>,
     qr_inv: Query<
@@ -224,45 +225,54 @@ fn ui_rpg_handle_items_sprite_slots(
     qr_slot: Query<(Entity, &TkItemSlot)>,
     mut texture_atlas_layout: ResMut<Assets<TextureAtlasLayout>>,
     asset_server: Res<AssetServer>,
+    qr_items: Query<Entity, With<TkUiSprite>>,
 ) {
-    info!("Init Items Ui");
+    for en in &qr_items {
+        command.entity(en).despawn();
+    }
+
     for (id, inv) in &qr_inv {
         if id.id == curid.id {
-            info!("Getting Unit");
             for (sloten, slot) in &qr_slot {
-                info!("Getting Slot {:?}", slot.id);
                 // Guard untuk tidak melebihi sisanya
                 if slot.id as usize >= inv.slot.len() {
-                    info!("unable to Print");
                     continue;
                 };
                 command.entity(sloten).with_children(|parpar| {
                     // TODO
-                    parpar.spawn(ImageNode {
-                        image: asset_server.load("test_items_atlas.png"),
-                        texture_atlas: Some(TextureAtlas {
-                            layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
-                                UVec2::splat(32),
-                                3,
-                                1,
-                                None,
-                                None,
-                            )),
-                            index: tkitems::item_conversion_index(inv.slot[slot.id as usize].id),
-                        }),
+                    parpar.spawn((
+                        ImageNode {
+                            image: asset_server.load("test_items_atlas.png"),
+                            texture_atlas: Some(TextureAtlas {
+                                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
+                                    UVec2::splat(32),
+                                    tkitems::ITEMSPRITEMAXHORI,
+                                    tkitems::ITEMSPRITEMAXVERT,
+                                    None,
+                                    None,
+                                )),
+                                index: tkitems::item_conversion_index(
+                                    inv.slot[slot.id as usize].id,
+                                ),
+                            }),
 
-                        ..Default::default()
-                    });
-                    parpar
-                        .spawn(Node {
-                            position_type: PositionType::Absolute,
-                            bottom: Val::Px(2.0),
-                            right: Val::Px(3.0),
-                            //display: Display::Flex,
-                            //justify_content: JustifyContent::FlexEnd,
-                            //align_items: AlignItems::FlexEnd,
                             ..Default::default()
-                        })
+                        },
+                        TkUiSprite,
+                    ));
+                    parpar
+                        .spawn((
+                            Node {
+                                position_type: PositionType::Absolute,
+                                bottom: Val::Px(2.0),
+                                right: Val::Px(3.0),
+                                //display: Display::Flex,
+                                //justify_content: JustifyContent::FlexEnd,
+                                //align_items: AlignItems::FlexEnd,
+                                ..Default::default()
+                            },
+                            TkUiSprite,
+                        ))
                         .with_children(|itemamountbuilder| {
                             itemamountbuilder.spawn((
                                 Text::new(format!("{}", inv.slot[slot.id as usize].amount)),
@@ -293,17 +303,76 @@ pub fn quick_info_minipanel_ui() {}
 fn handle_ui_changes(
     mut cmd: Commands,
     gamemode: Res<tkglobal_var::GStatus>,
-    qr_rpg: Query<Entity, With<TkRpgUi>>,
+    qr_invrpg: Query<Entity, With<TkUiRootInv>>,
     qr_rts: Query<Entity, With<TkRtsUi>>,
+    asset_server: Res<AssetServer>,
 ) {
     if gamemode.mode {
+        // if mode == rpg
         for i in &qr_rts {
             cmd.entity(i).despawn();
         }
+        cmd.trigger(RespawnUiEvents);
+        cmd.trigger(tkglobal_var::UiRefreshRpgEvents);
     } else {
-        for i in &qr_rpg {
-            cmd.entity(i).despawn();
+        for i in &qr_invrpg {
+            cmd.entity(i).despawn_children();
         }
+    }
+}
+
+fn ui_respawn_refresh(
+    _: On<RespawnUiEvents>,
+    mut command: Commands,
+    gamemode: Res<tkglobal_var::GStatus>,
+    qr_invrpg: Query<Entity, With<TkUiRootInv>>,
+    asset_server: Res<AssetServer>,
+) {
+    if gamemode.mode {
+        for i in &qr_invrpg {
+            command.entity(i).with_children(|reversal| {
+                reversal
+                    .spawn((
+                        Node {
+                            //justify_content: JustifyContent::Stretch,
+                            width: Val::Px(60.),
+                            height: Val::Px(60.),
+                            margin: UiRect::all(Val::Px(2.)),
+                            ..Default::default()
+                        },
+                        BackgroundColor(Color::linear_rgb(
+                            0.55294117647,
+                            0.55294117647,
+                            0.55294117647,
+                        )),
+                        TkItemSlot::new(0),
+                        Button,
+                    ))
+                    .with_children(|papar| {
+                        // Slot Number
+                        papar
+                            .spawn(Node {
+                                position_type: PositionType::Absolute,
+                                display: Display::Flex,
+                                top: Val::Px(2.0),
+                                left: Val::Px(3.0),
+                                ..Default::default()
+                            })
+                            .with_children(|papapar| {
+                                papapar.spawn((
+                                    Text::new(format!("{}", 0 + 1)),
+                                    TextColor(BLACK.into()),
+                                    TextFont {
+                                        font: asset_server.load("fonts/Medium.ttf"),
+                                        font_size: 12.0,
+                                        ..Default::default()
+                                    }, // JAJAL
+                                ));
+                            });
+                    });
+            });
+        }
+    } else {
     }
 }
 
@@ -342,5 +411,6 @@ impl Plugin for TkGameUiPlugin {
         );
         app.add_observer(ui_rpg_handle_amount_items_slots);
         app.add_observer(ui_rpg_handle_items_sprite_slots);
+        app.add_observer(ui_respawn_refresh);
     }
 }

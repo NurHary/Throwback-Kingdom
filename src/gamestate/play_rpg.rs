@@ -18,7 +18,7 @@ pub fn rpg_play(
     if key.just_pressed(KeyCode::KeyR) {
         current_id.id = dynid.get_next_values(current_id.id);
         // TODO: msgre
-        command.trigger(tkglobal_var::IsHeroesChanged);
+        command.trigger(tkglobal_var::UiRefreshRpgEvents);
     }
     if current_id.id > *dynid.unit.last().unwrap() {
         current_id.id = 0

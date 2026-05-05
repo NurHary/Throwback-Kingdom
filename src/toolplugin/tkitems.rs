@@ -1,3 +1,7 @@
+//! FILES       :   tkitems.rs
+//! DESCRIPTION :   FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM ITEMS, BIASANYA SALING
+//!                 BERIKATAN DENGAN TK INVENTORY
+
 use crate::toolplugin::tkinventory;
 use bevy::prelude::*;
 
@@ -9,6 +13,11 @@ pub enum ITEMIDS {
     Stone,
     Fiber,
 }
+
+/// Global Constant untuk max horizontal Sprite items
+pub const ITEMSPRITEMAXHORI: u32 = 3;
+/// Global Constant untuk max Vertical Sprite items
+pub const ITEMSPRITEMAXVERT: u32 = 3;
 
 /// Fungsi untuk mendapatkan index atlas dari item id (x)
 pub fn item_conversion_index(id: ITEMIDS) -> usize {
@@ -41,10 +50,11 @@ impl TkItems {
 
     pub fn split_amount(&mut self, a: u8) -> Option<Self> {
         if a < self.amount {
+            let tmp: u8 = self.amount;
             self.amount = a;
             return Some(Self {
                 id: self.id,
-                amount: self.amount - a,
+                amount: tmp - a,
             });
         }
         return None;
@@ -54,14 +64,15 @@ impl TkItems {
     /// ditampung (if (self.amnt + rhs.amnt > MAX) ? MAX - total.amnt : 0 )
     pub fn check_items(&self, rhs: &Self) -> Option<u8> {
         // Guard sehingga tidak akan dilakukan pengecekan ketika item sudah penuh
-        if self.amount == MAXIMUM_ITEM_STACK {
+        if rhs.amount >= MAXIMUM_ITEM_STACK {
+            // Why not this
             return None;
         }
         if self.id == rhs.id {
             // ini ada supaya disana tahu kalau item ini ada berapa jumlah yang bisa di tambahkan,
             // apabila lebih make return sisa untuk dibangun item dan insert lagi
             if self.amount + rhs.amount > MAXIMUM_ITEM_STACK {
-                return Some(MAXIMUM_ITEM_STACK - (self.amount + rhs.amount));
+                return Some((self.amount + rhs.amount) - MAXIMUM_ITEM_STACK);
             }
             return Some(0);
             //return Some(MAXIMUM_ITEM_STACK - rhs.amount);

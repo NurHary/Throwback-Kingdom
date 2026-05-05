@@ -85,7 +85,7 @@ impl TkQuadTree {
 
     pub fn remerge(&mut self) {
         let all_child = self.take_all_children_unit();
-        println!("\n take all Children {:?}", all_child);
+        //println!("\n take all Children {:?}", all_child);
         self.tiles = Some(Vec::new());
         if let Some(tiles) = &mut self.tiles {
             tiles.extend(all_child.into_iter());
@@ -194,10 +194,10 @@ impl TkQuadTree {
             if self.divided {
                 // melakukan check child apakah child bercabang atau tidak
                 if self.check_child_not_divided() {
-                    println!(
-                        "Get Parent Mut {} tidak memiliki anakan yang terdivide",
-                        self.name
-                    );
+                    //println!(
+                    //"Get Parent Mut {} tidak memiliki anakan yang terdivide",
+                    //self.name
+                    //);
                     // jika tidak bercabang make return diri sendiri
                     return Some(self);
                 } else {
@@ -294,7 +294,7 @@ impl TkQuadTree {
         self.divided = false;
         self.childnode = None;
         self.tiles = Some(Vec::new());
-        println!("Partisi {} berhasil dihapus dan menjadi normal", self.name);
+        //println!("Partisi {} berhasil dihapus dan menjadi normal", self.name);
     }
 
     // On Process
@@ -375,7 +375,7 @@ impl TkQuadTree {
     /// dan akan true apabila lebih dari 4 (0, 1, 2, 3, 4);
     pub fn check_child_branch_exceed_four(&self) -> bool {
         let hasil = self.check_child_amount();
-        println!("\n \nJumlah tiles pada anakan adalah: {}", hasil);
+        //println!("\n \nJumlah tiles pada anakan adalah: {}", hasil);
         if hasil > 4 {
             return false;
         }
@@ -384,18 +384,18 @@ impl TkQuadTree {
     /// Fungsi untuk mengembalikan anakan berdasarkan jumlahnya secara recursive
     fn check_child_amount(&self) -> usize {
         let mut return_amount: usize = 0;
-        println!("\nCheck Child partisi: {}", self.name);
+        //println!("\nCheck Child partisi: {}", self.name);
         if self.divided {
             for i in self.childnode.as_ref().unwrap() {
                 return_amount += i.check_child_amount()
             }
         } else {
             if let Some(tiles) = &self.tiles {
-                println!(
-                    "partisi {} memiliki tiles dengan jumlah: {}",
-                    self.name,
-                    tiles.len()
-                );
+                //println!(
+                //    "partisi {} memiliki tiles dengan jumlah: {}",
+                //self.name,
+                //    tiles.len()
+                //);
                 return_amount += tiles.len();
             }
         }
@@ -610,7 +610,7 @@ fn update_quadtree_unit(
                 // menginsert entity itu pada posisi saat ini
                 if qt.divided {
                     if let Some(distribusi) = qt.distribute(en, tr.translation) {
-                        println!("Update Quadtree distribute \n");
+                        //println!("Update Quadtree distribute \n");
                         qtdec.activate(distribusi);
                         qtdc.activate(distribusi);
                         qtup.assign_values(distribusi);
@@ -618,7 +618,7 @@ fn update_quadtree_unit(
                 } else {
                     if let Some(distribusi) = qt.insert(en, tr.translation) {
                         //println!("Update Quadtree insert \n");
-                        println!("Assign This To qtup insert update");
+                        //println!("Assign This To qtup insert update");
                         qtdec.activate(distribusi);
                         qtdc.activate(distribusi);
                         //qtup.assign_values(distribusi);
@@ -707,10 +707,10 @@ fn delete_qt(
     // apabila qtdec memiliki posisi, make dilanjutkan
     for qtdec_pos in qtdec.pos.clone() {
         let to_delete = search_unit_to_delete(&mut qt, qtdec_pos);
-        println!(
-            "Mendapatkan unit apa saja yang harus di cek untuk delete, {:?}",
-            to_delete
-        );
+        //println!(
+        //    "Mendapatkan unit apa saja yang harus di cek untuk delete, {:?}",
+        //    to_delete
+        //);
         for (en, mut qtup) in &mut qr {
             for check_deleting_nodes in &to_delete {
                 if check_deleting_nodes == &en {
@@ -727,16 +727,16 @@ fn delete_qt(
                         }
                         // cari partisi parentnya
                         if let Some(part) = qt.get_parent_mut(*qtup.old_val.as_ref().unwrap()) {
-                            println!(
-                                "Mendapatkan Partisi berupa: {}======================",
-                                part.name
-                            );
+                            //println!(
+                            //    "Mendapatkan Partisi berupa: {}======================",
+                            //    part.name
+                            //);
 
                             // apabila anakan dari parentnya ada di atas 4
                             if !part.check_child_branch_exceed_four() {
-                                println!("{} memiliki jumlah anakan diatas 4", part.name);
+                                //println!("{} memiliki jumlah anakan diatas 4", part.name);
                             } else {
-                                println!("{} memiliki jumlah anakan dibawah 4", part.name);
+                                //println!("{} memiliki jumlah anakan dibawah 4", part.name);
                                 // Make kita akan meremerge semua anakan di bawahnya untuk masuk
                                 // menjadi ankan dari parent itu sendiri
                                 part.remerge();

@@ -6,6 +6,7 @@
 //!
 //!
 
+use crate::tkitems;
 use bevy::prelude::*;
 
 /// Variable Global untuk mengingat saat ini memilih karakter yang mana (RPG MODES)
@@ -72,6 +73,28 @@ impl WorldSize {
     pub const MEDIUM: f32 = 100000000.0;
     pub const LARGE: f32 = 100000000000.0;
 }
+
+// // // ASSET // // //
+
+/// Macro untuk spawn items itu sendiri dikarenakan asset server dan texture layout tidak dapat di
+/// kirim ke fn lainnya
+macro_rules! spawnitems {
+    ($id: expr, $amount: expr, $assv: ident, $texl: ident) => {
+        (
+            tkitems::TkItems::new($id, $amount),
+            Sprite {
+                image: $assv.load("test_items_atlas.png"),
+                texture_atlas: Some(TextureAtlas {
+                    layout: $texl.clone(),
+                    index: tkitems::item_conversion_index($id),
+                }),
+                custom_size: Some(Vec2::splat(7.)),
+                ..Default::default()
+            },
+        )
+    };
+}
+pub(crate) use spawnitems;
 
 // // // QUADTREE // // //
 
@@ -143,9 +166,9 @@ impl QTRC for QTDeleteConditions {
 #[derive(Event)]
 /// Struct event untuk mengirimkan sinyal kalau karater (rpg) saat ini berganti, berguna baik untuk
 /// ui ataupun command mode dan lainnya
-pub struct IsHeroesChanged;
+pub struct UiRefreshRpgEvents;
 
 #[derive(Event)]
 /// Struct event untuk mengirimkan sinyal kalau karater (rpg) saat ini berganti, berguna baik untuk
 /// ui ataupun command mode dan lainnya
-pub struct InventoryItemInserts;
+pub struct InventoryItemInsertsEvents;

@@ -5,6 +5,7 @@ fungsi yang dapat digunakan oleh main games, fungsi itu terdiri dari hal berikut
 1. fungsi untuk mengakses Quadtree dan mendapatkan entities berdsarkan tingkatan partisi
 2. pengecekan collision untuk setiap entities yang dikirim oleh proses 1
 3. pengaplikasian physics berdasarkan tipe dari collision tersebut
+4. send data pada fungsi yang berkaitan menggunakan sistem event
 
 ## Component & Plugins
 ada beberapa Component yang di definisikan, yaitu:
@@ -17,5 +18,6 @@ dimana juga terdapat beberapa tipe data yang dijelaskan serta struct plugins
 2. TkPhysicsPlugins -> plugins yang menjalankan operasi fungsi dari TkPhysics secara keseluruhan
     segala operasi tersebut (untuk saat ini adalah)
     1. operasi pengecekan collision
-    2. #ToImplement operasi pengaksesan quadtree -> Update
+    2. operasi pengaksesan quadtree -> Update
+    3. operasi pengecekan tipe dan pengiriman sinyal berdasarkan tipe
 

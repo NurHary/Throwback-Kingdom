@@ -1,5 +1,6 @@
 use crate::{
     tkanimations, tkbundles, tkcamera, tkentities, tkphysics,
+    tool::tkglobal_var,
     toolplugin::{tkinventory, tkitems},
 };
 use bevy::prelude::*;
@@ -26,6 +27,14 @@ pub fn spawn_character(
 
     let layout: TextureAtlasLayout =
         TextureAtlasLayout::from_grid(UVec2::splat(16), 2, 2, None, None);
+    let layout_items: TextureAtlasLayout = TextureAtlasLayout::from_grid(
+        UVec2::splat(32),
+        tkitems::ITEMSPRITEMAXHORI,
+        tkitems::ITEMSPRITEMAXVERT,
+        None,
+        None,
+    );
+    let item_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout_items);
     let texture_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout);
 
     // // //  TEST TEXTURE ATLAS // // //
@@ -98,7 +107,7 @@ pub fn spawn_character(
         tkentities::UnitSelectable::new(),
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
         Transform::from_xyz(25.0, 25.0, 0.0),
-        tkinventory::TkInventory::new(3),
+        tkinventory::TkInventory::new(4),
     ));
     command.spawn((
         tkbundles::HeroesBundles::new(
@@ -265,62 +274,27 @@ pub fn spawn_character(
     // // // ITEMS TEST // // //
     command.spawn((
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkitems::TkItems::new(tkitems::ITEMIDS::Wood, 99),
-        Sprite {
-            image: asset_server.load("test_items_atlas.png"),
-            texture_atlas: Some(TextureAtlas {
-                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
-                    UVec2::splat(32),
-                    3,
-                    1,
-                    None,
-                    None,
-                )),
-                index: tkitems::item_conversion_index(tkitems::ITEMIDS::Wood),
-            }),
-            custom_size: Some(Vec2::splat(7.)),
-            ..Default::default()
-        },
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 99, asset_server, item_atlas),
         Transform::from_xyz(40.0, 25.0, 0.0),
     ));
     command.spawn((
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkitems::TkItems::new(tkitems::ITEMIDS::Wood, 1),
-        Sprite {
-            image: asset_server.load("test_items_atlas.png"),
-            texture_atlas: Some(TextureAtlas {
-                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
-                    UVec2::splat(32),
-                    3,
-                    1,
-                    None,
-                    None,
-                )),
-                index: tkitems::item_conversion_index(tkitems::ITEMIDS::Wood),
-            }),
-            custom_size: Some(Vec2::splat(7.)),
-            ..Default::default()
-        },
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 25, asset_server, item_atlas),
         Transform::from_xyz(10.0, 65.0, 0.0),
     ));
     command.spawn((
         tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkitems::TkItems::new(tkitems::ITEMIDS::Stone, 1),
-        Sprite {
-            image: asset_server.load("test_items_atlas.png"),
-            texture_atlas: Some(TextureAtlas {
-                layout: texture_atlas_layout.add(TextureAtlasLayout::from_grid(
-                    UVec2::splat(32),
-                    3,
-                    1,
-                    None,
-                    None,
-                )),
-                index: tkitems::item_conversion_index(tkitems::ITEMIDS::Wood),
-            }),
-            custom_size: Some(Vec2::splat(7.)),
-            ..Default::default()
-        },
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 95, asset_server, item_atlas),
+        Transform::from_xyz(-10.0, -10.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 82, asset_server, item_atlas),
+        Transform::from_xyz(-20.0, 35.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Stone, 12, asset_server, item_atlas),
         Transform::from_xyz(30.0, 15.0, 0.0),
     ));
 }

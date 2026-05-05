@@ -1,5 +1,6 @@
 //! FILES       :   tkinventory.rs
-//! DESCRIPTION :   FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM inventory
+//! DESCRIPTION :   FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM INVENTORY, BIASANYA SALING
+//!                 BERIKATAN DENGAN TK ITEMS
 
 use crate::{
     tkentities, tkitems, tkphysics,
@@ -56,14 +57,16 @@ impl TkInventory {
 
     /// fungsi untuk menambahkan data items pada yang sudah ada
     pub fn append_items_to_items(&mut self, idx: usize, items: &tkitems::TkItems) {
-        println!("BOKEP BOKEP BOKEP BOKEP");
-        // copy shits bruh
+        if self.slot[idx].id == items.id {
+            self.slot[idx].amount += items.amount
+        } else {
+            error!("The F*ck You Feed Me?");
+        }
     }
 
     /// fungsi untuk menambahkan data items pada slots kosong, return bool untuk memberikan
     /// informamsi terkait keberhasilan proses fungsi, false apabila slot penuh
     pub fn append_items_to_slots(&mut self, items: &tkitems::TkItems) -> bool {
-        // Cek apabila masih ada ruang kosong
         if self.check_slot_size() {
             self.slot
                 .push(tkitems::TkItems::new(items.id, items.amount));
@@ -90,7 +93,7 @@ impl Plugin for TkInventoryPlugins {
     fn build(&self, app: &mut App) {
         // Implementation
         app.add_systems(Update, debug_print_invslot);
-        app.add_observer(test_items_collision);
+        app.add_observer(items_collision_event);
     }
 }
 
@@ -100,23 +103,17 @@ impl Plugin for TkInventoryPlugins {
 
 /// Fungsi untuk memasukkan suatu item ke dalam inventory karakter
 /// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
-/// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter
-pub fn insert_item_to_inventory(qr: Query<&mut TkInventory>) {}
-
-/// Fungsi untuk (Test) memasukkan suatu item ke dalam inventory karakter
-/// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
 /// /// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter. sehingga untuk fungsi tes
 /// ini kita tidak akan menggunakan collision itu terlebih dahulu
-
-pub fn test_items_collision(
-    mut invc: On<tkphysics::ItemCollisionEventHandle>,
-    mut qritem: Query<(Entity, &mut tkitems::TkItems)>,
+pub fn items_collision_event(
+    invc: On<tkphysics::ItemCollisionEventHandle>,
+    mut qritem: Query<(Entity, &mut tkitems::TkItems)>, // Signal
     mut qrinv: Query<(Entity, &mut TkInventory)>,
     mut command: Commands,
     //qrunit: Query<(Entity, &mut TkInventory)>,
 ) {
     if let Some(itemada) = invc.itemen {
-        if let Ok((item_en, mut items)) = qritem.get_mut(itemada) {
+        if let Ok((_, mut items)) = qritem.get_mut(itemada) {
             if let Ok((_, mut inv)) = qrinv.get_mut(invc.uniten) {
                 // Cek Inventory apabila ada
                 if let Some((it_index, remainder)) = inv.check_contains_item(&items) {
@@ -124,7 +121,7 @@ pub fn test_items_collision(
                         // apabila lebih
                         if let Some(split_items) = items.split_amount(remainder) {
                             inv.append_items_to_items(it_index, &split_items);
-                            if (inv.append_items_to_slots(&items)) {
+                            if inv.append_items_to_slots(&items) {
                                 command.entity(itemada).despawn();
                             }
                         }
@@ -141,22 +138,22 @@ pub fn test_items_collision(
                         }
                     }
                 }
-                command.trigger(tkglobal_var::InventoryItemInserts);
+                command.trigger(tkglobal_var::InventoryItemInsertsEvents);
             }
         }
     }
 }
 
-// Membuat system untuk melihat inventory dengan menggunakan egui
-fn debug_show_inventoryzero(
-    mut contest: EguiContexts,
-    qr: Query<(&tkentities::DynamicHeroId, &TkInventory)>,
-    gid: Res<CurrentId>,
-) {
-    for (id, inv) in qr {
-        if id.id == gid.id {}
-    }
-}
+//// Membuat system untuk melihat inventory dengan menggunakan egui
+//fn debug_show_inventoryzero(
+//    mut contest: EguiContexts,
+//    qr: Query<(&tkentities::DynamicHeroId, &TkInventory)>,
+//    gid: Res<CurrentId>,
+//) {
+//    for (id, inv) in qr {
+//        if id.id == gid.id {}
+//    }
+//}
 
 /// Debug function untuk menerima input "t" lalu print setiap item yang ada di inventory slot pada
 /// character yang dipilih
@@ -166,10 +163,8 @@ fn debug_print_invslot(
     curid: Res<tkglobal_var::CurrentId>,
 ) {
     if key.just_pressed(KeyCode::KeyT) {
-        for (id, inv) in &qr {
-            if id.id == curid.id {
-                info!("Items Terdiri Dari {:?}", inv.slot);
-            }
+        for (id, _) in &qr {
+            if id.id == curid.id {}
         }
     }
 }
