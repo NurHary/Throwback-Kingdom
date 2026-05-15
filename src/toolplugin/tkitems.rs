@@ -2,22 +2,22 @@
 //! DESCRIPTION :   FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM ITEMS, BIASANYA SALING
 //!                 BERIKATAN DENGAN TK INVENTORY
 
-use crate::toolplugin::tkinventory;
 use bevy::prelude::*;
 
-const MAXIMUM_ITEM_STACK: u8 = 99;
+pub const MAXIMUM_ITEM_STACK: [u8; 5] = [26, 99, 99, 1, 1];
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum ITEMIDS {
     Wood,
     Stone,
     Fiber,
+    Axe,
+    Pickaxe,
 }
 
-/// Global Constant untuk max horizontal Sprite items
-pub const ITEMSPRITEMAXHORI: u32 = 3;
-/// Global Constant untuk max Vertical Sprite items
-pub const ITEMSPRITEMAXVERT: u32 = 3;
+/// Global Constant untuk max horizontal dan vertikal Sprite items
+pub const ITEMSPRITEMAXHORI: u32 = 5;
+pub const ITEMSPRITEMAXVERT: u32 = 1;
 
 /// Fungsi untuk mendapatkan index atlas dari item id (x)
 pub fn item_conversion_index(id: ITEMIDS) -> usize {
@@ -25,6 +25,8 @@ pub fn item_conversion_index(id: ITEMIDS) -> usize {
         ITEMIDS::Wood => return 0,
         ITEMIDS::Stone => return 1,
         ITEMIDS::Fiber => return 2,
+        ITEMIDS::Axe => return 3,
+        ITEMIDS::Pickaxe => return 4,
     }
 }
 
@@ -38,14 +40,18 @@ impl TkItems {
         Self { id, amount }
     }
     pub fn add_amount(&mut self, amount: u8) -> (bool, u8) {
-        if (self.amount + amount) <= MAXIMUM_ITEM_STACK {
+        if (self.amount + amount) <= MAXIMUM_ITEM_STACK[item_conversion_index(self.id)] {
             self.amount += amount;
             // apabila bisa ditambah, make kita tidak perlu melakukan aksi selanjutnya
             return (false, 0);
         }
         // apabila tidak bisa ditambah, make kita perlu melakukan aksi selanjutnya
-        self.amount += amount - ((self.amount + amount) - MAXIMUM_ITEM_STACK);
-        (true, (self.amount + amount) - MAXIMUM_ITEM_STACK)
+        self.amount +=
+            amount - ((self.amount + amount) - MAXIMUM_ITEM_STACK[item_conversion_index(self.id)]);
+        (
+            true,
+            (self.amount + amount) - MAXIMUM_ITEM_STACK[item_conversion_index(self.id)],
+        )
     }
 
     pub fn split_amount(&mut self, a: u8) -> Option<Self> {
@@ -64,15 +70,17 @@ impl TkItems {
     /// ditampung (if (self.amnt + rhs.amnt > MAX) ? MAX - total.amnt : 0 )
     pub fn check_items(&self, rhs: &Self) -> Option<u8> {
         // Guard sehingga tidak akan dilakukan pengecekan ketika item sudah penuh
-        if rhs.amount >= MAXIMUM_ITEM_STACK {
+        if rhs.amount >= MAXIMUM_ITEM_STACK[item_conversion_index(self.id)] {
             // Why not this
             return None;
         }
         if self.id == rhs.id {
             // ini ada supaya disana tahu kalau item ini ada berapa jumlah yang bisa di tambahkan,
             // apabila lebih make return sisa untuk dibangun item dan insert lagi
-            if self.amount + rhs.amount > MAXIMUM_ITEM_STACK {
-                return Some((self.amount + rhs.amount) - MAXIMUM_ITEM_STACK);
+            if self.amount + rhs.amount > MAXIMUM_ITEM_STACK[item_conversion_index(self.id)] {
+                return Some(
+                    (self.amount + rhs.amount) - MAXIMUM_ITEM_STACK[item_conversion_index(self.id)],
+                );
             }
             return Some(0);
             //return Some(MAXIMUM_ITEM_STACK - rhs.amount);

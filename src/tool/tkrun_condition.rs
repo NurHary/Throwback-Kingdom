@@ -8,13 +8,3 @@ use bevy::prelude::*;
 pub fn rc_gamemode(mode: Res<GStatus>) -> bool {
     mode.mode // apabila true, make rpg
 }
-
-/// ini digunakan untuk mentrigger Panggilan untuk melakukan distribute pada anakan quadtree
-pub fn qt_distribute(need: Res<QTDistributeConditions>) -> bool {
-    need.condition
-}
-
-/// ini digunakan untuk mentrigger Panggilan untuk melakukan penghapusan partisi
-pub fn qt_delete(need: Res<QTDeleteConditions>) -> bool {
-    need.condition
-}

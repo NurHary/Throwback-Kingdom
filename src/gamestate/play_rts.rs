@@ -1,4 +1,4 @@
-use crate::{gamestate::play::UNIT_SPEED, tkcamera, tkentities, tkglobal_var};
+use crate::{entities::tkentities, gamestate::play::UNIT_SPEED, tkcamera, tkglobal_var};
 use bevy::{math::VectorSpace, prelude::*, window::PrimaryWindow};
 use bevy_pancam;
 

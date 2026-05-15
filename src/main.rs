@@ -1,17 +1,17 @@
 mod debugtool;
+mod entities;
 mod gamestate;
-mod tkentities;
 mod tool;
 mod toolplugin;
 
 use debugtool::*;
-use tkentities::*;
+use entities::tkentities::*;
 use tool::*;
 use toolplugin::*;
 
+use bevy::prelude::*;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::window::WindowMode;
-use bevy::{prelude::*, window::PrimaryWindow};
 
 use bevy_egui::EguiPlugin;
 

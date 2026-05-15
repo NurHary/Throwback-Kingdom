@@ -1,4 +1,3 @@
 # What Todo Today
-- [ ] Create Sprite For Tools
-- [ ] Systems iterasi inventory untuk mencari tools
-- [ ] Systems to draw the tool when activated
+- [ ] Sistem inisialisasi ada error berupa ketika quadtree telah bercabang ada yang tidak update
+- [ ] Memperbaiki sistem yang ada dalam distribute child

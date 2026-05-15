@@ -1,5 +1,5 @@
 use crate::*;
-use bevy::{ecs::entity::Entities, prelude::*};
+use bevy::prelude::*;
 
 pub const UNIT_SPEED: f32 = 25.;
 

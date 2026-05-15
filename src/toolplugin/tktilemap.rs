@@ -1,3 +1,7 @@
+//! File    :   tktilemap
+//! Desc    :   File yang hold Plugin dimana juga hold semua implementasi untuk object - object di
+//!             dalam tilemap tersebut
+
 use bevy::{math::bool, prelude::*};
 
 pub type Tilemaptile = Vec<Vec<usize>>;
@@ -34,3 +38,16 @@ pub enum LayerLevel {
     Object,
     Omni,
 }
+
+struct TkWorld;
+
+// // // PLUGINS// // //
+
+/// Tk Worlds merupakan plugin yang mengatur dunia dan objek - objek yang ada di dunia tersebut
+impl Plugin for TkWorld {
+    fn build(&self, app: &mut App) {
+        todo!()
+    }
+}
+
+//fn

@@ -2,18 +2,25 @@
 //! DESCRIPTIONS:   FILE YANG MENAMPUNG SEMUA AKTIFITAS PHYSICS / PENDETEKSI COLLISION DIMANA
 //!                 MEMANFAATKAN PARTISI RUANG DARI TKQUADTREE
 
-use crate::{gamestate::startup, tkglobal_var, tkitems, tkquadtree};
+use crate::{gamestate::startup, tkglobal_var, tkitems, tkquadtree, toolplugin::QuadtreeUnit};
 use bevy::{ecs::event, prelude::*};
-// Plugins//
-//
-//Ini adalah Plugin yang mana Plugin ini akan berjalan ketika
+
+// // // LAYERS COMPONENT // // //
+#[derive(Component)]
+pub struct EntityCollisionLayers;
+#[derive(Component)]
+pub struct ItemCollisionLayers;
+#[derive(Component)]
+pub struct ToolCollisionLayers;
+#[derive(Component)]
+pub struct ObjectCollisionLayers;
 
 // // // Resource / Event / Data // // //
-//
-#[derive(Copy, Clone)]
-pub enum CollisionType {
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub enum COLLISIONTYPE {
     UNIT,
     ITEMS,
+    OBJECTS,
 }
 
 /// Struct Event yang memberikan signal terkait pengecekan collision kepada system handle collision
@@ -21,7 +28,7 @@ pub enum CollisionType {
 #[derive(Event)]
 pub struct PhysicsColisionEventHandle {
     enself: Entity,
-    otheren: Entity,
+    _otheren: Entity,
     intes_size: Vec2,
     condition: BVec2,
 }
@@ -37,6 +44,12 @@ impl ItemCollisionEventHandle {
     pub fn clear(&mut self) {
         self.itemen = None
     }
+}
+
+#[derive(Event)]
+struct ObjectCollisionEventHandle {
+    oben: Entity,
+    enself: Entity,
 }
 
 // // // Component // // //
@@ -57,7 +70,7 @@ impl TkRectangle {
     pub fn new(width: f32, height: f32) -> Self {
         Self { width, height }
     }
-    pub fn unwrap_position3(&self, tr: Vec3) -> [Vec3; 4] {
+    pub fn _unwrap_position3(&self, tr: Vec3) -> [Vec3; 4] {
         let x0 = tr.x - self.width / 2.;
         let y0 = tr.y - self.height / 2.;
         let x1 = tr.x + self.width / 2.;
@@ -95,35 +108,47 @@ impl TkRectangle {
             current_pos[3].min(next_pos[3]) - current_pos[1].max(next_pos[1]),
         )
     }
+    pub fn min(&self, tr: &Vec3) -> Vec3 {
+        let ret = self.unwrap_coord(tr);
+        return Vec3::new(ret[0], ret[1], 0.0);
+    }
+    pub fn max(&self, tr: &Vec3) -> Vec3 {
+        let ret = self.unwrap_coord(tr);
+        return Vec3::new(ret[2], ret[3], 0.0);
+    }
+    pub fn contains3_equal(&self, tr: &Vec3, t: &Vec3) -> bool {
+        (t.cmpge(self.min(tr)) & t.cmple(self.max(tr))).all()
+    }
 }
 
 /// Struct untuk bentuk Capsules (tidur)
 /// model dari struct ini dalam model ECS sehingga han ya menyimpan radius dari lingkaran tersebut
 /// tanpa menyertakan posisinya. untuk posisinya diambil dari entity yang memegangnya (dimana pasti
 /// memiliki transform)
-#[derive(Component, Clone, Copy)]
-struct TkCapsules {
-    width: f32, // width ada, tapi height = rad
-    rad: f32,
-}
+//#[derive(Component, Clone, Copy)]
+//struct TkCapsules {
+//    width: f32, // width ada, tapi height = rad
+//    rad: f32,
+//}
+//
+//impl TkCapsules {
+//    /// fungsi init untuk membuat componen ECS TkCircles
+//    pub fn new(width: f32, rad: f32) -> Self {
+//        Self { width, rad }
+//    }
+//}
 
-impl TkCapsules {
-    /// fungsi init untuk membuat componen ECS TkCircles
-    pub fn new(width: f32, rad: f32) -> Self {
-        Self { width, rad }
-    }
-}
-
+// NOTE: MUNGKIN INI UBAH
 #[derive(Component, Clone, Copy)]
 pub struct EntityColliding {
-    colliding: bool,
-    col_type: CollisionType,
+    _colliding: bool,
+    col_type: COLLISIONTYPE,
 }
 
 impl EntityColliding {
-    pub fn new(coltype: CollisionType) -> Self {
+    pub fn new(coltype: COLLISIONTYPE) -> Self {
         Self {
-            colliding: false,
+            _colliding: false,
             col_type: coltype,
         }
     }
@@ -131,11 +156,21 @@ impl EntityColliding {
 
 // // // IMPLEMENTATION // // //
 
+fn __compare_collision(current_pos: [f32; 4], next_pos: [f32; 4]) -> bool {
+    current_pos[0] <= next_pos[2]
+        && current_pos[2] >= next_pos[0]
+        && current_pos[1] <= next_pos[3]
+        && current_pos[3] >= next_pos[1]
+}
+
 /// Fungsi untuk mengakses Quadtree serta melakukan pengecekan collision berdasarkan isi dari
 /// Quadtree tersebut.
-pub fn access_quadtree_physics(
+fn handle_flowcollision_entities(
     mut command: Commands,
-    mut qr: Query<(&EntityColliding, &TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
+    qr: Query<
+        (&EntityColliding, &TkRectangle, &mut Transform),
+        (With<tkquadtree::QuadtreeUnit>, Without<ToolCollisionLayers>),
+    >,
     qt: Res<tkquadtree::TkQuadTree>,
 ) {
     // mendapatkan semua entity dalam quadtree
@@ -149,52 +184,61 @@ pub fn access_quadtree_physics(
             for i in part_all_en {
                 if let Ok((current_ecol, current_rectang, current_tr)) = qr.get(*i) {
                     // Pastikan yang saat ini adalah Unit dan bukan items
-                    match current_ecol.col_type {
-                        CollisionType::ITEMS => {
-                            continue;
-                        }
-                        _ => {}
+                    if current_ecol.col_type != COLLISIONTYPE::UNIT {
+                        continue;
                     }
                     // Mendapatkan Kordinat Kotak untuk current
                     let current_pos = current_rectang.unwrap_coord(&current_tr.translation);
                     for j in part_all_en {
                         // if check untuk memastikan entity i bukanlah dirinya sendiri
-                        if i != j {
-                            // if check untuk memastikan entity i bukanlah entity i itu sendiri
-                            if let Ok((next_ecol, next_rectang, next_tr)) = qr.get(*j) {
-                                // Mendapatkan Kordinat Kotak untuk next
-                                let next_pos = next_rectang.unwrap_coord(&next_tr.translation);
-
-                                if current_pos[0] <= next_pos[2]
-                                    && current_pos[2] >= next_pos[0]
-                                    && current_pos[1] <= next_pos[3]
-                                    && current_pos[3] >= next_pos[1]
-                                {
-                                    match next_ecol.col_type {
-                                        CollisionType::UNIT => {
-                                            let overlap_value = current_rectang.intersect_size(
-                                                next_rectang,
-                                                &current_tr.translation,
-                                                &next_tr.translation,
-                                            );
-                                            command.trigger(PhysicsColisionEventHandle {
-                                                enself: *i,
-                                                otheren: *j,
-                                                intes_size: overlap_value,
-                                                condition: BVec2::new(
-                                                    current_tr.translation.x
-                                                        < next_tr.translation.x,
-                                                    current_tr.translation.y
-                                                        < next_tr.translation.y,
-                                                ),
-                                            });
-                                        }
-                                        CollisionType::ITEMS => {
-                                            command.trigger(ItemCollisionEventHandle {
-                                                itemen: Some(*j),
-                                                uniten: *i,
-                                            });
-                                        }
+                        if i == j {
+                            continue;
+                        }
+                        // if check untuk memastikan entity i bukanlah entity i itu sendiri
+                        if let Ok((next_ecol, next_rectang, next_tr)) = qr.get(*j) {
+                            // Mendapatkan Kordinat Kotak untuk next
+                            let next_pos = next_rectang.unwrap_coord(&next_tr.translation);
+                            if __compare_collision(current_pos, next_pos) {
+                                match next_ecol.col_type {
+                                    COLLISIONTYPE::UNIT => {
+                                        let overlap_value = current_rectang.intersect_size(
+                                            next_rectang,
+                                            &current_tr.translation,
+                                            &next_tr.translation,
+                                        );
+                                        command.trigger(PhysicsColisionEventHandle {
+                                            enself: *i,
+                                            _otheren: *j,
+                                            intes_size: overlap_value,
+                                            condition: BVec2::new(
+                                                current_tr.translation.x < next_tr.translation.x,
+                                                current_tr.translation.y < next_tr.translation.y,
+                                            ),
+                                        });
+                                    }
+                                    COLLISIONTYPE::ITEMS => {
+                                        command.trigger(ItemCollisionEventHandle {
+                                            itemen: Some(*j),
+                                            uniten: *i,
+                                        });
+                                    }
+                                    COLLISIONTYPE::OBJECTS => {
+                                        // Alasan tidak mendorong karena
+                                        // tidak dilakukan pengecekan padanya
+                                        let overlap_value = current_rectang.intersect_size(
+                                            next_rectang,
+                                            &current_tr.translation,
+                                            &next_tr.translation,
+                                        );
+                                        command.trigger(PhysicsColisionEventHandle {
+                                            enself: *i,
+                                            _otheren: *j,
+                                            intes_size: overlap_value,
+                                            condition: BVec2::new(
+                                                current_tr.translation.x < next_tr.translation.x,
+                                                current_tr.translation.y < next_tr.translation.y,
+                                            ),
+                                        });
                                     }
                                 }
                             }
@@ -206,7 +250,10 @@ pub fn access_quadtree_physics(
     }
 }
 
-/// Fungsi untuk menghandle collision yang
+// REFACTOR FUNGSI DIATAS
+//fn __handle_collision_to_signal() {}
+
+/// Fungsi untuk menghandle collision Unit, mereka akan saling dorong mendorong
 fn handle_unit_collision(
     colval: On<PhysicsColisionEventHandle>,
     mut qr: Query<(&TkRectangle, &mut Transform), With<tkquadtree::QuadtreeUnit>>,
@@ -250,7 +297,7 @@ impl Plugin for TkPhysicsPlugin {
         app.add_systems(
             Update,
             (
-                access_quadtree_physics.run_if(in_state(tkglobal_var::GameState::Play)),
+                handle_flowcollision_entities.run_if(in_state(tkglobal_var::GameState::Play)),
                 tk_show_collision_box.run_if(in_state(tkglobal_var::GameState::Play)),
             ), // ini hanya akan berjalan ketika game state
                // adalah play

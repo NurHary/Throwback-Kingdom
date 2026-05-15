@@ -8,12 +8,6 @@ impl Plugin for TkAnimationPlugin {
     }
 }
 
-#[derive(Component)]
-pub struct TkAnimation {
-    pub idle: Option<TkAnimationStorage>,
-    pub walk: Option<TkAnimationStorage>,
-}
-
 // Animation
 #[derive(Clone)]
 pub struct TkAnimationStorage {
@@ -32,8 +26,21 @@ impl TkAnimationStorage {
     }
 }
 
+#[derive(Component)]
+pub struct TkEntityAnimation {
+    pub idle: Option<TkAnimationStorage>,
+    pub walk: Option<TkAnimationStorage>,
+}
+
+// Update Hanya ketika ada perubahan pada nyawa
+#[derive(Component)]
+struct TkObjectAnimations {
+    pub normal_state: u8,
+    pub broken_state: Vec<u8>,
+}
+
 pub fn handle_animation(
-    mut main_query: Query<(&TkUnit, &mut Sprite, &mut TkAnimation), Without<Mesh2d>>,
+    mut main_query: Query<(&TkUnit, &mut Sprite, &mut TkEntityAnimation), Without<Mesh2d>>,
     time: Res<Time>,
 ) {
     for (ch_state, mut sprite, mut anim) in &mut main_query {

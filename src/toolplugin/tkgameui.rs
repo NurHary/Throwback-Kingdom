@@ -8,7 +8,7 @@ use bevy::{
 };
 
 use crate::{
-    tkentities,
+    entities::tkentities,
     tool::{tkglobal_var, tkrun_condition},
     toolplugin::{tkinventory, tkitems},
 };

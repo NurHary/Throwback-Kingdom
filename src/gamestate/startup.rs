@@ -1,5 +1,6 @@
 use crate::{
-    tkanimations, tkbundles, tkcamera, tkentities, tkphysics,
+    entities::{self, tkentities},
+    tkanimations, tkbundles, tkcamera, tkphysics,
     tool::tkglobal_var,
     toolplugin::{tkinventory, tkitems},
 };
@@ -25,7 +26,7 @@ pub fn spawn_character(
     // // //
     let testure: Handle<Image> = asset_server.load("atlas_test.png");
 
-    let layout: TextureAtlasLayout =
+    let layout_atlas: TextureAtlasLayout =
         TextureAtlasLayout::from_grid(UVec2::splat(16), 2, 2, None, None);
     let layout_items: TextureAtlasLayout = TextureAtlasLayout::from_grid(
         UVec2::splat(32),
@@ -34,15 +35,23 @@ pub fn spawn_character(
         None,
         None,
     );
-    let item_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout_items);
-    let texture_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout);
+    let layout_objects: TextureAtlasLayout = TextureAtlasLayout::from_grid(
+        UVec2::splat(32),
+        entities::tkobjects::OBJECTSPRITEMAXHORI,
+        entities::tkobjects::OBJECTSPRITEMAXVERT,
+        None,
+        None,
+    );
+    let __item_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout_items);
+    let __object_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout_objects);
+    let __texture_atlas: Handle<TextureAtlasLayout> = texture_atlas_layout.add(layout_atlas);
 
     // // //  TEST TEXTURE ATLAS // // //
     command.spawn((
         Sprite {
             image: testure,
             texture_atlas: Some(TextureAtlas {
-                layout: texture_atlas,
+                layout: __texture_atlas,
                 index: 2,
             }),
             custom_size: Some(Vec2::splat(7.)),
@@ -92,7 +101,7 @@ pub fn spawn_character(
             custom_size: Some(Vec2::splat(7.)),
             ..Default::default()
         },
-        tkanimations::TkAnimation {
+        tkanimations::TkEntityAnimation {
             idle: Some(tkanimations::TkAnimationStorage::new(
                 Timer::from_seconds(0.4, TimerMode::Repeating),
                 0,
@@ -105,7 +114,8 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::UNIT, 5.0, 5.0),
+        tkphysics::EntityCollisionLayers,
         Transform::from_xyz(25.0, 25.0, 0.0),
         tkinventory::TkInventory::new(4),
     ));
@@ -132,7 +142,7 @@ pub fn spawn_character(
             color: Color::Hsla(Hsla::new(141.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
-        tkanimations::TkAnimation {
+        tkanimations::TkEntityAnimation {
             idle: Some(tkanimations::TkAnimationStorage::new(
                 Timer::from_seconds(0.4, TimerMode::Repeating),
                 0,
@@ -145,7 +155,8 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::UNIT, 5.0, 5.0),
+        tkphysics::EntityCollisionLayers,
         tkinventory::TkInventory::new(4), // Handle Inventories
         Transform::from_xyz(30.0, -20.0, 0.0),
     ));
@@ -172,7 +183,7 @@ pub fn spawn_character(
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
-        tkanimations::TkAnimation {
+        tkanimations::TkEntityAnimation {
             idle: Some(tkanimations::TkAnimationStorage::new(
                 Timer::from_seconds(0.4, TimerMode::Repeating),
                 0,
@@ -185,7 +196,8 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::UNIT, 5.0, 5.0),
+        tkphysics::EntityCollisionLayers,
         tkinventory::TkInventory::new(5),
         Transform::from_xyz(-90.0, 25.0, 0.0),
     ));
@@ -213,7 +225,7 @@ pub fn spawn_character(
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
-        tkanimations::TkAnimation {
+        tkanimations::TkEntityAnimation {
             idle: Some(tkanimations::TkAnimationStorage::new(
                 Timer::from_seconds(0.4, TimerMode::Repeating),
                 0,
@@ -226,7 +238,8 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::UNIT, 5.0, 5.0),
+        tkphysics::EntityCollisionLayers,
         tkinventory::TkInventory::new(2),
         Transform::from_xyz(220.0, 0.0, 0.0),
     ));
@@ -253,7 +266,7 @@ pub fn spawn_character(
             color: Color::Hsla(Hsla::new(12.0, 0.86, 0.77, 1.0)),
             ..Default::default()
         },
-        tkanimations::TkAnimation {
+        tkanimations::TkEntityAnimation {
             idle: Some(tkanimations::TkAnimationStorage::new(
                 Timer::from_seconds(0.4, TimerMode::Repeating),
                 0,
@@ -266,36 +279,78 @@ pub fn spawn_character(
             )),
         },
         tkentities::UnitSelectable::new(),
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::UNIT, 5.0, 5.0),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::UNIT, 5.0, 5.0),
+        tkphysics::EntityCollisionLayers,
         Transform::from_xyz(-100.0, -50.0, 0.0),
         tkinventory::TkInventory::new(7),
     ));
 
     // // // ITEMS TEST // // //
     command.spawn((
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 99, asset_server, item_atlas),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 99, asset_server, __item_atlas),
         Transform::from_xyz(40.0, 25.0, 0.0),
     ));
     command.spawn((
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 25, asset_server, item_atlas),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 6, asset_server, __item_atlas),
         Transform::from_xyz(10.0, 65.0, 0.0),
     ));
     command.spawn((
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 95, asset_server, item_atlas),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 99, asset_server, __item_atlas),
         Transform::from_xyz(-10.0, -10.0, 0.0),
     ));
     command.spawn((
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 82, asset_server, item_atlas),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Wood, 6, asset_server, __item_atlas),
         Transform::from_xyz(-20.0, 35.0, 0.0),
     ));
     command.spawn((
-        tkbundles::ColliderBundles::new(tkphysics::CollisionType::ITEMS, 5.0, 5.0),
-        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Stone, 12, asset_server, item_atlas),
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Stone, 12, asset_server, __item_atlas),
         Transform::from_xyz(30.0, 15.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Pickaxe, 1, asset_server, __item_atlas),
+        Transform::from_xyz(10.0, 32.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Stone, 1, asset_server, __item_atlas),
+        Transform::from_xyz(20.0, 32.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Pickaxe, 1, asset_server, __item_atlas),
+        Transform::from_xyz(-20.0, -10.0, 0.0),
+    ));
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::ITEMS, 5.0, 5.0),
+        tkglobal_var::spawnitems!(tkitems::ITEMIDS::Axe, 1, asset_server, __item_atlas),
+        Transform::from_xyz(10.0, -10.0, 0.0),
+    ));
+
+    // // // OBJECT TEST // // //
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::OBJECTS, 5.0, 5.0),
+        tkglobal_var::spawnobjects!(
+            entities::tkobjects::OBJECTSID::STONE,
+            asset_server,
+            __object_atlas
+        ),
+        Transform::from_xyz(20.0, 13.0, 0.0),
+    ));
+
+    command.spawn((
+        tkbundles::ColliderBundles::new(tkphysics::COLLISIONTYPE::OBJECTS, 5.0, 5.0),
+        tkglobal_var::spawnobjects!(
+            entities::tkobjects::OBJECTSID::TRUNK,
+            asset_server,
+            __object_atlas
+        ),
+        Transform::from_xyz(15.0, -20.0, 0.0),
     ));
 }
 pub fn camera_startup(

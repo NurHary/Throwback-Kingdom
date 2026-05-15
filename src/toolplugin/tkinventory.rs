@@ -2,11 +2,7 @@
 //! DESCRIPTION :   FILES PENAMPUNG FUNGSI DAN COMPONENT UNTUK SYSTEM INVENTORY, BIASANYA SALING
 //!                 BERIKATAN DENGAN TK ITEMS
 
-use crate::{
-    tkentities, tkitems, tkphysics,
-    tool::{tkglobal_var, CurrentId},
-    toolplugin::TkItems,
-};
+use crate::{entities::tkentities, tkitems, tkphysics, tool::tkglobal_var};
 use bevy::prelude::*;
 use bevy_egui::EguiContexts;
 
@@ -42,9 +38,9 @@ impl TkInventory {
     /// fungsi ini akan dipanggil ketika update inventory / backpack dilakukan
     pub fn extend_maximum_slot() {}
 
-    /// fungsi untuk melakukan cek apakah ada suatu items di slot, apabila ada make
+    /// fungsi untuk melakukan cek apakah ada suatu items di slot, apabila ada maka
     /// ia akan mereturn index dan juga stacks sisanya
-    /// apabila stack sisa negatif, make lakukan operasi penambahan serta append pada slots
+    /// apabila stack sisa negatif, maka lakukan operasi penambahan serta append pada slots
     fn check_contains_item(&self, items: &tkitems::TkItems) -> Option<(usize, u8)> {
         for i in 0..self.slot.len() {
             // apabila ada ataupun non None, make dapatkan sinyal
@@ -66,10 +62,22 @@ impl TkInventory {
 
     /// fungsi untuk menambahkan data items pada slots kosong, return bool untuk memberikan
     /// informamsi terkait keberhasilan proses fungsi, false apabila slot penuh
-    pub fn append_items_to_slots(&mut self, items: &tkitems::TkItems) -> bool {
+    pub fn append_items_to_slots(&mut self, items: &mut tkitems::TkItems) -> bool {
         if self.check_slot_size() {
-            self.slot
-                .push(tkitems::TkItems::new(items.id, items.amount));
+            if items.amount <= tkitems::MAXIMUM_ITEM_STACK[tkitems::item_conversion_index(items.id)]
+            {
+                self.slot
+                    .push(tkitems::TkItems::new(items.id, items.amount));
+                return true;
+            } else {
+                if let Some(mut split_items) = items.split_amount(
+                    tkitems::MAXIMUM_ITEM_STACK[tkitems::item_conversion_index(items.id)],
+                ) {
+                    self.slot
+                        .push(tkitems::TkItems::new(items.id, items.amount));
+                    self.append_items_to_slots(&mut split_items);
+                }
+            }
             return true;
         }
         return false;
@@ -103,14 +111,13 @@ impl Plugin for TkInventoryPlugins {
 
 /// Fungsi untuk memasukkan suatu item ke dalam inventory karakter
 /// tentu ini perlu prerequisites berupa Quadtree itu sendiri serta pengecekan collision untuk
-/// /// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter. sehingga untuk fungsi tes
+/// mengecek apakah item sudah masuk ke dalam area pengumpulan karakter. sehingga untuk fungsi tes
 /// ini kita tidak akan menggunakan collision itu terlebih dahulu
 pub fn items_collision_event(
     invc: On<tkphysics::ItemCollisionEventHandle>,
     mut qritem: Query<(Entity, &mut tkitems::TkItems)>, // Signal
     mut qrinv: Query<(Entity, &mut TkInventory)>,
     mut command: Commands,
-    //qrunit: Query<(Entity, &mut TkInventory)>,
 ) {
     if let Some(itemada) = invc.itemen {
         if let Ok((_, mut items)) = qritem.get_mut(itemada) {
@@ -121,7 +128,7 @@ pub fn items_collision_event(
                         // apabila lebih
                         if let Some(split_items) = items.split_amount(remainder) {
                             inv.append_items_to_items(it_index, &split_items);
-                            if inv.append_items_to_slots(&items) {
+                            if inv.append_items_to_slots(&mut items) {
                                 command.entity(itemada).despawn();
                             }
                         }
@@ -133,7 +140,8 @@ pub fn items_collision_event(
                 } else {
                     // apabila tidak ada items sama sekali
                     if inv.slot.len() < inv.slot_amount.into() {
-                        if inv.append_items_to_slots(&items) {
+                        // DISINI
+                        if inv.append_items_to_slots(&mut items) {
                             command.entity(itemada).despawn();
                         }
                     }

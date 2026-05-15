@@ -1,6 +1,3 @@
-//! RECENT CHANGES: ADD THE INVENTORY SLOT COMPONENT
-//!
-//!
 //! DESCRIPTION: FILE YANG MENYIMPAN KESELURUHAN SYSTEM UNTUK ENTITAS BAIK ENTITAS KAWAN ATAUPUN
 //! ENTITAS LAWAN
 
@@ -104,4 +101,33 @@ impl DynamicIdAllocator {
     }
 }
 
-// // // INVENTORY SLOT // // //
+// MORE TO ALL
+
+#[derive(Component)]
+struct TkHealth {
+    maxhealth: i16,
+    healthpoint: i16,
+}
+
+impl TkHealth {
+    pub fn new(maxhealth: i16, healthpoint: i16) -> Self {
+        Self {
+            maxhealth,
+            healthpoint,
+        }
+    }
+    pub fn heal(&mut self, a: i16) {
+        self.healthpoint = (self.healthpoint + a).min(self.maxhealth);
+    }
+
+    pub fn damage(&mut self, a: i16) {
+        self.healthpoint -= a;
+    }
+
+    pub fn isDead(&self) -> bool {
+        if self.healthpoint > 0 {
+            return false;
+        }
+        return true;
+    }
+}

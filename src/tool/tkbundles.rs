@@ -1,19 +1,23 @@
-use crate::*;
+use crate::{entities::tkentities, tkphysics, tkquadtree};
 use bevy::prelude::*;
 
 #[derive(Bundle)]
 pub struct HeroesBundles {
-    hero: Heroes,
-    id: DynamicHeroId,
-    unit: TkUnit,
+    hero: tkentities::Heroes,
+    id: tkentities::DynamicHeroId,
+    unit: tkentities::TkUnit,
 }
 
 impl HeroesBundles {
-    pub fn new(hero: Heroes, id: DynamicHeroId, st: TkUnitState) -> Self {
+    pub fn new(
+        hero: tkentities::Heroes,
+        id: tkentities::DynamicHeroId,
+        st: tkentities::TkUnitState,
+    ) -> Self {
         Self {
             hero,
             id,
-            unit: TkUnit::new(st),
+            unit: tkentities::TkUnit::new(st),
         }
     }
 }
@@ -25,21 +29,23 @@ pub struct ColliderBundles {
     // ukuran dari collision tersebut.
     // kita disini hanya akan menggunakan ukuran kotak karena ukuran kotak adalah ukuran yang akan
     // kita gunakan secara utama
-    collision_area: TkRectangle,
+    collision_area: tkphysics::TkRectangle,
     // untuk mengecek apakah unit tersebut tengah melakukan tabrakan dengan objek lainnya
-    is_colliding: EntityColliding,
+    is_colliding: tkphysics::EntityColliding,
 
-    quadtree: QuadtreeUnit,
-    quadtree_position: QuadtreeUnitPosition,
+    quadtree: tkquadtree::QuadtreeUnit,
+    quadtree_position: tkquadtree::QuadtreeUnitPosition,
+    quadtree_states: tkquadtree::QuadtreeUnitStates,
 }
 
 impl ColliderBundles {
-    pub fn new(coltype: CollisionType, width: f32, height: f32) -> Self {
+    pub fn new(coltype: tkphysics::COLLISIONTYPE, width: f32, height: f32) -> Self {
         Self {
-            collision_area: TkRectangle::new(width, height),
-            is_colliding: EntityColliding::new(coltype),
-            quadtree: QuadtreeUnit,
-            quadtree_position: QuadtreeUnitPosition::new(),
+            collision_area: tkphysics::TkRectangle::new(width, height),
+            is_colliding: tkphysics::EntityColliding::new(coltype),
+            quadtree: tkquadtree::QuadtreeUnit,
+            quadtree_position: tkquadtree::QuadtreeUnitPosition::new(),
+            quadtree_states: tkquadtree::QuadtreeUnitStates::new(),
         }
     }
 }

@@ -1,0 +1,2 @@
+set editor = nvim
+set timeout = "5"

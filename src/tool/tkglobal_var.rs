@@ -6,7 +6,10 @@
 //!
 //!
 
-use crate::tkitems;
+use crate::{
+    tkitems,
+    toolplugin::{QuadtreeIndex, tkquadtree},
+};
 use bevy::prelude::*;
 
 /// Variable Global untuk mengingat saat ini memilih karakter yang mana (RPG MODES)
@@ -63,16 +66,16 @@ pub struct MarqueeCursorPosition {
 
 // // // WORLDSIZEE // // //
 
-#[derive(Resource)]
-struct WorldSize {
-    value: f32,
-}
+//#[derive(Resource)]
+//struct WorldSize {
+//    value: f32,
+//}
 
-impl WorldSize {
-    pub const SMALL: f32 = 1000000.0;
-    pub const MEDIUM: f32 = 100000000.0;
-    pub const LARGE: f32 = 100000000000.0;
-}
+//impl WorldSize {
+//    pub const SMALL: f32 = 1000000.0;
+//    pub const MEDIUM: f32 = 100000000.0;
+//    pub const LARGE: f32 = 100000000000.0;
+//}
 
 // // // ASSET // // //
 
@@ -81,6 +84,7 @@ impl WorldSize {
 macro_rules! spawnitems {
     ($id: expr, $amount: expr, $assv: ident, $texl: ident) => {
         (
+            tkphysics::ItemCollisionLayers,
             tkitems::TkItems::new($id, $amount),
             Sprite {
                 image: $assv.load("test_items_atlas.png"),
@@ -96,68 +100,61 @@ macro_rules! spawnitems {
 }
 pub(crate) use spawnitems;
 
-// // // QUADTREE // // //
-
-pub trait QTRC {
-    fn clear(&mut self, tr: Vec3);
-    fn activate(&mut self, tr: Vec3);
+/// Macro untuk spawn items itu sendiri dikarenakan asset server dan texture layout tidak dapat di
+/// kirim ke fn lainnya
+macro_rules! spawnobjects {
+    ($id: expr, $assv: ident, $texl: ident) => {
+        (
+            tkphysics::ObjectCollisionLayers,
+            entities::tkobjects::TkObjects::new($id),
+            Sprite {
+                image: $assv.load("test_object_atlas.png"),
+                texture_atlas: Some(TextureAtlas {
+                    layout: $texl.clone(),
+                    index: entities::tkobjects::object_atlas_index($id),
+                }),
+                custom_size: Some(Vec2::splat(7.)),
+                ..Default::default()
+            },
+        )
+    };
 }
+
+pub(crate) use spawnobjects;
+// // // QUADTREE // // //
 
 // NOTE: Ubah ini menjadi event / message
 /// Resource Switch yang berguna untuk memberitahu jika diperlukan operasi pendistribusian partisi pada
 /// suatu Quadtree
-#[derive(Resource)]
+#[derive(Event)]
 pub struct QTDistributeConditions {
+    pub en: Entity,
     pub pos: Vec<Vec3>,
-    pub condition: bool,
-}
-impl Default for QTDistributeConditions {
-    fn default() -> Self {
-        Self {
-            pos: Vec::new(),
-            condition: false,
-        }
-    }
 }
 
-impl QTRC for QTDistributeConditions {
-    fn clear(&mut self, tr: Vec3) {
-        self.pos.retain(|value| *value != tr);
-        if self.pos.len() > 0 {
-            self.condition = false;
-        }
+impl QTDistributeConditions {
+    pub fn new(en: Entity, pos: Vec<Vec3>) -> Self {
+        Self { en, pos }
     }
-    fn activate(&mut self, tr: Vec3) {
-        self.pos.push(tr);
-        self.condition = true
+    pub fn clear(&mut self) {
+        self.pos.clear()
     }
 }
 
 /// Resource Switch yang berguna untuk memberitahu jika diperlukan operasi penghapusan partisi pada
 /// suatu Quadtree
-#[derive(Resource)]
+#[derive(Event)]
 pub struct QTDeleteConditions {
-    pub pos: Vec<Vec3>,
-    pub condition: bool,
+    pub en: Entity,
+    pub tr: Vec<Vec3>,
 }
-impl Default for QTDeleteConditions {
-    fn default() -> Self {
-        Self {
-            pos: Vec::new(),
-            condition: false,
-        }
+
+impl QTDeleteConditions {
+    pub fn new(en: Entity, tr: Vec<Vec3>) -> Self {
+        Self { en, tr }
     }
-}
-impl QTRC for QTDeleteConditions {
-    fn clear(&mut self, tr: Vec3) {
-        self.pos.retain(|value| *value != tr);
-        if self.pos.len() > 0 {
-            self.condition = false;
-        }
-    }
-    fn activate(&mut self, tr: Vec3) {
-        self.pos.push(tr);
-        self.condition = true
+    pub fn clear(&mut self) {
+        self.tr.clear()
     }
 }
 

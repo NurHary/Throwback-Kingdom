@@ -1,6 +1,6 @@
 # Target Cycle
-- [ ] System Inventory
-- [ ] Memperbaiki Quadtree
+- [x] System Inventory
+- [x] Memperbaiki Quadtree
 
 # TARGET
 ## ARTS
